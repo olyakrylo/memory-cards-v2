@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { User } from "../utils/types";
 import Cookies from "cookies";
 import { getCookie } from "../utils/cookies";
+import { connect } from "../utils/connection";
 
 type Method = "get" | "post" | "put" | "delete";
 
@@ -10,13 +11,15 @@ export async function getUser(
   res: NextApiResponse
 ): Promise<User | null> {
   const cookies = new Cookies(req, res);
-  const { API_URL, SECRET } = process.env;
-  const token = getCookie(cookies, "id_token", SECRET as string);
-  if (token) {
-    const res = await fetch(`${API_URL as string}/users/${token}`);
-    const { user } = await res.json();
-
-    return user;
+  const { SECRET } = process.env;
+  const id = getCookie(cookies, "id_token", SECRET as string);
+  if (id) {
+    const { User } = await connect();
+    const user = await User.findById(id);
+    return {
+      ...user._doc,
+      _id: id,
+    };
   }
 
   return null;
