@@ -6,6 +6,7 @@ import RemoveRoundedIcon from "@mui/icons-material/RemoveRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
 import { State, Topic, UpdatedResult, User } from "../../utils/types";
 import { setCurrentTopic } from "../../redux/actions/main";
@@ -28,6 +29,8 @@ export const Topics = ({
   const [topics, setTopics] = useState<Topic[]>([]);
   const [hidden, setHidden] = useState<boolean>(false);
   const [showInput, setShowInput] = useState<boolean>(false);
+
+  const { t } = useTranslation();
 
   const router = useRouter();
 
@@ -139,7 +142,7 @@ export const Topics = ({
             ref={inputRef}
             className={styles.add__input}
             aria-hidden={!showInput}
-            placeholder={"type name..."}
+            placeholder={`${t("add.topic_title")}...`}
             onKeyUp={addTopic}
           />
         </div>

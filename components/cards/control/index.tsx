@@ -8,6 +8,7 @@ import {
   DialogTitle,
   TextField,
 } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 import { State, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
@@ -26,6 +27,8 @@ export const CardControl = ({
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
 
+  const { t } = useTranslation();
+
   const onSave = () => {
     onClose(question, answer);
   };
@@ -38,7 +41,7 @@ export const CardControl = ({
   return (
     <Dialog open={open} className={styles.container}>
       <DialogTitle>
-        New card for{" "}
+        {t("add.new_card_for")}{" "}
         <span className={styles.topic}> {currentTopic?.title}</span>
       </DialogTitle>
 
@@ -47,21 +50,21 @@ export const CardControl = ({
           className={styles.input}
           required
           multiline
-          label={"question"}
+          label={t("ui.question")}
           onChange={(e) => onChangeField(e, setQuestion)}
         />
         <TextField
           required
           multiline
-          label={"answer"}
+          label={t("ui.answer")}
           onChange={(e) => onChangeField(e, setAnswer)}
         />
       </DialogContent>
 
       <DialogActions className={styles.actions}>
-        <Button onClick={() => onClose("", "")}>Cancel</Button>
+        <Button onClick={() => onClose("", "")}>{t("ui.cancel")}</Button>
         <Button variant="contained" onClick={onSave}>
-          Save
+          {t("ui.save")}
         </Button>
       </DialogActions>
     </Dialog>

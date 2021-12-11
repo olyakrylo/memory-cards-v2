@@ -3,7 +3,15 @@
     "or": "or",
     "language": "Language",
     "logout": "Log out",
-    "show_arrows": "Show arrows"
+    "show_arrows": "Show arrows",
+    "question": "Question",
+    "answer": "Answer",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "add": {
+    "topic_title": "Title",
+    "new_card_for": "New card for"
   },
   "auth": {
     "signIn": "Authorization",

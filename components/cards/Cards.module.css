@@ -9,12 +9,11 @@
 }
 
 .control__add {
-  background: var(--seagreen);
-  color: var(--bg-color);
+  background: var(--seagreen) !important;
+  color: var(--bg-color) !important;
 }
 
 .control__add:hover {
-  background: var(--seagreen);
   opacity: 0.8;
 }
 
@@ -46,7 +45,7 @@
 }
 
 .card__del {
-  position: absolute;
+  position: absolute !important;
   top: 12px;
   right: 12px;
 }

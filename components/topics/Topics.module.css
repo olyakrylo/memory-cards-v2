@@ -58,7 +58,7 @@
 }
 
 .control__toggle {
-  margin: 10px -10px;
+  margin: 10px -10px !important;
   color: var(--medium-gray);
 }
 
@@ -70,9 +70,8 @@
 }
 
 .add__button {
-  /*color: var(--seagreen);*/
-  border: 2px solid var(--seagreen);
-  border-radius: 10px;
+  border: 2px solid var(--seagreen) !important;
+  border-radius: 10px !important;
 }
 
 .add__input {
