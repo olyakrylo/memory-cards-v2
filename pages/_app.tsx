@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
+import "@splidejs/splide/dist/css/splide.min.css";
 
 import "../styles/globals.css";
 import type { AppProps } from "next/app";

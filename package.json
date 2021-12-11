@@ -8,11 +8,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@babel/core": "^7.16.0",
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.0",
     "@mui/material": "^5.2.0",
-    "@splidejs/react-splide": "^0.6.15",
+    "@splidejs/react-splide": "^0.6.17",
+    "@splidejs/splide": "^3.6.9",
     "cookies": "^0.8.0",
     "i18next": "^21.5.3",
     "i18next-browser-languagedetector": "^6.1.2",
