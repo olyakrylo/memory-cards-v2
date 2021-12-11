@@ -1,0 +1,63 @@
+.loader {
+  margin-left: calc(50% - 20px);
+}
+
+.control {
+  margin: 0 24px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.control__add {
+  background: var(--seagreen);
+  color: var(--bg-color);
+}
+
+.control__add:hover {
+  background: var(--seagreen);
+  opacity: 0.8;
+}
+
+.slider {
+  margin: auto;
+  width: 700px;
+  max-width: 100%;
+}
+
+.card {
+  position: relative;
+  background-color: var(--white);
+  margin: 24px;
+  height: calc(100% - 70px);
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  overflow-y: auto;
+  transition-property: transform, margin;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+.card_arrows {
+  margin: 24px 55px;
+}
+
+.card__del {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+}
+
+.arrowControl {
+  margin-left: 24px;
+  font-size: 16px;
+  font-family: var(--brand-font-family);
+  color: var(--dark-gray);
+}
+
+.arrow_hidden {
+  visibility: hidden;
+}

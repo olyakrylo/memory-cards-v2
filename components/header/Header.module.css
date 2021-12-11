@@ -1,0 +1,26 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+.title {
+  font-family: var(--brand-font-family);
+  font-size: 34px;
+  line-height: 34px;
+  letter-spacing: 0.5px;
+  color: var(--seagreen);
+}
+
+.title_gray {
+  color: var(--dark-gray);
+}
+
+.modeButton {
+  all: unset;
+  color: var(--dark-gray);
+  cursor: pointer;
+  width: 34px;
+  height: 34px;
+}

@@ -1,0 +1,14 @@
+.content {
+  display: grid;
+  grid-gap: 24px;
+  padding-top: 10px !important;
+  width: 300px;
+}
+
+.topic {
+  color: var(--seagreen);
+}
+
+.actions {
+  padding: 8px 24px 24px;
+}

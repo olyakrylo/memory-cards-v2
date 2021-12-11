@@ -1,0 +1,11 @@
+.container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--brand-font-family);
+  color: var(--dark-gray);
+}
+
+.settings {
+  color: var(--medium-gray);
+}

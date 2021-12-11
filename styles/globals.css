@@ -1,0 +1,75 @@
+:root {
+  --base-font-family: "Roboto", -apple-system, BlinkMacSystemFont, Segoe UI,
+    Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue,
+    sans-serif;
+  --brand-font-family: "Noto Sans";
+
+  --seagreen: #1a8f88;
+  --red: #ae0000b2;
+  --light-red: rgba(174, 0, 0, 0.6);
+  --dark-gray: #3c3c3c;
+  --medium-gray: #777;
+  --light-gray: #b5b5b5;
+  --white: #fff;
+  --bg-color: #e5e5e5;
+
+  --shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+}
+
+:root.dark {
+  --seagreen: #20b2aa;
+  --red: #cfcfcf;
+  --light-red: #cfcfcf;
+  --medium-gray: #cfcfcf;
+  --dark-gray: #696969;
+  --white: #696969;
+  --bg-color: #1c1c1c;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: var(--base-font-family);
+}
+
+body {
+  padding: 60px 40px;
+  background: var(--bg-color);
+}
+
+@media (max-width: 500px) {
+  body {
+    padding: 60px 20px;
+  }
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../assets/fonts/Roboto-Light.woff");
+  font-style: normal;
+  font-weight: 300;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../assets/fonts/Roboto-Regular.woff");
+  font-style: normal;
+  font-weight: 400;
+}
+
+@font-face {
+  font-family: "Noto Sans";
+  src: url("../assets/fonts/NotoSans-Bold.woff");
+  font-style: normal;
+  font-weight: 700;
+}

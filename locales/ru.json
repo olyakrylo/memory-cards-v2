@@ -1,0 +1,20 @@
+{
+  "ui": {
+    "or": "или",
+    "language": "Язык",
+    "logout": "Выход",
+    "show_arrows": "Показывать стрелки"
+  },
+  "auth": {
+    "signIn": "Авторизация",
+    "signUp": "Регистрация",
+    "button": {
+      "signUp": "Регистрация",
+      "signIn": "Войти"
+    },
+    "placeholder": {
+      "login": "Логин",
+      "password": "Пароль"
+    }
+  }
+}

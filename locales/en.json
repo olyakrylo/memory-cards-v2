@@ -1,0 +1,20 @@
+{
+  "ui": {
+    "or": "or",
+    "language": "Language",
+    "logout": "Log out",
+    "show_arrows": "Show arrows"
+  },
+  "auth": {
+    "signIn": "Authorization",
+    "signUp": "Registration",
+    "button": {
+      "signUp": "Sign up",
+      "signIn": "Sign in"
+    },
+    "placeholder": {
+      "login": "Login",
+      "password": "Password"
+    }
+  }
+}
