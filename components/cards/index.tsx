@@ -54,7 +54,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
 
   useEffect(() => {
     if (!currentTopic) {
-      setCards(DefaultCards.start[i18n.language] ?? []);
+      setCards(DefaultCards.start[i18n.language ?? "en"] ?? []);
       return;
     }
 
@@ -65,7 +65,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
       if (cards.length) {
         setCards(cards);
       } else {
-        setCards(DefaultCards.empty[i18n.language] ?? []);
+        setCards(DefaultCards.empty[i18n.language ?? "en"] ?? []);
       }
       setLoading(false);
     });
@@ -100,7 +100,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
     setCards(
       updatedCards.length
         ? updatedCards
-        : DefaultCards.empty[i18n.language] ?? []
+        : DefaultCards.empty[i18n.language ?? "en"] ?? []
     );
   };
 

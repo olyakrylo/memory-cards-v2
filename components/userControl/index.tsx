@@ -8,12 +8,14 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
+import { setUser } from "../../redux/actions/main";
 
 type UserControlProps = {
   user: User;
+  setUser: (v: User | undefined) => void;
 };
 
-export const UserControl = ({ user }: UserControlProps) => {
+export const UserControl = ({ user, setUser }: UserControlProps) => {
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
   const router = useRouter();
 
@@ -23,6 +25,7 @@ export const UserControl = ({ user }: UserControlProps) => {
     const res = await fetch("/api/users/logout");
     if (res.ok) {
       await router.push("/auth");
+      setUser(undefined);
     }
   };
 
@@ -101,4 +104,6 @@ const mapStateToProps = (state: { main: { user: User } }) => {
   return { user: state.main.user };
 };
 
-export default connect(mapStateToProps)(UserControl);
+const mapDispatchToProps = { setUser };
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserControl);

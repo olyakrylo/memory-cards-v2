@@ -21,7 +21,6 @@ const AddCard = ({ currentTopic, setLoading, addCard }: AddCardProps) => {
   };
 
   const onCloseNewCardDialog = async (question: string, answer: string) => {
-    console.log("close");
     setNewCardOpen(false);
     if (!question || !answer) return;
     setLoading(true);
