@@ -7,7 +7,6 @@ import {
   IconButton,
   Switch,
 } from "@mui/material";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { useEffect, useRef, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
@@ -17,7 +16,8 @@ import { flip } from "../../utils/flip";
 import { DefaultCards } from "../../utils/default-cards";
 import { request } from "../../middleware";
 import styles from "./Cards.module.css";
-import CardControl from "./control/";
+import EditCard from "./edit";
+import AddCard from "./add";
 
 type CardProps = {
   currentTopic?: Topic;
@@ -27,7 +27,6 @@ export const Cards = ({ currentTopic }: CardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [inverted, setInverted] = useState<boolean>(false);
-  const [newCardOpen, setNewCardOpen] = useState<boolean>(false);
   const [showArrows, setShowArrows] = useState<boolean>(true);
 
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
@@ -81,23 +80,17 @@ export const Cards = ({ currentTopic }: CardProps) => {
     setInverted(false);
   };
 
-  const openNewCardDialog = () => {
-    setNewCardOpen(true);
+  const addCard = (newCard: Card): void => {
+    setCards([...cards.filter((c) => !!c._id), newCard]);
   };
 
-  const closeNewCardDialog = async (question: string, answer: string) => {
-    setNewCardOpen(false);
-    if (!question || !answer || !currentTopic) return;
-    setLoading(true);
-    const newCard = await request<Card>("post", "cards", {
-      question,
-      answer,
-      topic_id: currentTopic?._id,
-    });
-    if (newCard) {
-      setCards([...cards.filter((c) => !!c._id), newCard]);
-    }
-    setLoading(false);
+  const updateCard = (updatedCard: Card): void => {
+    setCards(
+      cards.map((c) => {
+        if (c._id === updatedCard._id) return updatedCard;
+        return c;
+      })
+    );
   };
 
   const deleteCard = async (e: any, id: string) => {
@@ -115,15 +108,12 @@ export const Cards = ({ currentTopic }: CardProps) => {
     <div>
       <div className={styles.control}>
         {currentTopic && (
-          <IconButton
-            className={styles.control__add}
-            onClick={() => openNewCardDialog()}
-          >
-            <AddRoundedIcon />
-          </IconButton>
+          <AddCard
+            currentTopic={currentTopic}
+            setLoading={setLoading}
+            addCard={addCard}
+          />
         )}
-
-        <CardControl open={newCardOpen} onClose={closeNewCardDialog} />
       </div>
 
       {loading && <CircularProgress className={styles.loader} />}
@@ -155,6 +145,14 @@ export const Cards = ({ currentTopic }: CardProps) => {
                   >
                     <DeleteTwoToneIcon />
                   </IconButton>
+                )}
+
+                {card._id && (
+                  <EditCard
+                    card={card}
+                    setLoading={setLoading}
+                    updateCard={updateCard}
+                  />
                 )}
               </div>
             </SplideSlide>

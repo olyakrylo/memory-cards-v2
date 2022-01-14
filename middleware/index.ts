@@ -3,6 +3,7 @@ import { User } from "../utils/types";
 import Cookies from "cookies";
 import { getCookie } from "../utils/cookies";
 import { connect } from "../utils/connection";
+import { dataExample } from "../data.example";
 
 type Method = "get" | "post" | "put" | "delete";
 
@@ -11,7 +12,12 @@ export async function getUser(
   res: NextApiResponse
 ): Promise<User | null> {
   const cookies = new Cookies(req, res);
-  const { SECRET } = process.env;
+  const { SECRET, NO_CONNECTION } = process.env;
+
+  if (NO_CONNECTION) {
+    return dataExample.user;
+  }
+
   const id = getCookie(cookies, "id_token", SECRET as string);
   if (id) {
     const { User } = await connect();

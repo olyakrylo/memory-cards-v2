@@ -3,6 +3,7 @@
   grid-gap: 24px;
   padding-top: 10px !important;
   width: 300px;
+  min-width: 100%;
 }
 
 .topic {

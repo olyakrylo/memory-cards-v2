@@ -10,27 +10,29 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-import { State, Topic } from "../../../utils/types";
+import { Card, State, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
 
 type CardControlProps = {
   currentTopic?: Topic;
   open: boolean;
-  onClose: (question: string, answer: string) => void;
+  onClose: (question: string, answer: string, card?: Card) => void;
+  card?: Card;
 };
 
 export const CardControl = ({
   currentTopic,
   open,
   onClose,
+  card,
 }: CardControlProps) => {
-  const [question, setQuestion] = useState<string>("");
-  const [answer, setAnswer] = useState<string>("");
+  const [question, setQuestion] = useState<string>(card?.question ?? "");
+  const [answer, setAnswer] = useState<string>(card?.answer ?? "");
 
   const { t } = useTranslation();
 
   const onSave = () => {
-    onClose(question, answer);
+    onClose(question, answer, card);
   };
 
   const onChangeField = (event: any, updateFunc: (value: string) => void) => {
@@ -41,7 +43,7 @@ export const CardControl = ({
   return (
     <Dialog open={open} className={styles.container}>
       <DialogTitle>
-        {t("add.new_card_for")}{" "}
+        {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
         <span className={styles.topic}> {currentTopic?.title}</span>
       </DialogTitle>
 
@@ -51,12 +53,14 @@ export const CardControl = ({
           required
           multiline
           label={t("ui.question")}
+          defaultValue={question}
           onChange={(e) => onChangeField(e, setQuestion)}
         />
         <TextField
           required
           multiline
           label={t("ui.answer")}
+          defaultValue={answer}
           onChange={(e) => onChangeField(e, setAnswer)}
         />
       </DialogContent>

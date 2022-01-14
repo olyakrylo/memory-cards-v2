@@ -11,7 +11,8 @@
   },
   "add": {
     "topic_title": "Title",
-    "new_card_for": "New card for"
+    "new_card_for": "New card for",
+    "edit_card_in": "Edit card in"
   },
   "auth": {
     "signIn": "Authorization",

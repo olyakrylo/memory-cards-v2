@@ -1,14 +1,21 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
+import { dataExample } from "../../../data.example";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
+  const { NO_CONNECTION } = process.env;
 
   const catcher = (error: Error) => res.status(400).json({ error });
 
   const handleCase: ResponseFuncs = {
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
+      if (NO_CONNECTION) {
+        res.json(dataExample.topics);
+        return;
+      }
+
       const { Topic } = await connect();
       res.json(await Topic.find({ users_id: req.body.user_id }).catch(catcher));
     },

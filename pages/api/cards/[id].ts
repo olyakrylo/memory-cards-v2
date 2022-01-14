@@ -7,6 +7,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const catcher = (error: Error) => res.status(400).json({ error });
 
+  const { NO_CONNECTION } = process.env;
   const { id } = req.query;
 
   const handleCase: ResponseFuncs = {
@@ -15,6 +16,10 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.json(await Card.findById(id).catch(catcher));
     },
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
+      if (NO_CONNECTION) {
+        res.json(req.body);
+        return;
+      }
       const { Card } = await connect();
       res.json(await Card.findByIdAndUpdate(id, req.body, { new: true }));
     },
