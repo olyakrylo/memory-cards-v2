@@ -1,22 +1,40 @@
-import { NextApiRequest, NextApiResponse } from "next";
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { connect } from "react-redux";
 
-import { getUser, request } from "../../middleware";
-import { User } from "../../utils/types";
+import { request } from "../../middleware";
+import { State, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
+import { setUser } from "../../redux/actions/main";
 
 type Mode = "signIn" | "signUp";
 
-const Auth = () => {
+type AuthProps = {
+  user?: User;
+  setUser: (u: User) => void;
+};
+
+const Auth = ({ user, setUser }: AuthProps) => {
   const router = useRouter();
   const [mode, setMode] = useState<Mode>("signIn");
   const content = useRef<HTMLDivElement>(null);
   const { t } = useTranslation();
+
+  useEffect(() => {
+    if (user) {
+      router.push({ pathname: "/app" });
+      return;
+    }
+    request("get", "users").then(({ user }) => {
+      if (user) {
+        router.push({ pathname: "/app" });
+      }
+    });
+  }, [user, setUser, router]);
 
   const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -119,21 +137,14 @@ const Password = () => {
   );
 };
 
-export async function getServerSideProps(ctx: {
-  req: NextApiRequest;
-  res: NextApiResponse;
-}) {
-  const user = await getUser(ctx.req, ctx.res);
-  if (user) {
-    return {
-      redirect: {
-        destination: "/app",
-        permanent: false,
-      },
-    };
-  }
+const mapStateToProps = (state: { main: State }) => {
+  return {
+    user: state.main.user,
+  };
+};
 
-  return { props: {} };
-}
+const mapDispatchToProps = {
+  setUser,
+};
 
-export default Auth;
+export default connect(mapStateToProps, mapDispatchToProps)(Auth);
