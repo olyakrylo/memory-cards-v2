@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
+import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
 import {
   CircularProgress,
   FormControlLabel,
@@ -13,7 +14,6 @@ import { useTranslation } from "react-i18next";
 
 import { Card, State, Topic } from "../../utils/types";
 import { flip } from "../../utils/flip";
-import { DefaultCards } from "../../utils/default-cards";
 import { request } from "../../middleware";
 import styles from "./Cards.module.css";
 import EditCard from "./edit";
@@ -54,7 +54,6 @@ export const Cards = ({ currentTopic }: CardProps) => {
 
   useEffect(() => {
     if (!currentTopic) {
-      setCards(DefaultCards.start[i18n.language ?? "en"] ?? []);
       return;
     }
 
@@ -62,11 +61,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
     request<Card[]>("post", "cards/by_topic", {
       topic_id: currentTopic._id,
     }).then((cards) => {
-      if (cards.length) {
-        setCards(cards);
-      } else {
-        setCards(DefaultCards.empty[i18n.language ?? "en"] ?? []);
-      }
+      setCards(cards);
       setLoading(false);
     });
   }, [currentTopic, i18n]);
@@ -97,11 +92,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
     e.stopPropagation();
     await request("delete", `cards/${id}`);
     const updatedCards = cards.filter((c) => c._id !== id);
-    setCards(
-      updatedCards.length
-        ? updatedCards
-        : DefaultCards.empty[i18n.language ?? "en"] ?? []
-    );
+    setCards(updatedCards);
   };
 
   return (
@@ -118,7 +109,21 @@ export const Cards = ({ currentTopic }: CardProps) => {
 
       {loading && <CircularProgress className={styles.loader} />}
 
-      {!loading && (
+      {!loading && !currentTopic && (
+        <div className={styles.tip}>
+          <ArrowCircleDownRoundedIcon className={styles.tip__icon_topics} />
+          {t("ui.choose_topic")}
+        </div>
+      )}
+
+      {!loading && !!currentTopic && !cards.length && (
+        <div className={styles.tip}>
+          {t("ui.add_first_card")}{" "}
+          <ArrowCircleDownRoundedIcon className={styles.tip__icon_add} />
+        </div>
+      )}
+
+      {!loading && !!cards.length && (
         <Splide
           ref={sliderRef}
           onMove={resetCards}
@@ -160,17 +165,19 @@ export const Cards = ({ currentTopic }: CardProps) => {
         </Splide>
       )}
 
-      <FormGroup className={styles.arrowControl}>
-        <FormControlLabel
-          control={
-            <Switch
-              onChange={() => setShowArrows(!showArrows)}
-              checked={showArrows}
-            />
-          }
-          label={t("ui.show_arrows") as string}
-        />
-      </FormGroup>
+      {!loading && !!cards.length && (
+        <FormGroup className={styles.arrowControl}>
+          <FormControlLabel
+            control={
+              <Switch
+                onChange={() => setShowArrows(!showArrows)}
+                checked={showArrows}
+              />
+            }
+            label={t("ui.show_arrows") as string}
+          />
+        </FormGroup>
+      )}
     </div>
   );
 };

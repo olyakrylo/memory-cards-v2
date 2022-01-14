@@ -7,7 +7,9 @@
     "question": "Question",
     "answer": "Answer",
     "save": "Save",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "add_first_card": "Add the first card",
+    "choose_topic": "Choose a topic"
   },
   "add": {
     "topic_title": "Title",

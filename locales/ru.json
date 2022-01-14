@@ -7,7 +7,9 @@
     "question": "Вопрос",
     "answer": "Ответ",
     "save": "Сохранить",
-    "cancel": "Отмена"
+    "cancel": "Отмена",
+    "add_first_card": "Добавь первую карточку",
+    "choose_topic": "Выбери тему"
   },
   "add": {
     "topic_title": "Название",

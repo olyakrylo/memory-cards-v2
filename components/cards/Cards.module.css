@@ -17,6 +17,27 @@
   opacity: 0.8;
 }
 
+.tip {
+  max-width: 50vw;
+  margin: -32px auto auto;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  font-family: var(--brand-font-family);
+  font-size: 20px;
+  text-align: center;
+  line-height: 24px;
+  color: var(--red);
+}
+
+.tip__icon_topics {
+  transform: rotate(90deg);
+}
+
+.tip__icon_add {
+  transform: rotate(-90deg);
+}
+
 .slider {
   margin: auto;
   width: 700px;
