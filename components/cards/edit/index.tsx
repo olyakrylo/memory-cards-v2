@@ -42,18 +42,21 @@ const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
   };
 
   return (
-    <IconButton
-      className={styles.card__edit}
-      color="primary"
-      onClick={openEditCardDialog}
-    >
-      <EditRoundedIcon />
+    <div>
+      <IconButton
+        className={styles.card__edit}
+        color="primary"
+        onClick={openEditCardDialog}
+      >
+        <EditRoundedIcon />
+      </IconButton>
+
       <CardControl
         card={card}
         open={editCardOpen}
         onClose={onCloseEditCardDialog}
       />
-    </IconButton>
+    </div>
   );
 };
 
