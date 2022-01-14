@@ -16,7 +16,8 @@ export type AddCardProps = {
 const AddCard = ({ currentTopic, setLoading, addCard }: AddCardProps) => {
   const [newCardOpen, setNewCardOpen] = useState<boolean>(false);
 
-  const openNewCardDialog = () => {
+  const openNewCardDialog = (e: any) => {
+    e.stopPropagation();
     setNewCardOpen(true);
   };
 
@@ -38,10 +39,12 @@ const AddCard = ({ currentTopic, setLoading, addCard }: AddCardProps) => {
   };
 
   return (
-    <IconButton className={styles.control__add} onClick={openNewCardDialog}>
-      <AddRoundedIcon />
+    <div>
+      <IconButton className={styles.control__add} onClick={openNewCardDialog}>
+        <AddRoundedIcon />
+      </IconButton>
       <CardControl open={newCardOpen} onClose={onCloseNewCardDialog} />
-    </IconButton>
+    </div>
   );
 };
 
