@@ -36,7 +36,7 @@ const App = ({ user, setUser }: AppProps) => {
     });
   }, [user, setUser, router, setLoading]);
 
-  if (loading) {
+  if (loading || !user) {
     return <CircularProgress size={50} />;
   }
 

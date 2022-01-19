@@ -9,6 +9,7 @@ import { User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
 import { setUser } from "../../redux/actions/main";
+import { request } from "../../middleware";
 
 type UserControlProps = {
   user: User;
@@ -24,8 +25,8 @@ export const UserControl = ({ user, setUser }: UserControlProps) => {
   const handleLogout = async () => {
     const res = await fetch("/api/users/logout");
     if (res.ok) {
-      await router.push("/auth");
       setUser(undefined);
+      await router.push("/auth");
     }
   };
 

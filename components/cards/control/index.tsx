@@ -31,8 +31,14 @@ export const CardControl = ({
 
   const { t } = useTranslation();
 
-  const onSave = () => {
+  const onSave = (e: any) => {
+    e.stopPropagation();
     onClose(question, answer, card);
+  };
+
+  const onCloseDialog = (e: any) => {
+    e.stopPropagation();
+    onClose("", "");
   };
 
   const onChangeField = (event: any, updateFunc: (value: string) => void) => {
@@ -66,7 +72,7 @@ export const CardControl = ({
       </DialogContent>
 
       <DialogActions className={styles.actions}>
-        <Button onClick={() => onClose("", "")}>{t("ui.cancel")}</Button>
+        <Button onClick={onCloseDialog}>{t("ui.cancel")}</Button>
         <Button variant="contained" onClick={onSave}>
           {t("ui.save")}
         </Button>
