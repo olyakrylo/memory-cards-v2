@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
+import ShuffleRoundedIcon from "@mui/icons-material/ShuffleRounded";
 import {
   CircularProgress,
   FormControlLabel,
@@ -11,6 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
+import arrayShuffle from "array-shuffle";
 
 import { Card, State, Topic } from "../../utils/types";
 import { flip } from "../../utils/flip";
@@ -28,6 +30,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
   const [cards, setCards] = useState<Card[]>([]);
   const [inverted, setInverted] = useState<boolean>(false);
   const [showArrows, setShowArrows] = useState<boolean>(true);
+  const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
 
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const sliderRef = useRef<Splide>(null);
@@ -76,7 +79,10 @@ export const Cards = ({ currentTopic }: CardProps) => {
   };
 
   const addCard = (newCard: Card): void => {
-    setCards([...cards.filter((c) => !!c._id), newCard]);
+    setCards([...cards, newCard]);
+    if (shuffledCards) {
+      setShuffledCards([...shuffledCards, newCard]);
+    }
   };
 
   const updateCard = (updatedCard: Card): void => {
@@ -86,6 +92,14 @@ export const Cards = ({ currentTopic }: CardProps) => {
         return c;
       })
     );
+    if (shuffledCards) {
+      setShuffledCards(
+        shuffledCards.map((c) => {
+          if (c._id === updatedCard._id) return updatedCard;
+          return c;
+        })
+      );
+    }
   };
 
   const deleteCard = async (e: any, id: string) => {
@@ -93,19 +107,37 @@ export const Cards = ({ currentTopic }: CardProps) => {
     await request("delete", `cards/${id}`);
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
+    if (shuffledCards) {
+      setShuffledCards(shuffledCards.filter((c) => c._id !== id));
+    }
+  };
+
+  const toggleShuffle = () => {
+    if (shuffledCards) {
+      setShuffledCards(null);
+    } else {
+      setShuffledCards(arrayShuffle(cards));
+    }
   };
 
   return (
     <div>
-      <div className={styles.control}>
-        {currentTopic && (
+      {currentTopic && (
+        <div className={styles.control}>
+          <IconButton
+            onClick={toggleShuffle}
+            className={shuffledCards ? styles.shuffle_active : styles.shuffle}
+          >
+            <ShuffleRoundedIcon />
+          </IconButton>
+
           <AddCard
             currentTopic={currentTopic}
             setLoading={setLoading}
             addCard={addCard}
           />
-        )}
-      </div>
+        </div>
+      )}
 
       {loading && <CircularProgress className={styles.loader} />}
 
@@ -133,7 +165,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
             arrows: showArrows,
           }}
         >
-          {cards.map((card, i) => (
+          {(shuffledCards ?? cards).map((card, i) => (
             <SplideSlide key={card._id}>
               <div
                 ref={(el) => (cardsRef.current[i] = el)}

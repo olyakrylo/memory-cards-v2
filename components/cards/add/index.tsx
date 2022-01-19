@@ -39,12 +39,11 @@ const AddCard = ({ currentTopic, setLoading, addCard }: AddCardProps) => {
   };
 
   return (
-    <div>
-      <IconButton className={styles.control__add} onClick={openNewCardDialog}>
-        <AddRoundedIcon />
-      </IconButton>
+    <IconButton className={styles.control__add} onClick={openNewCardDialog}>
+      <AddRoundedIcon />
+
       <CardControl open={newCardOpen} onClose={onCloseNewCardDialog} />
-    </div>
+    </IconButton>
   );
 };
 

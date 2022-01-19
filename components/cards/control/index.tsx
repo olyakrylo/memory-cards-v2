@@ -42,6 +42,7 @@ export const CardControl = ({
   };
 
   const onChangeField = (event: any, updateFunc: (value: string) => void) => {
+    event.stopPropagation();
     const { value } = event.target as { value: string };
     updateFunc(value);
   };
