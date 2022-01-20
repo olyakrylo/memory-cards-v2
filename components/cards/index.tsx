@@ -163,6 +163,9 @@ export const Cards = ({ currentTopic }: CardProps) => {
           options={{
             height: 400,
             arrows: showArrows,
+            classes: {
+              arrow: `splide__arrow ${styles.arrow}`,
+            },
           }}
         >
           {(shuffledCards ?? cards).map((card, i) => (

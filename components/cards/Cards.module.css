@@ -84,14 +84,14 @@
   color: var(--dark-gray);
 }
 
-.arrow_hidden {
-  visibility: hidden;
-}
-
 .shuffle {
   color: var(--dark-gray) !important;
 }
 
 .shuffle_active {
   color: var(--red) !important;
+}
+
+.arrow:disabled {
+  visibility: hidden;
 }
