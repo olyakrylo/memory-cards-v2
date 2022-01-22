@@ -7,7 +7,9 @@
   position: absolute;
   top: 0;
   left: -50px;
-  padding: 60px 30px 30px 50px;
+  padding: 60px 60px 30px 50px;
+  display: grid;
+  grid-gap: 16px;
   background-color: var(--white);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -17,6 +19,11 @@
 
 .content[aria-hidden="true"] {
   transform: translateX(-110%);
+}
+
+.topicsList {
+  max-height: 60vh;
+  overflow-y: auto;
 }
 
 .topic {
@@ -40,7 +47,7 @@
 
 .topic[aria-selected="true"] {
   opacity: 1;
-  transform: scale(1.2) translate(20px);
+  transform: translate(5px);
 }
 
 .topic__del {
@@ -62,34 +69,23 @@
   color: var(--medium-gray);
 }
 
-.add {
-  margin-top: 30px;
-  display: flex;
-  align-items: flex-end;
-  gap: 12px;
-}
-
 .add__button {
   border: 2px solid var(--seagreen) !important;
   border-radius: 10px !important;
+  width: max-content;
 }
 
-.add__input {
-  outline: none;
-  font-family: var(--base-font-family);
-  font-size: 16px;
-  color: var(--medium-gray);
-  background: transparent;
-  border-radius: 0;
-  border: none;
-  border-bottom: 2px solid var(--seagreen);
-  transition: transform 0.2s ease-in-out;
+.add__content {
+  padding-top: 8px !important;
+  width: 300px;
+  max-width: 100%;
 }
 
-.add__input:focus {
-  border-bottom-color: var(--light-red);
+.add__form {
+  display: grid;
+  gap: 8px;
 }
 
-.add__input[aria-hidden="true"] {
-  transform: scale(0);
+.add__actions {
+  padding: 0 16px 16px !important;
 }

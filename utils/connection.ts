@@ -15,7 +15,9 @@ export const connect = async () => {
 
   const TopicSchema = new mongoose.Schema({
     users_id: Array,
+    author_id: String,
     title: String,
+    public: Boolean,
   });
 
   const CardSchema = new mongoose.Schema({

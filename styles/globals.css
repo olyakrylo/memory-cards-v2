@@ -9,8 +9,8 @@
   --light-red: rgba(174, 0, 0, 0.6);
   --dark-gray: #3c3c3c;
   --medium-gray: #777;
-  --light-gray: #b5b5b5;
   --white: #fff;
+  --black: rgba(0, 0, 0, 0.8);
   --bg-color: #e5e5e5;
 
   --shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
@@ -23,6 +23,7 @@
   --medium-gray: #cfcfcf;
   --dark-gray: #696969;
   --white: #696969;
+  --black: rgba(255, 255, 255, 0.8);
   --bg-color: #1c1c1c;
 }
 

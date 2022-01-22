@@ -1,0 +1,99 @@
+.add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--red);
+  margin-left: -8px;
+  text-transform: lowercase !important;
+}
+
+.add__title {
+  border-bottom: 1px solid var(--red);
+  font-size: 14px;
+  line-height: 20px;
+}
+
+.dialog__search {
+  width: 100%;
+}
+
+.dialog__content {
+  width: 600px;
+  max-width: 80vw;
+}
+
+.dialog__actions {
+  padding: 8px 16px 16px !important;
+}
+
+.topic {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--bg-color);
+}
+
+.topic__head {
+  display: grid;
+  grid-template-areas: "expand title author toggle" "expand cards cards toggle";
+  grid-template-columns: 34px max-content auto 34px;
+  grid-gap: 8px;
+  align-items: center;
+}
+
+.topic__expand {
+  grid-area: expand;
+  color: var(--medium-gray);
+  transition: transform 0.2s ease-in-out;
+}
+
+.topic__expand[aria-expanded="true"] {
+  transform: rotate(180deg);
+}
+
+.topic__title {
+  grid-area: title;
+  font-family: var(--brand-font-family);
+  color: var(--black);
+}
+
+.topic__author {
+  grid-area: author;
+  color: var(--seagreen);
+}
+
+.topic__cards {
+  grid-area: cards;
+  color: var(--black);
+}
+
+.topic__toggle {
+  grid-area: toggle;
+  color: var(--seagreen);
+  transition: color 0.2s ease-in-out;
+}
+
+.topic__toggle[aria-selected="true"] {
+  color: var(--red);
+}
+
+.card {
+  background-color: var(--bg-color);
+  display: grid;
+  grid-gap: 4px;
+  padding: 8px 16px;
+  margin: 8px 0;
+  border-radius: 8px;
+  color: var(--black);
+  font-size: 14px;
+}
+
+.card:first-child {
+  margin-top: 16px;
+}
+
+.card > p {
+  font-size: 14px;
+}
+
+.card__question {
+  font-family: var(--brand-font-family);
+}

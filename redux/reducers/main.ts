@@ -2,7 +2,10 @@ import * as t from "../types";
 import { AnyAction } from "redux";
 import { State } from "../../utils/types";
 
-const main = (state: State = { colorMode: "light" }, action: AnyAction) => {
+const main = (
+  state: State = { colorMode: "light", topics: [] },
+  action: AnyAction
+) => {
   switch (action.type) {
     case t.SET_USER:
       return {
@@ -10,7 +13,7 @@ const main = (state: State = { colorMode: "light" }, action: AnyAction) => {
         user: action.payload,
       };
 
-    case t.SET_TOPIC:
+    case t.SET_CURRENT_TOPIC:
       return {
         ...state,
         currentTopic: action.payload,
@@ -20,6 +23,12 @@ const main = (state: State = { colorMode: "light" }, action: AnyAction) => {
       return {
         ...state,
         colorMode: action.payload,
+      };
+
+    case t.SET_TOPICS:
+      return {
+        ...state,
+        topics: action.payload,
       };
 
     default:

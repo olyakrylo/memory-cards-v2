@@ -33,11 +33,15 @@ export const CardControl = ({
 
   const onSave = (e: any) => {
     e.stopPropagation();
+    setQuestion("");
+    setAnswer("");
     onClose(question, answer, card);
   };
 
   const onCloseDialog = (e: any) => {
     e.stopPropagation();
+    setQuestion("");
+    setAnswer("");
     onClose("", "");
   };
 
@@ -73,7 +77,9 @@ export const CardControl = ({
       </DialogContent>
 
       <DialogActions className={styles.actions}>
-        <Button onClick={onCloseDialog}>{t("ui.cancel")}</Button>
+        <Button onClick={onCloseDialog} color="secondary">
+          {t("ui.cancel")}
+        </Button>
         <Button variant="contained" onClick={onSave}>
           {t("ui.save")}
         </Button>

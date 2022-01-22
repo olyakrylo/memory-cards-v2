@@ -9,12 +9,20 @@
     "save": "Save",
     "cancel": "Cancel",
     "add_first_card": "Add the first card",
-    "choose_topic": "Choose a topic"
+    "choose_topic": "Choose a topic",
+    "search": "Search"
   },
   "add": {
     "topic_title": "Title",
+    "new_topic": "New topic",
+    "make_public": "Make public",
     "new_card_for": "New card for",
-    "edit_card_in": "Edit card in"
+    "edit_card_in": "Edit card in",
+    "existing_topics": "Add existing topics",
+    "cards-count_one": "{{count}} card",
+    "cards-count_other": "{{count}} cards",
+    "add-topics_one": "Add {{count}} topic",
+    "add-topics_other": "Add {{count}} topics"
   },
   "auth": {
     "signIn": "Authorization",

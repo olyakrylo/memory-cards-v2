@@ -9,7 +9,7 @@ import {
   IconButton,
   Switch,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import arrayShuffle from "array-shuffle";
@@ -69,8 +69,8 @@ export const Cards = ({ currentTopic }: CardProps) => {
     });
   }, [currentTopic, i18n]);
 
-  const toggleCard = (event: any) => {
-    const card = event.target as HTMLDivElement;
+  const toggleCard = (event: BaseSyntheticEvent) => {
+    const card = event.currentTarget as HTMLDivElement;
     flip(card, 200, () => setInverted(!inverted));
   };
 
@@ -175,7 +175,9 @@ export const Cards = ({ currentTopic }: CardProps) => {
                 className={`${styles.card} ${showArrows && styles.card_arrows}`}
                 onClick={toggleCard}
               >
-                {inverted ? card.answer : card.question}
+                <p className={styles.card__text}>
+                  {inverted ? card.answer : card.question}
+                </p>
 
                 {card._id && (
                   <IconButton

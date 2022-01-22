@@ -10,8 +10,15 @@ export const setUser = (user?: User) => (dispatch: Function) => {
 
 export const setCurrentTopic = (topic: Topic) => (dispatch: Function) => {
   dispatch({
-    type: t.SET_TOPIC,
+    type: t.SET_CURRENT_TOPIC,
     payload: topic,
+  });
+};
+
+export const setTopics = (topics: Topic[]) => (dispatch: Function) => {
+  dispatch({
+    type: t.SET_TOPICS,
+    payload: topics,
   });
 };
 

@@ -9,12 +9,22 @@
     "save": "Сохранить",
     "cancel": "Отмена",
     "add_first_card": "Добавь первую карточку",
-    "choose_topic": "Выбери тему"
+    "choose_topic": "Выбери тему",
+    "search": "Поиск"
   },
   "add": {
     "topic_title": "Название",
+    "new_topic": "Новая тема",
+    "make_public": "Сделать общедоступной",
     "new_card_for": "Новая карточка для",
-    "edit_card_in": "Редактировать карточку в"
+    "edit_card_in": "Редактировать карточку в",
+    "existing_topics": "Добавить из существующих",
+    "cards-count_one": "{{count}} карточка",
+    "cards-count_few": "{{count}} карточки",
+    "cards-count_many": "{{count}} карточек",
+    "add-topics_one": "Добавить {{count}} тему",
+    "add-topics_few": "Добавить {{count}} темы",
+    "add-topics_many": "Добавить {{count}} тем"
   },
   "auth": {
     "signIn": "Авторизация",
