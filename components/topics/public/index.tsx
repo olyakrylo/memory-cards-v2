@@ -154,7 +154,11 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
                   <IconButton
                     size="small"
                     className={styles.topic__toggle}
-                    aria-selected={selectedTopics.includes(topic._id)}
+                    color={
+                      selectedTopics.includes(topic._id)
+                        ? "secondary"
+                        : "primary"
+                    }
                     onClick={() => toggleTopic(topic._id)}
                   >
                     {selectedTopics.includes(topic._id) ? (

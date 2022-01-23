@@ -9,7 +9,7 @@
 
 .add__title {
   border-bottom: 1px solid var(--red);
-  font-size: 14px;
+  font-size: 14px !important;
   line-height: 20px;
 }
 
@@ -51,7 +51,7 @@
 
 .topic__title {
   grid-area: title;
-  font-family: var(--brand-font-family);
+  font-family: var(--brand-font-family) !important;
   color: var(--black);
 }
 
@@ -67,12 +67,7 @@
 
 .topic__toggle {
   grid-area: toggle;
-  color: var(--seagreen);
   transition: color 0.2s ease-in-out;
-}
-
-.topic__toggle[aria-selected="true"] {
-  color: var(--red);
 }
 
 .card {
@@ -95,5 +90,5 @@
 }
 
 .card__question {
-  font-family: var(--brand-font-family);
+  font-family: var(--brand-font-family) !important;
 }
