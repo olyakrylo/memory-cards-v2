@@ -8,13 +8,14 @@ import {
   FormGroup,
   IconButton,
   Switch,
+  Typography,
 } from "@mui/material";
-import { useEffect, useRef, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Splide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import arrayShuffle from "array-shuffle";
 
-import { Card, State, Topic } from "../../utils/types";
+import { Card, State, Topic, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import { request } from "../../middleware";
 import styles from "./Cards.module.css";
@@ -22,10 +23,11 @@ import EditCard from "./edit";
 import AddCard from "./add";
 
 type CardProps = {
+  user: User;
   currentTopic?: Topic;
 };
 
-export const Cards = ({ currentTopic }: CardProps) => {
+export const Cards = ({ currentTopic, user }: CardProps) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [inverted, setInverted] = useState<boolean>(false);
@@ -36,6 +38,10 @@ export const Cards = ({ currentTopic }: CardProps) => {
   const sliderRef = useRef<Splide>(null);
 
   const { i18n, t } = useTranslation();
+
+  const canEditTopic = () => {
+    return currentTopic?.author_id === user._id;
+  };
 
   useEffect(() => {
     const handleKeyup = (event: any) => {
@@ -65,12 +71,13 @@ export const Cards = ({ currentTopic }: CardProps) => {
       topic_id: currentTopic._id,
     }).then((cards) => {
       setCards(cards);
+      setInverted(false);
       setLoading(false);
     });
   }, [currentTopic, i18n]);
 
-  const toggleCard = (event: any) => {
-    const card = event.target as HTMLDivElement;
+  const toggleCard = (event: BaseSyntheticEvent) => {
+    const card = event.currentTarget as HTMLDivElement;
     flip(card, 200, () => setInverted(!inverted));
   };
 
@@ -126,16 +133,20 @@ export const Cards = ({ currentTopic }: CardProps) => {
         <div className={styles.control}>
           <IconButton
             onClick={toggleShuffle}
-            className={shuffledCards ? styles.shuffle_active : styles.shuffle}
+            className={styles.shuffle}
+            aria-checked={!!shuffledCards}
+            aria-hidden={!cards.length}
           >
             <ShuffleRoundedIcon />
           </IconButton>
 
-          <AddCard
-            currentTopic={currentTopic}
-            setLoading={setLoading}
-            addCard={addCard}
-          />
+          {canEditTopic() && (
+            <AddCard
+              currentTopic={currentTopic}
+              setLoading={setLoading}
+              addCard={addCard}
+            />
+          )}
         </div>
       )}
 
@@ -148,7 +159,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
         </div>
       )}
 
-      {!loading && !!currentTopic && !cards.length && (
+      {!loading && !!currentTopic && canEditTopic() && !cards.length && (
         <div className={styles.tip}>
           {t("ui.add_first_card")}{" "}
           <ArrowCircleDownRoundedIcon className={styles.tip__icon_add} />
@@ -175,9 +186,11 @@ export const Cards = ({ currentTopic }: CardProps) => {
                 className={`${styles.card} ${showArrows && styles.card_arrows}`}
                 onClick={toggleCard}
               >
-                {inverted ? card.answer : card.question}
+                <Typography className={styles.card__text}>
+                  {inverted ? card.answer : card.question}
+                </Typography>
 
-                {card._id && (
+                {card._id && canEditTopic() && (
                   <IconButton
                     className={styles.card__del}
                     color="secondary"
@@ -187,7 +200,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
                   </IconButton>
                 )}
 
-                {card._id && (
+                {card._id && canEditTopic() && (
                   <EditCard
                     card={card}
                     setLoading={setLoading}
@@ -219,6 +232,7 @@ export const Cards = ({ currentTopic }: CardProps) => {
 
 const mapStateToProps = (state: { main: State }) => {
   return {
+    user: state.main.user as User,
     currentTopic: state.main.currentTopic,
   };
 };

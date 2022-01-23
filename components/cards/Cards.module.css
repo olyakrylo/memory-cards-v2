@@ -54,11 +54,19 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 20px;
   overflow-y: auto;
   transition-property: transform, margin;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
+}
+
+.card__text {
+  max-height: calc(100% - 40px);
+  overflow: auto;
+  padding: 40px 24px 24px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--black);
 }
 
 .card_arrows {
@@ -79,17 +87,25 @@
 
 .arrowControl {
   margin-left: 24px;
+  color: var(--black);
+}
+
+.arrowControl .MuiFormControlLabel-root {
   font-size: 16px;
-  font-family: var(--brand-font-family);
-  color: var(--dark-gray);
+  font-family: var(--base-font-family);
+  font-weight: 300 !important;
 }
 
 .shuffle {
   color: var(--dark-gray) !important;
 }
 
-.shuffle_active {
+.shuffle[aria-checked="true"] {
   color: var(--red) !important;
+}
+
+.shuffle[aria-hidden="true"] {
+  visibility: hidden;
 }
 
 .arrow:disabled {

@@ -1,6 +1,7 @@
 export type State = {
   user?: User;
   currentTopic?: Topic;
+  topics: Topic[];
   colorMode: "light" | "dark";
 };
 
@@ -21,6 +22,8 @@ export interface Topic {
   _id: string;
   title: string;
   users_id: string[];
+  author_id: string;
+  public?: boolean;
 }
 
 export interface Card {
@@ -29,5 +32,10 @@ export interface Card {
   question: string;
   answer: string;
 }
+
+export type TopicExt = Topic & {
+  author_name: string;
+  cards_count: number;
+};
 
 export type UpdatedResult = { updated: boolean };

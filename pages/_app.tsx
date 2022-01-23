@@ -17,6 +17,13 @@ function MyApp({
 }: AppProps & { colorMode: "dark" | "light" }) {
   const theme = createTheme({
     palette: palette(colorMode),
+    typography: {
+      fontSize: 14,
+      fontWeightLight: 300,
+      fontWeightMedium: 300,
+      fontWeightRegular: 300,
+      fontWeightBold: 500,
+    },
   });
 
   return (

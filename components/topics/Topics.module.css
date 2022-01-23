@@ -7,7 +7,9 @@
   position: absolute;
   top: 0;
   left: -50px;
-  padding: 60px 30px 30px 50px;
+  padding: 40px 60px 30px 50px;
+  display: grid;
+  grid-gap: 16px;
   background-color: var(--white);
   border-top-right-radius: 8px;
   border-bottom-right-radius: 8px;
@@ -19,18 +21,30 @@
   transform: translateX(-110%);
 }
 
+.topicsList {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.topicsList__divider {
+  color: var(--medium-gray);
+  margin-top: 20px !important;
+}
+
+.topicsList__divider p {
+  font-size: 14px !important;
+}
+
 .topic {
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 5px 0;
+  margin: 2px 0;
   font-family: var(--brand-font-family);
   font-size: 18px;
   color: var(--seagreen);
   opacity: 0.7;
-  transition-property: opacity, transform;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
+  transition: opacity 0.2s ease-in-out;
   cursor: pointer;
 }
 
@@ -40,7 +54,6 @@
 
 .topic[aria-selected="true"] {
   opacity: 1;
-  transform: scale(1.2) translate(20px);
 }
 
 .topic__del {
@@ -62,34 +75,32 @@
   color: var(--medium-gray);
 }
 
-.add {
-  margin-top: 30px;
+.addButton {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: 8px;
+  margin-left: -8px;
+  text-transform: lowercase !important;
 }
 
-.add__button {
-  border: 2px solid var(--seagreen) !important;
-  border-radius: 10px !important;
+.addButton__title {
+  border-bottom: 1px solid;
+  font-size: 14px !important;
+  line-height: 20px;
 }
 
-.add__input {
-  outline: none;
-  font-family: var(--base-font-family);
-  font-size: 16px;
-  color: var(--medium-gray);
-  background: transparent;
-  border-radius: 0;
-  border: none;
-  border-bottom: 2px solid var(--seagreen);
-  transition: transform 0.2s ease-in-out;
+.add__content {
+  padding-top: 8px !important;
+  width: 300px;
+  max-width: 100%;
 }
 
-.add__input:focus {
-  border-bottom-color: var(--light-red);
+.add__form {
+  display: grid;
+  gap: 8px;
 }
 
-.add__input[aria-hidden="true"] {
-  transform: scale(0);
+.add__actions {
+  padding: 0 16px 16px !important;
 }

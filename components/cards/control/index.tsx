@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -26,8 +26,15 @@ export const CardControl = ({
   onClose,
   card,
 }: CardControlProps) => {
-  const [question, setQuestion] = useState<string>(card?.question ?? "");
-  const [answer, setAnswer] = useState<string>(card?.answer ?? "");
+  const [question, setQuestion] = useState<string>("");
+  const [answer, setAnswer] = useState<string>("");
+
+  useEffect(() => {
+    if (open) {
+      setQuestion(card?.question ?? "");
+      setAnswer(card?.answer ?? "");
+    }
+  }, [open, card]);
 
   const { t } = useTranslation();
 
@@ -73,7 +80,9 @@ export const CardControl = ({
       </DialogContent>
 
       <DialogActions className={styles.actions}>
-        <Button onClick={onCloseDialog}>{t("ui.cancel")}</Button>
+        <Button onClick={onCloseDialog} color="secondary">
+          {t("ui.cancel")}
+        </Button>
         <Button variant="contained" onClick={onSave}>
           {t("ui.save")}
         </Button>
