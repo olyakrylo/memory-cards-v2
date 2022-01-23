@@ -2,17 +2,18 @@ import { connect } from "react-redux";
 import {
   Button,
   Checkbox,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
   FormControlLabel,
   FormGroup,
-  IconButton,
   TextField,
+  Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
 import { BaseSyntheticEvent, useState } from "react";
 
 import styles from "../Topics.module.css";
@@ -37,8 +38,7 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
     setIsPublic(false);
   };
 
-  const closeDialog = (e: BaseSyntheticEvent): void => {
-    e.stopPropagation();
+  const closeDialog = (): void => {
     clear();
   };
 
@@ -50,8 +50,7 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
     setIsPublic(e.target.checked);
   };
 
-  const add = async (e: BaseSyntheticEvent): Promise<void> => {
-    e.stopPropagation();
+  const add = async (): Promise<void> => {
     if (!user) return;
 
     const newTopic = await request<Topic>("post", "topics", {
@@ -67,13 +66,17 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
   };
 
   return (
-    <IconButton
-      className={styles.add__button}
-      size={"small"}
-      color="primary"
-      onClick={() => setDialogOpened(true)}
-    >
-      <AddRoundedIcon />
+    <div>
+      <Button
+        className={styles.addButton}
+        color="primary"
+        onClick={() => setDialogOpened(true)}
+      >
+        <AddBoxRoundedIcon />
+        <Typography className={styles.addButton__title}>
+          {t("add.create_topic")}
+        </Typography>
+      </Button>
 
       <Dialog open={dialogOpened}>
         <DialogTitle>{t("add.new_topic")}</DialogTitle>
@@ -101,7 +104,7 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
           </Button>
         </DialogActions>
       </Dialog>
-    </IconButton>
+    </div>
   );
 };
 

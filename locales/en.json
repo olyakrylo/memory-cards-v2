@@ -10,10 +10,13 @@
     "cancel": "Cancel",
     "add_first_card": "Add the first card",
     "choose_topic": "Choose a topic",
-    "search": "Search"
+    "search": "Search",
+    "created": "Created",
+    "added": "Added"
   },
   "add": {
     "topic_title": "Title",
+    "create_topic": "Create a topic",
     "new_topic": "New topic",
     "make_public": "Make public",
     "new_card_for": "New card for",

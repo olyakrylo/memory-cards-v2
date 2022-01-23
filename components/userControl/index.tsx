@@ -9,7 +9,6 @@ import { User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
 import { setUser } from "../../redux/actions/main";
-import { request } from "../../middleware";
 
 type UserControlProps = {
   user: User;

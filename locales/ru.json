@@ -10,10 +10,13 @@
     "cancel": "Отмена",
     "add_first_card": "Добавь первую карточку",
     "choose_topic": "Выбери тему",
-    "search": "Поиск"
+    "search": "Поиск",
+    "created": "Созданные",
+    "added": "Добавленные"
   },
   "add": {
     "topic_title": "Название",
+    "create_topic": "Создать тему",
     "new_topic": "Новая тема",
     "make_public": "Сделать общедоступной",
     "new_card_for": "Новая карточка для",

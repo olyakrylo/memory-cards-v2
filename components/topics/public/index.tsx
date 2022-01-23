@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
 import styles from "./PublicTopics.module.css";
+import mainStyles from "../Topics.module.css";
 import { request } from "../../../middleware";
 import { Card, State, Topic, TopicExt, User } from "../../../utils/types";
 import { setTopics } from "../../../redux/actions/main";
@@ -109,9 +110,13 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
 
   return (
     <div>
-      <Button color="secondary" className={styles.add} onClick={openDialog}>
+      <Button
+        color="secondary"
+        className={mainStyles.addButton}
+        onClick={openDialog}
+      >
         <CollectionsBookmarkRoundedIcon />
-        <Typography className={styles.add__title}>
+        <Typography className={mainStyles.addButton__title}>
           {t("add.existing_topics")}
         </Typography>
       </Button>

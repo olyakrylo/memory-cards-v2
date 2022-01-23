@@ -1,21 +1,26 @@
 import { connect } from "react-redux";
-import { CircularProgress, IconButton } from "@mui/material";
-import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutlineRounded";
+import {
+  CircularProgress,
+  Divider,
+  IconButton,
+  Typography,
+} from "@mui/material";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { useTranslation } from "react-i18next";
 
-import { State, Topic, UpdatedResult, User } from "../../utils/types";
+import { State, Topic, User } from "../../utils/types";
 import { setCurrentTopic, setTopics } from "../../redux/actions/main";
 import { request } from "../../middleware";
 import styles from "./Topics.module.css";
 import UserControl from "../userControl";
 import AddTopic from "./add";
 import PublicTopics from "./public";
+import TopicItem from "./item";
 
 type TopicsProps = {
   user: User;
-  currentTopic?: Topic;
   setCurrentTopic: (topic: Topic) => void;
   topics: Topic[];
   setTopics: (topics: Topic[]) => void;
@@ -23,11 +28,11 @@ type TopicsProps = {
 
 export const Topics = ({
   user,
-  currentTopic,
   setCurrentTopic,
   topics,
   setTopics,
 }: TopicsProps) => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);
 
@@ -60,25 +65,20 @@ export const Topics = ({
     setHidden(!hidden);
   };
 
-  const selectTopic = async (topic: Topic) => {
-    await router.push({
-      pathname: "/app",
-      query: { topic: topic._id },
-    });
-  };
-
   const addTopic = async (newTopic: Topic): Promise<void> => {
     setTopics([...topics, newTopic]);
-    await selectTopic(newTopic);
+    await router.push({
+      pathname: "/app",
+      query: { topic: newTopic._id },
+    });
   };
 
-  const deleteTopic = async (id: string) => {
-    const { updated } = await request<UpdatedResult>("delete", `topics/${id}`, {
-      user_id: user._id,
-    });
-    if (updated) {
-      setTopics(topics.filter((t) => t._id !== id));
-    }
+  const selfTopics = (): Topic[] => {
+    return topics.filter((t) => t.author_id === user._id);
+  };
+
+  const publicTopics = (): Topic[] => {
+    return topics.filter((t) => t.author_id !== user._id);
   };
 
   return (
@@ -86,33 +86,30 @@ export const Topics = ({
       <div className={styles.content} aria-hidden={hidden}>
         {loading && <CircularProgress size={24} />}
 
-        <div className={styles.topicsList}>
-          {!loading &&
-            topics.map((topic) => (
-              <p
-                className={styles.topic}
-                aria-selected={currentTopic?._id === topic._id}
-                onClick={() => selectTopic(topic)}
-                key={topic._id}
-              >
-                {topic.title}
+        {!loading && (
+          <div className={styles.topicsList}>
+            <Divider className={styles.topicsList__divider} textAlign="left">
+              <Typography>{t("ui.created")}</Typography>
+            </Divider>
 
-                <IconButton
-                  size="small"
-                  color="secondary"
-                  className={styles.topic__del}
-                  aria-hidden={currentTopic?._id !== topic._id}
-                  onClick={() => deleteTopic(topic._id)}
-                >
-                  <RemoveCircleOutlineRoundedIcon />
-                </IconButton>
-              </p>
+            {selfTopics().map((topic) => (
+              <TopicItem key={topic._id} topic={topic} />
             ))}
+
+            <Divider className={styles.topicsList__divider} textAlign="left">
+              <Typography>{t("ui.added")}</Typography>
+            </Divider>
+
+            {publicTopics().map((topic) => (
+              <TopicItem key={topic._id} topic={topic} />
+            ))}
+          </div>
+        )}
+
+        <div>
+          <AddTopic addTopic={addTopic} />
+          <PublicTopics />
         </div>
-
-        <AddTopic addTopic={addTopic} />
-
-        <PublicTopics />
       </div>
 
       <div className={styles.control}>
@@ -129,7 +126,6 @@ export const Topics = ({
 const mapStateToProps = (state: { main: State }) => {
   return {
     user: state.main.user as User,
-    currentTopic: state.main.currentTopic,
     topics: state.main.topics,
   };
 };
