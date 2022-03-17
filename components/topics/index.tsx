@@ -49,7 +49,7 @@ export const Topics = ({
     request<Topic>("get", `topics/${router.query.topic}`).then((topic) => {
       setCurrentTopic(topic);
     });
-  }, [router.query, setCurrentTopic, topics]);
+  }, [router.query]);
 
   useEffect(() => {
     setLoading(true);

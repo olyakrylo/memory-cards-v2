@@ -11,7 +11,8 @@ import {
   Typography,
 } from "@mui/material";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
-import { Splide, SplideSlide } from "@splidejs/react-splide";
+import { Splide } from "@splidejs/splide";
+import { SplideSlide, Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import arrayShuffle from "array-shuffle";
 
@@ -21,6 +22,7 @@ import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import EditCard from "./edit";
 import AddCard from "./add";
+import { useRouter } from "next/router";
 
 type CardProps = {
   user: User;
@@ -28,14 +30,19 @@ type CardProps = {
 };
 
 export const Cards = ({ currentTopic, user }: CardProps) => {
+  const router = useRouter();
+
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [inverted, setInverted] = useState<boolean>(false);
   const [showArrows, setShowArrows] = useState<boolean>(true);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
+  const [currCard, setCurrCard] = useState<number>(
+    parseInt(router.query.card as string) || 0
+  );
 
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
-  const sliderRef = useRef<Splide>(null);
+  const sliderRef = useRef<ReactSplide>(null);
 
   const { i18n, t } = useTranslation();
 
@@ -81,14 +88,19 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
     flip(card, 200, () => setInverted(!inverted));
   };
 
-  const resetCards = () => {
+  const handleMove = async (_: Splide, index: number): Promise<void> => {
+    setCurrCard(index);
     setInverted(false);
+    await router.push({
+      pathname: "/app",
+      query: { ...router.query, card: index },
+    });
   };
 
-  const addCard = (newCard: Card): void => {
-    setCards([...cards, newCard]);
+  const addCards = (newCards: Card[]): void => {
+    setCards([...cards, ...newCards]);
     if (shuffledCards) {
-      setShuffledCards([...shuffledCards, newCard]);
+      setShuffledCards([...shuffledCards, ...newCards]);
     }
   };
 
@@ -144,7 +156,7 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
             <AddCard
               currentTopic={currentTopic}
               setLoading={setLoading}
-              addCard={addCard}
+              addCards={addCards}
             />
           )}
         </div>
@@ -167,9 +179,9 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
       )}
 
       {!loading && !!cards.length && (
-        <Splide
+        <ReactSplide
           ref={sliderRef}
-          onMove={resetCards}
+          onMove={handleMove}
           className={styles.slider}
           options={{
             height: 400,
@@ -177,6 +189,7 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
             classes: {
               arrow: `splide__arrow ${styles.arrow}`,
             },
+            start: currCard,
           }}
         >
           {(shuffledCards ?? cards).map((card, i) => (
@@ -210,7 +223,7 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
               </div>
             </SplideSlide>
           ))}
-        </Splide>
+        </ReactSplide>
       )}
 
       {!loading && !!cards.length && (

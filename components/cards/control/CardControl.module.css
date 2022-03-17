@@ -2,8 +2,8 @@
   display: grid;
   grid-gap: 24px;
   padding-top: 10px !important;
-  width: 300px;
-  min-width: 100%;
+  width: 400px;
+  max-width: 100%;
 }
 
 .topic {
@@ -12,4 +12,26 @@
 
 .actions {
   padding: 8px 16px 16px !important;
+}
+
+.or {
+  font-size: 12px;
+  text-align: center;
+  color: var(--medium-gray);
+  margin: -8px 0;
+}
+
+.card {
+  background-color: var(--bg-color);
+  display: grid;
+  grid-gap: 4px;
+  padding: 8px 16px;
+  margin-top: -12px;
+  border-radius: 8px;
+  color: var(--black);
+  font-size: 14px;
+}
+
+.card__question {
+  font-family: var(--brand-font-family) !important;
 }
