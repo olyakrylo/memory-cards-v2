@@ -188,6 +188,7 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
             arrows: showArrows,
             classes: {
               arrow: `splide__arrow ${styles.arrow}`,
+              pagination: `splide__pagination ${styles.pagination}`,
             },
             start: currCard,
           }}
