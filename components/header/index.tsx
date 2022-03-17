@@ -2,20 +2,31 @@ import { connect } from "react-redux";
 import { Brightness4 } from "@mui/icons-material";
 
 import { State } from "../../utils/types";
-import { setColorMode } from "../../redux/actions/main";
+import { setDarkMode } from "../../redux/actions/main";
 import styles from "./Header.module.css";
+import { useEffect } from "react";
+import { request } from "../../utils/request";
 
 type HeaderProps = {
-  colorMode: "dark" | "light";
-  setColorMode: (mode: "dark" | "light") => void;
+  darkMode?: boolean;
+  setDarkMode: (darkMode: boolean) => void;
 };
 
-export const Header = ({ colorMode, setColorMode }: HeaderProps) => {
+export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
+  useEffect(() => {
+    request<{ dark: boolean }>("get", "color").then(({ dark }) => {
+      if (!dark) return;
+      document.documentElement.classList.add("dark");
+      setDarkMode(true);
+    });
+  }, [setDarkMode]);
+
   const toggleTheme = () => {
-    const newMode = colorMode === "dark" ? "light" : "dark";
-    document.documentElement.classList.add(newMode);
-    document.documentElement.classList.remove(colorMode);
-    setColorMode(newMode);
+    const newMode = !darkMode;
+    document.documentElement.classList.toggle("dark");
+    setDarkMode(newMode);
+
+    void request<{ updated: boolean }>("post", "color", { dark: newMode });
   };
 
   return (
@@ -32,12 +43,12 @@ export const Header = ({ colorMode, setColorMode }: HeaderProps) => {
 
 const mapStateToProps = (state: { main: State }) => {
   return {
-    colorMode: state.main.colorMode,
+    darkMode: state.main.darkMode,
   };
 };
 
 const mapDispatchToProps = {
-  setColorMode,
+  setDarkMode,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Header);

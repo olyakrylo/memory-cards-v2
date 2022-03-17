@@ -22,10 +22,9 @@ export const setTopics = (topics: Topic[]) => (dispatch: Function) => {
   });
 };
 
-export const setColorMode =
-  (mode: "light" | "dark") => (dispatch: Function) => {
-    dispatch({
-      type: t.SET_COLOR_MODE,
-      payload: mode,
-    });
-  };
+export const setDarkMode = (darkMode: boolean) => (dispatch: Function) => {
+  dispatch({
+    type: t.SET_DARK_MODE,
+    payload: darkMode,
+  });
+};

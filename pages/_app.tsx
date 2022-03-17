@@ -13,10 +13,10 @@ import { palette } from "../utils/palette";
 function MyApp({
   Component,
   pageProps,
-  colorMode,
-}: AppProps & { colorMode: "dark" | "light" }) {
+  darkMode,
+}: AppProps & { darkMode?: boolean }) {
   const theme = createTheme({
-    palette: palette(colorMode),
+    palette: palette(darkMode ? "dark" : "light"),
     typography: {
       fontSize: 14,
       fontWeightLight: 300,
@@ -35,7 +35,7 @@ function MyApp({
 
 const mapStateToProps = (state: { main: State }) => {
   return {
-    colorMode: state.main.colorMode,
+    darkMode: state.main.darkMode,
   };
 };
 

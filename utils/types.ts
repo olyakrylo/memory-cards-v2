@@ -2,7 +2,7 @@ export type State = {
   user?: User;
   currentTopic?: Topic;
   topics: Topic[];
-  colorMode: "light" | "dark";
+  darkMode?: boolean;
 };
 
 export interface ResponseFuncs {
