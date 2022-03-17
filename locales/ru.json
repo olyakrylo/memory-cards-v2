@@ -28,7 +28,8 @@
     "cards-count_many": "{{count}} карточек",
     "add-topics_one": "Добавить {{count}} тему",
     "add-topics_few": "Добавить {{count}} темы",
-    "add-topics_many": "Добавить {{count}} тем"
+    "add-topics_many": "Добавить {{count}} тем",
+    "save_topic": "Сохранить тему"
   },
   "auth": {
     "signIn": "Авторизация",

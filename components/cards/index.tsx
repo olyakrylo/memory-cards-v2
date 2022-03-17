@@ -2,12 +2,14 @@ import { connect } from "react-redux";
 import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
 import ShuffleRoundedIcon from "@mui/icons-material/ShuffleRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import {
   CircularProgress,
   FormControlLabel,
   FormGroup,
   IconButton,
   Switch,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
@@ -23,13 +25,16 @@ import styles from "./Cards.module.css";
 import EditCard from "./edit";
 import AddCard from "./add";
 import { useRouter } from "next/router";
+import { setTopics } from "../../redux/actions/main";
 
 type CardProps = {
   user: User;
   currentTopic?: Topic;
+  topics: Topic[];
+  setTopics: (t: Topic[]) => void;
 };
 
-export const Cards = ({ currentTopic, user }: CardProps) => {
+export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -139,6 +144,18 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
     }
   };
 
+  const isSelfTopic = (): boolean => {
+    return topics.some((t) => t._id === currentTopic?._id);
+  };
+
+  const addCurrentTopic = async (): Promise<void> => {
+    if (!currentTopic) return;
+    const updatedTopics = await request<Topic[]>("put", "topics/public", {
+      topics_id: [currentTopic._id],
+    });
+    setTopics([...topics, ...updatedTopics]);
+  };
+
   return (
     <div>
       {currentTopic && (
@@ -151,6 +168,17 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
           >
             <ShuffleRoundedIcon />
           </IconButton>
+
+          <div className={styles.control__topic}>
+            <Typography>{currentTopic.title}</Typography>
+            {currentTopic && !isSelfTopic() && (
+              <Tooltip title={t("add.save_topic") ?? ""}>
+                <IconButton onClick={addCurrentTopic}>
+                  <AddRoundedIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </div>
 
           {canEditTopic() && (
             <AddCard
@@ -248,7 +276,12 @@ const mapStateToProps = (state: { main: State }) => {
   return {
     user: state.main.user as User,
     currentTopic: state.main.currentTopic,
+    topics: state.main.topics,
   };
 };
 
-export default connect(mapStateToProps)(Cards);
+const mapDispatchToProps = {
+  setTopics,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Cards);

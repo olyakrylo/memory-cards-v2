@@ -6,6 +6,8 @@
   margin: 0 24px;
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  column-gap: 24px;
 }
 
 .control__add {
@@ -17,9 +19,17 @@
   opacity: 0.8;
 }
 
+.control__topic {
+  display: flex;
+  align-items: center;
+  column-gap: 8px;
+  color: var(--black);
+  text-align: center;
+}
+
 .tip {
   max-width: 50vw;
-  margin: -32px auto auto;
+  margin: 16px auto auto;
   display: flex;
   justify-content: center;
   gap: 16px;
