@@ -12,7 +12,8 @@
     "choose_topic": "Выбери тему",
     "search": "Поиск",
     "created": "Созданные",
-    "added": "Добавленные"
+    "added": "Добавленные",
+    "upload_from_file": "Загрузить из файла"
   },
   "add": {
     "topic_title": "Название",

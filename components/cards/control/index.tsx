@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import {
   Button,
   Dialog,
@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  Tooltip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
@@ -16,9 +17,14 @@ import styles from "./CardControl.module.css";
 type CardControlProps = {
   currentTopic?: Topic;
   open: boolean;
-  onClose: (question: string, answer: string, card?: Card) => void;
+  onClose: (
+    newCards: { question: string; answer: string }[] | null,
+    card?: Card
+  ) => void;
   card?: Card;
 };
+
+type ShortCard = Omit<Card, "_id" | "topic_id">;
 
 export const CardControl = ({
   currentTopic,
@@ -29,10 +35,13 @@ export const CardControl = ({
   const [question, setQuestion] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
 
+  const [cardsFromFile, setCardsFromFile] = useState<ShortCard[]>([]);
+
   useEffect(() => {
     if (open) {
       setQuestion(card?.question ?? "");
       setAnswer(card?.answer ?? "");
+      setCardsFromFile([]);
     }
   }, [open, card]);
 
@@ -40,18 +49,47 @@ export const CardControl = ({
 
   const onSave = (e: any) => {
     e.stopPropagation();
-    onClose(question, answer, card);
+    let newCards = [{ question, answer }];
+    if (cardsFromFile.length) {
+      newCards = cardsFromFile;
+    }
+    onClose(newCards, card);
   };
 
   const onCloseDialog = (e: any) => {
     e.stopPropagation();
-    onClose("", "");
+    onClose(null);
   };
 
   const onChangeField = (event: any, updateFunc: (value: string) => void) => {
     event.stopPropagation();
     const { value } = event.target as { value: string };
     updateFunc(value);
+  };
+
+  const handleFile = async (event: BaseSyntheticEvent): Promise<void> => {
+    const file = event.target.files[0] as File;
+    const text = await file.text();
+    const separator: Record<string, string> = {
+      "text/plain": " ",
+      "text/tab-separated-values": "\t",
+      "text/csv": ";",
+    };
+    try {
+      const cardsData = text
+        .split("\n")
+        .filter((row) => !!row.trim())
+        .map((row: string): ShortCard => {
+          const [q, a] = row.trim().split(separator[file.type]);
+          if (!q || !a) {
+            throw new Error();
+          }
+          return { question: q, answer: a };
+        });
+      setCardsFromFile(cardsData);
+    } catch {
+      alert("Invalid file content");
+    }
   };
 
   return (
@@ -69,6 +107,7 @@ export const CardControl = ({
           label={t("ui.question")}
           defaultValue={question}
           onChange={(e) => onChangeField(e, setQuestion)}
+          disabled={!!cardsFromFile.length}
         />
         <TextField
           required
@@ -76,7 +115,26 @@ export const CardControl = ({
           label={t("ui.answer")}
           defaultValue={answer}
           onChange={(e) => onChangeField(e, setAnswer)}
+          disabled={!!cardsFromFile.length}
         />
+
+        {!card && <div className={styles.or}>{t("ui.or")}</div>}
+
+        {!card && (
+          <Tooltip title={`(.txt, .tsv ${t("ui.or")} .csv)`}>
+            <Button variant="contained" component="label">
+              {t("ui.upload_from_file")}
+              <input type="file" hidden onChange={handleFile} accept=".txt" />
+            </Button>
+          </Tooltip>
+        )}
+
+        {cardsFromFile.map((card, i) => (
+          <div className={styles.card} key={i}>
+            <span className={styles.card__question}>{card.question}</span>
+            <span className={styles.card__answer}>{card.answer}</span>
+          </div>
+        ))}
       </DialogContent>
 
       <DialogActions className={styles.actions}>

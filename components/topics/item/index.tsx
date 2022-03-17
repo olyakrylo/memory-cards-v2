@@ -13,6 +13,7 @@ type TopicItemProps = {
   topics: Topic[];
   user: User;
   currentTopic?: Topic;
+  setTopics: (t: Topic[]) => void;
 };
 
 const TopicItem = ({
@@ -20,6 +21,7 @@ const TopicItem = ({
   topics: topicsList,
   user,
   currentTopic,
+  setTopics,
 }: TopicItemProps) => {
   const router = useRouter();
 

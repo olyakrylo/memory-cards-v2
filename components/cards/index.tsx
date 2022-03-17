@@ -85,10 +85,10 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
     setInverted(false);
   };
 
-  const addCard = (newCard: Card): void => {
-    setCards([...cards, newCard]);
+  const addCards = (newCards: Card[]): void => {
+    setCards([...cards, ...newCards]);
     if (shuffledCards) {
-      setShuffledCards([...shuffledCards, newCard]);
+      setShuffledCards([...shuffledCards, ...newCards]);
     }
   };
 
@@ -144,7 +144,7 @@ export const Cards = ({ currentTopic, user }: CardProps) => {
             <AddCard
               currentTopic={currentTopic}
               setLoading={setLoading}
-              addCard={addCard}
+              addCards={addCards}
             />
           )}
         </div>

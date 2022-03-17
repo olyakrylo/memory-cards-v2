@@ -2,7 +2,6 @@ import { connect } from "react-redux";
 import {
   Button,
   Checkbox,
-  Container,
   Dialog,
   DialogActions,
   DialogContent,

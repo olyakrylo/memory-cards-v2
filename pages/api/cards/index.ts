@@ -14,7 +14,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Card } = await connect();
-      res.json(await Card.create(req.body).catch(catcher));
+      res.json(
+        await Card.create(req.body.cards, { checkKeys: true }).catch(catcher)
+      );
     },
   };
 

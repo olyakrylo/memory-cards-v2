@@ -22,18 +22,17 @@ const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
   };
 
   const onCloseEditCardDialog = async (
-    question: string,
-    answer: string,
+    newCards: { question: string; answer: string }[] | null,
     card?: Card
   ) => {
     setEditCardOpen(false);
-    if (!card) return;
+    if (!card || !newCards) return;
 
     setLoading(true);
     const updatedCard = await request<Card>("put", `cards/${card._id}`, {
       ...card,
-      question,
-      answer,
+      question: newCards[0].question,
+      answer: newCards[0].answer,
     });
     if (updatedCard) {
       updateCard(updatedCard);
