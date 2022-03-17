@@ -26,7 +26,8 @@
     "cards-count_one": "{{count}} card",
     "cards-count_other": "{{count}} cards",
     "add-topics_one": "Add {{count}} topic",
-    "add-topics_other": "Add {{count}} topics"
+    "add-topics_other": "Add {{count}} topics",
+    "save_topic": "Save topic"
   },
   "auth": {
     "signIn": "Authorization",
