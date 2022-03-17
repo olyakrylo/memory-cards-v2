@@ -4,7 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
-import { request } from "../../middleware";
+import { request } from "../../utils/request";
 import { State, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";

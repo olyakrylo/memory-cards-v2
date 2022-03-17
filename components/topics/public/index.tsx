@@ -20,7 +20,7 @@ import { connect } from "react-redux";
 
 import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
-import { request } from "../../../middleware";
+import { request } from "../../../utils/request";
 import { Card, State, Topic, TopicExt, User } from "../../../utils/types";
 import { setTopics } from "../../../redux/actions/main";
 

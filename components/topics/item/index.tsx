@@ -5,7 +5,7 @@ import RemoveCircleOutlineRoundedIcon from "@mui/icons-material/RemoveCircleOutl
 
 import { State, Topic, UpdatedResult, User } from "../../../utils/types";
 import { setTopics } from "../../../redux/actions/main";
-import { request } from "../../../middleware";
+import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
 
 type TopicItemProps = {

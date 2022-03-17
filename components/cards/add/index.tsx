@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 
 import styles from "../Cards.module.css";
 import CardControl from "../control";
-import { request } from "../../../middleware";
+import { request } from "../../../utils/request";
 import { Card, Topic } from "../../../utils/types";
 
 export type AddCardProps = {

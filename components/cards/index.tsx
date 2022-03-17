@@ -17,7 +17,7 @@ import arrayShuffle from "array-shuffle";
 
 import { Card, State, Topic, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
-import { request } from "../../middleware";
+import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import EditCard from "./edit";
 import AddCard from "./add";

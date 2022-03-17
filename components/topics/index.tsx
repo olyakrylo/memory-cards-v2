@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 
 import { State, Topic, User } from "../../utils/types";
 import { setCurrentTopic, setTopics } from "../../redux/actions/main";
-import { request } from "../../middleware";
+import { request } from "../../utils/request";
 import styles from "./Topics.module.css";
 import UserControl from "../userControl";
 import AddTopic from "./add";

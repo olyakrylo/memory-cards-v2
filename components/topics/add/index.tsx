@@ -18,7 +18,7 @@ import { BaseSyntheticEvent, useState } from "react";
 
 import styles from "../Topics.module.css";
 import { State, Topic, User } from "../../../utils/types";
-import { request } from "../../../middleware";
+import { request } from "../../../utils/request";
 
 type AddTopicProps = {
   user?: User;

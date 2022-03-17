@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { CircularProgress } from "@mui/material";
 
-import { request } from "../../middleware";
+import { request } from "../../utils/request";
 import { setUser } from "../../redux/actions/main";
 import { State, User } from "../../utils/types";
 import styles from "./App.module.css";
