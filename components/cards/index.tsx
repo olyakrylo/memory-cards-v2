@@ -17,6 +17,7 @@ import { Splide } from "@splidejs/splide";
 import { SplideSlide, Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import arrayShuffle from "array-shuffle";
+import { useRouter } from "next/router";
 
 import { Card, State, Topic, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
@@ -24,7 +25,6 @@ import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import EditCard from "./edit";
 import AddCard from "./add";
-import { useRouter } from "next/router";
 import { setTopics } from "../../redux/actions/main";
 
 type CardProps = {
@@ -42,9 +42,7 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
   const [inverted, setInverted] = useState<boolean>(false);
   const [showArrows, setShowArrows] = useState<boolean>(true);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
-  const [currCard, setCurrCard] = useState<number>(
-    parseInt(router.query.card as string) || 0
-  );
+  const [currCard, setCurrCard] = useState<number>(0);
 
   const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const sliderRef = useRef<ReactSplide>(null);
@@ -79,9 +77,16 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
     }
 
     setLoading(true);
+    setCurrCard(0);
     request<Card[]>("post", "cards/by_topic", {
       topic_id: currentTopic._id,
     }).then((cards) => {
+      const indexFromUrl = parseInt((router.query.card as string) ?? "");
+      const indexFromStorage = parseInt(
+        sessionStorage.getItem(currentTopic._id.toString()) ?? ""
+      );
+      setCurrCard(indexFromUrl || indexFromStorage || 0);
+
       setCards(cards);
       setInverted(false);
       setLoading(false);
@@ -94,12 +99,9 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
   };
 
   const handleMove = async (_: Splide, index: number): Promise<void> => {
-    setCurrCard(index);
+    if (!currentTopic) return;
     setInverted(false);
-    await router.push({
-      pathname: "/app",
-      query: { ...router.query, card: index },
-    });
+    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
   };
 
   const addCards = (newCards: Card[]): void => {
