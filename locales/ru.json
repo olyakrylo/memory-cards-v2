@@ -13,7 +13,11 @@
     "search": "Поиск",
     "created": "Созданные",
     "added": "Добавленные",
-    "upload_from_file": "Загрузить из файла"
+    "upload_from_file": "Загрузить из файла",
+    "link_copied": "Ссылка скопирована!",
+    "topic_deleted": "Тема удалена",
+    "share": "Поделиться",
+    "delete": "Удалить"
   },
   "add": {
     "topic_title": "Название",

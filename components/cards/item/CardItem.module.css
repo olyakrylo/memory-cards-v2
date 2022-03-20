@@ -1,0 +1,46 @@
+.card {
+  position: relative;
+  background-color: var(--white);
+  margin: 24px;
+  height: calc(100% - 50px);
+  box-shadow: var(--shadow);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  transition-property: transform, margin;
+  transition-duration: 0.2s;
+  transition-timing-function: ease-in-out;
+}
+
+.card__text {
+  max-height: calc(100% - 110px);
+  overflow: auto;
+  padding: 0 24px;
+  line-height: 20px;
+  letter-spacing: 0.25px;
+  color: var(--black);
+}
+
+.card_arrows {
+  margin: 24px 55px;
+}
+
+.card__del {
+  position: absolute !important;
+  top: 12px;
+  right: 12px;
+}
+
+.card__edit {
+  position: absolute !important;
+  top: 12px;
+  left: 12px;
+}
+
+.card__share {
+  position: absolute !important;
+  bottom: 12px;
+  right: 12px;
+}

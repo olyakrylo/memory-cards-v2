@@ -10,6 +10,9 @@ export const palette = (colorMode: "light" | "dark"): PaletteOptions => {
         secondary: {
           main: "#ae0000b2",
         },
+        info: {
+          main: "#777",
+        },
       }
     : {
         mode: "dark",
@@ -17,6 +20,9 @@ export const palette = (colorMode: "light" | "dark"): PaletteOptions => {
           main: "#0fd4c9",
         },
         secondary: {
+          main: "#cfcfcf",
+        },
+        info: {
           main: "#cfcfcf",
         },
       };

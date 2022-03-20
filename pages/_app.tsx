@@ -9,6 +9,7 @@ import { wrapper } from "../redux/store";
 import "../locales/i18n";
 import { State } from "../utils/types";
 import { palette } from "../utils/palette";
+import Notification from "../components/notification";
 
 function MyApp({
   Component,
@@ -29,6 +30,8 @@ function MyApp({
   return (
     <ThemeProvider theme={theme}>
       <Component {...pageProps} />
+
+      <Notification />
     </ThemeProvider>
   );
 }

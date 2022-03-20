@@ -56,11 +56,11 @@
   opacity: 1;
 }
 
-.topic__del {
+.topic__menu {
   transition: transform 0.2s ease-in-out;
 }
 
-.topic__del[aria-hidden="true"] {
+.topic__menu[aria-hidden="true"] {
   transform: scale(0);
 }
 
@@ -103,4 +103,11 @@
 
 .add__actions {
   padding: 0 16px 16px !important;
+}
+
+.menu_item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
 }

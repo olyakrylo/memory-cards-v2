@@ -13,7 +13,11 @@
     "search": "Search",
     "created": "Created",
     "added": "Added",
-    "upload_from_file": "Upload from file"
+    "upload_from_file": "Upload from file",
+    "link_copied": "Link copied!",
+    "topic_deleted": "Topic deleted",
+    "share": "Share",
+    "delete": "Delete"
   },
   "add": {
     "topic_title": "Title",

@@ -1,8 +1,18 @@
+import { AlertColor } from "@mui/material";
+
+export type AppNotification = {
+  severity: AlertColor;
+  text: string;
+  translate?: boolean;
+  autoHide?: number;
+};
+
 export type State = {
   user?: User;
   currentTopic?: Topic;
   topics: Topic[];
   darkMode?: boolean;
+  notification: AppNotification;
 };
 
 export interface ResponseFuncs {
