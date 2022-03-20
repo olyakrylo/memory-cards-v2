@@ -1,5 +1,5 @@
 import * as t from "../types";
-import { Topic, User } from "../../utils/types";
+import { AppNotification, Topic, User } from "../../utils/types";
 
 export const setUser = (user?: User) => (dispatch: Function) => {
   dispatch({
@@ -28,3 +28,11 @@ export const setDarkMode = (darkMode: boolean) => (dispatch: Function) => {
     payload: darkMode,
   });
 };
+
+export const setNotification =
+  (notification: AppNotification) => (dispatch: Function) => {
+    dispatch({
+      type: t.SET_NOTIFICATION,
+      payload: notification,
+    });
+  };

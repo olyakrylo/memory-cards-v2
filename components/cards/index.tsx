@@ -1,5 +1,4 @@
 import { connect } from "react-redux";
-import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
 import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
 import ShuffleRoundedIcon from "@mui/icons-material/ShuffleRounded";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -14,27 +13,34 @@ import {
 } from "@mui/material";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Splide } from "@splidejs/splide";
-import { SplideSlide, Splide as ReactSplide } from "@splidejs/react-splide";
+import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import arrayShuffle from "array-shuffle";
 import { useRouter } from "next/router";
 
-import { Card, State, Topic, User } from "../../utils/types";
+import { AppNotification, Card, State, Topic, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import EditCard from "./edit";
 import AddCard from "./add";
-import { setTopics } from "../../redux/actions/main";
+import { setNotification, setTopics } from "../../redux/actions/main";
+import CardItem from "./item";
 
 type CardProps = {
   user: User;
   currentTopic?: Topic;
   topics: Topic[];
   setTopics: (t: Topic[]) => void;
+  setNotification: (n: AppNotification) => void;
 };
 
-export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
+export const Cards = ({
+  currentTopic,
+  user,
+  topics,
+  setTopics,
+  setNotification,
+}: CardProps) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
@@ -44,7 +50,6 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
   const [currCard, setCurrCard] = useState<number>(0);
 
-  const cardsRef = useRef<(HTMLDivElement | null)[]>([]);
   const sliderRef = useRef<ReactSplide>(null);
 
   const { i18n, t } = useTranslation();
@@ -60,9 +65,13 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
       }
       const index = sliderRef.current?.splide?.index;
       if (typeof index !== "number") return;
-      const ref = cardsRef.current[index];
-      if (!ref) return;
-      flip(ref, 200, () => setInverted(!inverted));
+
+      const splideRef = sliderRef.current?.splideRef.current;
+      const list = splideRef?.children[1]?.children?.[0];
+      const elem = list?.children?.[index]?.children?.[0];
+
+      if (!elem) return;
+      flip(elem as HTMLElement, 200, () => setInverted(!inverted));
     };
 
     window.addEventListener("keyup", handleKeyup);
@@ -128,8 +137,7 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
     }
   };
 
-  const deleteCard = async (e: any, id: string) => {
-    e.stopPropagation();
+  const deleteCard = async (id: string) => {
     await request("delete", `cards/${id}`);
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
@@ -156,6 +164,18 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
       topics_id: [currentTopic._id],
     });
     setTopics([...topics, ...updatedTopics]);
+  };
+
+  const shareCard = async (index: number): Promise<void> => {
+    const { href } = window.location;
+    const link = `${href}&card=${index}`;
+    await navigator.clipboard.writeText(link);
+    setNotification({
+      severity: "success",
+      text: "ui.link_copied",
+      translate: true,
+      autoHide: 5000,
+    });
   };
 
   return (
@@ -224,35 +244,18 @@ export const Cards = ({ currentTopic, user, topics, setTopics }: CardProps) => {
           }}
         >
           {(shuffledCards ?? cards).map((card, i) => (
-            <SplideSlide key={card._id}>
-              <div
-                ref={(el) => (cardsRef.current[i] = el)}
-                className={`${styles.card} ${showArrows && styles.card_arrows}`}
-                onClick={toggleCard}
-              >
-                <Typography className={styles.card__text}>
-                  {inverted ? card.answer : card.question}
-                </Typography>
-
-                {card._id && canEditTopic() && (
-                  <IconButton
-                    className={styles.card__del}
-                    color="secondary"
-                    onClick={(e) => deleteCard(e, card._id)}
-                  >
-                    <DeleteTwoToneIcon />
-                  </IconButton>
-                )}
-
-                {card._id && canEditTopic() && (
-                  <EditCard
-                    card={card}
-                    setLoading={setLoading}
-                    updateCard={updateCard}
-                  />
-                )}
-              </div>
-            </SplideSlide>
+            <CardItem
+              key={card._id}
+              card={card}
+              showArrows={showArrows}
+              canEditTopic={canEditTopic()}
+              inverted={inverted}
+              setLoading={setLoading}
+              toggleCard={toggleCard}
+              deleteCard={() => deleteCard(card._id)}
+              updateCard={updateCard}
+              shareCard={() => shareCard(i)}
+            />
           ))}
         </ReactSplide>
       )}
@@ -284,6 +287,7 @@ const mapStateToProps = (state: { main: State }) => {
 
 const mapDispatchToProps = {
   setTopics,
+  setNotification,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Cards);
