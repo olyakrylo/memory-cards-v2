@@ -14,8 +14,8 @@ import { setUser } from "../../redux/actions/main";
 type Mode = "signIn" | "signUp";
 
 type AuthProps = {
-  user?: User;
-  setUser: (u: User) => void;
+  user?: User | null;
+  setUser: (u?: User | null) => void;
 };
 
 type FieldProps = {
@@ -42,6 +42,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
       router.push({ pathname: "/app" });
       return;
     }
+    setUser(undefined);
     request("users", "", "get").then(({ user }) => {
       if (user) {
         router.push({ pathname: "/app" });

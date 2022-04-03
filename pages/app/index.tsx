@@ -12,7 +12,7 @@ import Topics from "../../components/topics";
 import Cards from "../../components/cards";
 
 type AppProps = {
-  user?: User;
+  user?: User | null;
   setUser: (user?: User) => void;
 };
 
@@ -21,6 +21,10 @@ const App = ({ user, setUser }: AppProps) => {
   const router = useRouter();
 
   useEffect(() => {
+    if (user === null) {
+      void router.push("/auth");
+      return;
+    }
     if (user) {
       setLoading(false);
       return;
@@ -29,7 +33,7 @@ const App = ({ user, setUser }: AppProps) => {
       if (user) {
         setUser(user);
       } else {
-        router.push({ pathname: "/auth" });
+        void router.push("/auth");
         return;
       }
       setLoading(false);

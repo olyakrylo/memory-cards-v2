@@ -1,7 +1,7 @@
 import * as t from "../types";
 import { AppNotification, Topic, User } from "../../utils/types";
 
-export const setUser = (user?: User) => (dispatch: Function) => {
+export const setUser = (user?: User | null) => (dispatch: Function) => {
   dispatch({
     type: t.SET_USER,
     payload: user,
