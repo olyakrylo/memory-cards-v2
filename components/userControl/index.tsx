@@ -9,6 +9,7 @@ import { State, User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
 import { setUser } from "../../redux/actions/main";
+import { request } from "../../utils/request";
 
 type UserControlProps = {
   user?: User | null;
@@ -21,10 +22,8 @@ export const UserControl = ({ user, setUser }: UserControlProps) => {
   const { t } = useTranslation();
 
   const handleLogout = async () => {
-    const res = await fetch("/api/users/logout");
-    if (res.ok) {
-      setUser(null);
-    }
+    await request("users", "logout", "get");
+    setUser(null);
   };
 
   const userMenuOpened = Boolean(userMenu);
