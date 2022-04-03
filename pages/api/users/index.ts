@@ -4,6 +4,7 @@ import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
 import { getCookie, setCookie } from "../../../utils/cookies";
 import { dataExample } from "../../../data.example";
+import { UsersAPI } from "../../../utils/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -29,11 +30,20 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { User } = await connect();
-      const user = await User.findOne(req.body).catch(catcher);
-      if (user) {
-        setCookie(cookies, "id_token", SECRET as string, user._id);
+      const { login, password } = req.body as UsersAPI[""]["post"]["params"];
+      const user = await User.findOne({ login });
+      if (!user) {
+        res.json({ error: { no_user: true } });
+        return;
       }
-      res.json({ user });
+
+      const checked = user.password === password;
+      if (checked) {
+        setCookie(cookies, "id_token", SECRET as string, user._id);
+        res.send({ user });
+      } else {
+        res.json({ error: { wrong_password: true } });
+      }
     },
   };
 

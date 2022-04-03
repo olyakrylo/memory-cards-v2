@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
 import { dataExample } from "../../../data.example";
+import { TopicsAPI } from "../../../utils/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -17,7 +18,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const { Topic } = await connect();
-      res.json(await Topic.find({ users_id: req.body.user_id }).catch(catcher));
+      const { user_id } = req.body as TopicsAPI["by_user"]["post"]["params"];
+      res.json(await Topic.find({ users_id: user_id }).catch(catcher));
     },
   };
 

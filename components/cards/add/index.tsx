@@ -28,7 +28,7 @@ const AddCard = ({ currentTopic, setLoading, addCards }: AddCardProps) => {
     if (!cards) return;
     setLoading(true);
 
-    const newCards = await request<Card[]>("post", "cards", {
+    const newCards = await request("cards", "", "post", {
       cards: cards.map((c) => ({ ...c, topic_id: currentTopic._id })),
     });
     if (newCards) {

@@ -46,14 +46,17 @@ export const Topics = ({
       setCurrentTopic(fromUserTopics);
       return;
     }
-    request<Topic>("get", `topics/${router.query.topic}`).then((topic) => {
-      setCurrentTopic(topic);
-    });
+    request("topics", "", "post", { id: router.query.topic as string }).then(
+      ({ topic }) => {
+        if (!topic) return;
+        setCurrentTopic(topic);
+      }
+    );
   }, [router.query]);
 
   useEffect(() => {
     setLoading(true);
-    request<Topic[]>("post", "topics/by_user", {
+    request("topics", "by_user", "post", {
       user_id: user._id,
     }).then((resTopics) => {
       setTopics(resTopics);

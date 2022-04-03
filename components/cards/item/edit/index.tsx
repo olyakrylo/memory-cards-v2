@@ -29,7 +29,7 @@ const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
     if (!card || !newCards) return;
 
     setLoading(true);
-    const updatedCard = await request<Card>("put", `cards/${card._id}`, {
+    const updatedCard = await request("cards", "", "put", {
       ...card,
       question: newCards[0].question,
       answer: newCards[0].answer,

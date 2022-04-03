@@ -52,7 +52,7 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
   const add = async (): Promise<void> => {
     if (!user) return;
 
-    const newTopic = await request<Topic>("post", "topics", {
+    const newTopic = await request("topics", "", "put", {
       users_id: [user._id],
       author_id: user._id,
       title,

@@ -25,7 +25,7 @@ const App = ({ user, setUser }: AppProps) => {
       setLoading(false);
       return;
     }
-    request("get", "users").then(({ user }) => {
+    request("users", "", "get").then(({ user }) => {
       if (user) {
         setUser(user);
       } else {

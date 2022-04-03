@@ -87,7 +87,7 @@ export const Cards = ({
 
     setLoading(true);
     setCurrCard(0);
-    request<Card[]>("post", "cards/by_topic", {
+    request("cards", "by_topic", "post", {
       topic_id: currentTopic._id,
     }).then((cards) => {
       const indexFromUrl = parseInt((router.query.card as string) ?? "");
@@ -138,7 +138,7 @@ export const Cards = ({
   };
 
   const deleteCard = async (id: string) => {
-    await request("delete", `cards/${id}`);
+    await request("cards", "", "delete", { id });
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
     if (shuffledCards) {
@@ -160,7 +160,7 @@ export const Cards = ({
 
   const addCurrentTopic = async (): Promise<void> => {
     if (!currentTopic) return;
-    const updatedTopics = await request<Topic[]>("put", "topics/public", {
+    const updatedTopics = await request("topics", "public", "put", {
       topics_id: [currentTopic._id],
     });
     setTopics([...topics, ...updatedTopics]);

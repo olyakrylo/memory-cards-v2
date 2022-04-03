@@ -4,6 +4,7 @@ import Cookies from "cookies";
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs, Topic } from "../../../utils/types";
 import { getCookie } from "../../../utils/cookies";
+import { TopicsAPI } from "../../../utils/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -11,7 +12,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const secret = process.env.SECRET as string;
 
   const handleCase: ResponseFuncs = {
-    POST: async (req: NextApiRequest, res: NextApiResponse) => {
+    GET: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic, User, Card } = await connect();
       let topics = await Topic.find({ public: true });
       topics = await Promise.all(
@@ -27,7 +28,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic } = await connect();
       const userId = getCookie(cookies, "id_token", secret);
-      const { topics_id } = req.body as { topics_id: string[] };
+      const { topics_id } = req.body as TopicsAPI["public"]["put"]["params"];
+
       const updatedTopics = await Promise.all(
         topics_id.map(async (tid) => {
           const topic = (await Topic.findById(tid)) as Topic;
