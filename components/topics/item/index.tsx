@@ -49,13 +49,10 @@ const TopicItem = ({
   };
 
   const deleteTopic = async () => {
-    const { updated } = await request<UpdatedResult>(
-      "delete",
-      `topics/${topic._id}`,
-      {
-        user_id: user._id,
-      }
-    );
+    const { updated } = await request("topics", "", "delete", {
+      user_id: user._id,
+      topic_id: topic._id,
+    });
     if (updated) {
       setTopics(topicsList.filter((t) => t._id !== topic._id));
       setNotification({

@@ -43,6 +43,13 @@
     "placeholder": {
       "login": "Login",
       "password": "Password"
+    },
+    "error": {
+      "user_exists": "This username is already occupied",
+      "short_login": "At least 3 characters",
+      "short_password": "At least 8 characters",
+      "user_not_found": "User is not found",
+      "wrong_password": "Wrong password"
     }
   }
 }

@@ -42,7 +42,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
   useEffect(() => {
     if (!dialogOpened) return;
     setLoading(true);
-    request<TopicExt[]>("post", "topics/public", {}).then((data) => {
+    request("topics", "public", "get").then((data) => {
       const ids = topics.map((t) => t._id);
       const notSelfTopics = data.filter((pt) => !ids.includes(pt._id));
       setPublicTopics(notSelfTopics);
@@ -64,7 +64,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
 
   const loadCards = async (id: string): Promise<void> => {
     if (topicCards[id]) return;
-    const cards = await request<Card[]>("post", "cards/by_topic", {
+    const cards = await request("cards", "by_topic", "post", {
       topic_id: id,
     });
     setTopicCards({ ...topicCards, [id]: cards });
@@ -88,7 +88,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
   };
 
   const updateTopics = async (): Promise<void> => {
-    const updatedTopics = await request<Topic[]>("put", "topics/public", {
+    const updatedTopics = await request("topics", "public", "put", {
       topics_id: selectedTopics,
     });
     setTopics([...topics, ...updatedTopics]);

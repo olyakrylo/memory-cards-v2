@@ -45,6 +45,13 @@
     "placeholder": {
       "login": "Логин",
       "password": "Пароль"
+    },
+    "error": {
+      "user_exists": "Имя занято",
+      "short_login": "Не менее 3-х символов",
+      "short_password": "Не менее 8-ми символов",
+      "user_not_found": "Пользователь не найден",
+      "wrong_password": "Неверный пароль"
     }
   }
 }

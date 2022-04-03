@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
 import { dataExample } from "../../../data.example";
+import { CardsAPI } from "../../../utils/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -21,7 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       }
 
       const { Card } = await connect();
-      res.json(await Card.find(req.body).catch(catcher));
+      const { topic_id } = req.body as CardsAPI["by_topic"]["post"]["params"];
+      res.json(await Card.find({ topic_id }).catch(catcher));
     },
   };
 

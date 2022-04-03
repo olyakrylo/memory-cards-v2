@@ -1,32 +1,29 @@
 import { connect } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 
-import { User } from "../../utils/types";
+import { State, User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
 import { setUser } from "../../redux/actions/main";
+import { request } from "../../utils/request";
 
 type UserControlProps = {
-  user: User;
-  setUser: (v: User | undefined) => void;
+  user?: User | null;
+  setUser: (v: User | undefined | null) => void;
 };
 
 export const UserControl = ({ user, setUser }: UserControlProps) => {
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
-  const router = useRouter();
 
   const { t } = useTranslation();
 
   const handleLogout = async () => {
-    const res = await fetch("/api/users/logout");
-    if (res.ok) {
-      setUser(undefined);
-      await router.push("/auth");
-    }
+    await request("users", "logout", "get");
+    setUser(null);
   };
 
   const userMenuOpened = Boolean(userMenu);
@@ -39,7 +36,7 @@ export const UserControl = ({ user, setUser }: UserControlProps) => {
 
   return (
     <div className={styles.container}>
-      {user.login}
+      {user?.login}
       <IconButton className={styles.settings} onClick={openUserMenu}>
         <SettingsIcon />
       </IconButton>
@@ -100,7 +97,7 @@ const LanguageMenu = () => {
   );
 };
 
-const mapStateToProps = (state: { main: { user: User } }) => {
+const mapStateToProps = (state: { main: State }) => {
   return { user: state.main.user };
 };
 

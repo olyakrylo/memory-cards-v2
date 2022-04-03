@@ -1,6 +1,6 @@
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { connect } from "react-redux";
 
@@ -14,14 +14,27 @@ import { setUser } from "../../redux/actions/main";
 type Mode = "signIn" | "signUp";
 
 type AuthProps = {
-  user?: User;
-  setUser: (u: User) => void;
+  user?: User | null;
+  setUser: (u?: User | null) => void;
+};
+
+type FieldProps = {
+  value: string;
+  onChangeValue: (event: BaseSyntheticEvent) => void;
+  error: string;
 };
 
 const Auth = ({ user, setUser }: AuthProps) => {
   const router = useRouter();
+
   const [mode, setMode] = useState<Mode>("signIn");
+  const [login, setLogin] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [loginError, setLoginError] = useState<string>("");
+  const [passwordError, setPasswordError] = useState<string>("");
+
   const content = useRef<HTMLDivElement>(null);
+
   const { t } = useTranslation();
 
   useEffect(() => {
@@ -29,34 +42,76 @@ const Auth = ({ user, setUser }: AuthProps) => {
       router.push({ pathname: "/app" });
       return;
     }
-    request("get", "users").then(({ user }) => {
+    setUser(undefined);
+    request("users", "", "get").then(({ user }) => {
       if (user) {
         router.push({ pathname: "/app" });
       }
     });
   }, [user, setUser, router]);
 
-  const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const { login, password } = e.target as HTMLFormElement;
-    if (!login.value || !password.value) return;
-    const { user } = await request<{ user: User }>("post", "users", {
-      login: login.value,
-      password: password.value,
+  const handleLoginChange = (event: BaseSyntheticEvent): void => {
+    const { value } = event.target;
+    if (validateInput(value)) {
+      setLogin(value);
+    }
+  };
+
+  const handlePasswordChange = (event: BaseSyntheticEvent): void => {
+    const { value } = event.target;
+    if (validateInput(value)) {
+      setPassword(value);
+    }
+  };
+
+  const validateInput = (value: string): boolean => {
+    if (!value) return true;
+    return /\w/.test(value) && !value.includes(" ");
+  };
+
+  const handleLogin = async () => {
+    setLoginError("");
+    setPasswordError("");
+    const { user, error } = await request("users", "", "post", {
+      login,
+      password,
     });
+    if (error?.no_user) {
+      setLoginError("user_not_found");
+      return;
+    }
+    if (error?.wrong_password) {
+      setPasswordError("wrong_password");
+      return;
+    }
     if (user) {
       await router.push("/app");
     }
   };
 
-  const handleSignUp = async (e: FormEvent) => {
-    e.preventDefault();
-    const { login, password } = e.target as HTMLFormElement;
-    if (!login.value || !password.value) return;
-    const { user } = await request<{ user: User }>("post", "users/create", {
-      login: login.value,
-      password: password.value,
+  const handleSignUp = async () => {
+    setLoginError("");
+    setPasswordError("");
+
+    let validated = true;
+    if (login.length < 3) {
+      setLoginError("short_login");
+      validated = false;
+    }
+    if (password.length < 9) {
+      setPasswordError("short_password");
+      validated = false;
+    }
+    if (!validated) return;
+
+    const { user, error } = await request("users", "create", "post", {
+      login,
+      password,
     });
+    if (error?.user_exists) {
+      setLoginError("user_exists");
+      return;
+    }
     if (user) {
       await router.push("/app");
     }
@@ -64,6 +119,10 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
   const changeMode = (type: Mode) => {
     if (!content.current) return;
+    setLoginError("");
+    setPasswordError("");
+    setLogin("");
+    setPassword("");
     flip(content.current, 200, () => setMode(type));
   };
 
@@ -74,13 +133,25 @@ const Auth = ({ user, setUser }: AuthProps) => {
       <div ref={content} className={styles.content}>
         <p className={styles.title}>{t(`auth.${mode}`)}</p>
 
-        {mode === "signIn" && (
-          <form onSubmit={handleLogin} className={styles.form}>
-            <Login />
-            <Password />
+        <div className={styles.form}>
+          <Login
+            value={login}
+            onChangeValue={handleLoginChange}
+            error={loginError}
+          />
+          <Password
+            value={password}
+            onChangeValue={handlePasswordChange}
+            error={passwordError}
+          />
 
+          {mode === "signIn" && (
             <div className={styles.buttonsContainer}>
-              <Button variant="contained" type="submit">
+              <Button
+                variant="contained"
+                onClick={handleLogin}
+                disabled={!login || !password}
+              >
                 {t("auth.button.signIn")}
               </Button>
               {t("ui.or")}
@@ -88,16 +159,15 @@ const Auth = ({ user, setUser }: AuthProps) => {
                 {t("auth.button.signUp")}
               </Button>
             </div>
-          </form>
-        )}
+          )}
 
-        {mode === "signUp" && (
-          <form onSubmit={handleSignUp} className={styles.form}>
-            <Login />
-            <Password />
-
+          {mode === "signUp" && (
             <div className={styles.buttonsContainer}>
-              <Button variant="contained" type="submit">
+              <Button
+                variant="contained"
+                onClick={handleSignUp}
+                disabled={!login || !password}
+              >
                 {t("auth.button.signUp")}
               </Button>
               {t("ui.or")}
@@ -105,31 +175,39 @@ const Auth = ({ user, setUser }: AuthProps) => {
                 {t("auth.button.signIn")}
               </Button>
             </div>
-          </form>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
 };
 
-const Login = () => {
+const Login = ({ value, onChangeValue, error }: FieldProps) => {
   const { t } = useTranslation();
   return (
     <TextField
       className={styles.input}
       label={t("auth.placeholder.login").toLowerCase()}
+      value={value}
+      onChange={onChangeValue}
+      error={!!error}
+      helperText={error ? t(`auth.error.${error}`) : ""}
       size="small"
       name="login"
     />
   );
 };
 
-const Password = () => {
+const Password = ({ value, onChangeValue, error }: FieldProps) => {
   const { t } = useTranslation();
   return (
     <TextField
       className={styles.input}
       label={t("auth.placeholder.password").toLowerCase()}
+      value={value}
+      onChange={onChangeValue}
+      error={!!error}
+      helperText={error ? t(`auth.error.${error}`) : ""}
       size="small"
       type="password"
       name="password"
