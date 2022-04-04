@@ -21,6 +21,10 @@
   transform: translateX(-110%);
 }
 
+.loader {
+  margin-top: 16px;
+}
+
 .topicsList {
   max-height: 60vh;
   overflow-y: auto;

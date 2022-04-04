@@ -8,11 +8,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
-      const dark = cookies.get("dark") === "true";
-      res.json({ dark });
+      const hide = cookies.get("hide_arrows") === "true";
+      res.json({ hide });
     },
-    POST: async (req: NextApiRequest, res: NextApiResponse) => {
-      cookies.set("dark", req.body.dark.toString());
+    PUT: async (req: NextApiRequest, res: NextApiResponse) => {
+      cookies.set("hide_arrows", req.body.hide.toString());
       res.json({ updated: true });
     },
   };

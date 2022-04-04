@@ -14,7 +14,7 @@ type HeaderProps = {
 
 export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
   useEffect(() => {
-    request("color", "", "get").then(({ dark }) => {
+    request("config", "color", "get").then(({ dark }) => {
       if (!dark) return;
       document.documentElement.classList.add("dark");
       setDarkMode(true);
@@ -26,7 +26,7 @@ export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
     document.documentElement.classList.toggle("dark");
     setDarkMode(newMode);
 
-    void request("color", "", "post", { dark: newMode });
+    void request("config", "color", "put", { dark: newMode });
   };
 
   return (

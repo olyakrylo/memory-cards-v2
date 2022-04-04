@@ -4,7 +4,7 @@ export type Paths = {
   users: UsersAPI;
   topics: TopicsAPI;
   cards: CardsAPI;
-  color: ColorAPI;
+  config: ConfigAPI;
 };
 
 export type UsersAPI = {
@@ -113,13 +113,24 @@ export type CardsAPI = {
   };
 };
 
-export type ColorAPI = {
-  "": {
+export type ConfigAPI = {
+  color: {
     get: {
+      params: {};
       result: { dark: boolean };
     };
-    post: {
+    put: {
       params: { dark: boolean };
+      result: UpdatedResult;
+    };
+  };
+  arrows: {
+    get: {
+      params: {};
+      result: { hide: boolean };
+    };
+    put: {
+      params: { hide: boolean };
       result: UpdatedResult;
     };
   };

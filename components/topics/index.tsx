@@ -87,7 +87,7 @@ export const Topics = ({
   return (
     <div className={styles.container}>
       <div className={styles.content} aria-hidden={hidden}>
-        {loading && <CircularProgress size={24} />}
+        {loading && <CircularProgress className={styles.loader} size={24} />}
 
         {!loading && (
           <div className={styles.topicsList}>

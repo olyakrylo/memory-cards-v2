@@ -46,7 +46,7 @@ export const Cards = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<Card[]>([]);
   const [inverted, setInverted] = useState<boolean>(false);
-  const [showArrows, setShowArrows] = useState<boolean>(true);
+  const [hideArrows, setHideArrows] = useState<boolean>(false);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
   const [currCard, setCurrCard] = useState<number>(0);
 
@@ -100,6 +100,10 @@ export const Cards = ({
       setInverted(false);
       setLoading(false);
     });
+
+    request("config", "arrows", "get").then(({ hide }) => {
+      setHideArrows(hide);
+    });
   }, [currentTopic, i18n]);
 
   const toggleCard = (event: BaseSyntheticEvent) => {
@@ -152,6 +156,13 @@ export const Cards = ({
     } else {
       setShuffledCards(arrayShuffle(cards));
     }
+  };
+
+  const toggleArrows = () => {
+    void request("config", "arrows", "put", {
+      hide: !hideArrows,
+    });
+    setHideArrows(!hideArrows);
   };
 
   const isSelfTopic = (): boolean => {
@@ -235,7 +246,7 @@ export const Cards = ({
           className={styles.slider}
           options={{
             height: 400,
-            arrows: showArrows,
+            arrows: !hideArrows,
             classes: {
               arrow: `splide__arrow ${styles.arrow}`,
               pagination: `splide__pagination ${styles.pagination}`,
@@ -247,7 +258,7 @@ export const Cards = ({
             <CardItem
               key={card._id}
               card={card}
-              showArrows={showArrows}
+              showArrows={!hideArrows}
               canEditTopic={canEditTopic()}
               inverted={inverted}
               setLoading={setLoading}
@@ -263,12 +274,7 @@ export const Cards = ({
       {!loading && !!cards.length && (
         <FormGroup className={styles.arrowControl}>
           <FormControlLabel
-            control={
-              <Switch
-                onChange={() => setShowArrows(!showArrows)}
-                checked={showArrows}
-              />
-            }
+            control={<Switch onChange={toggleArrows} checked={!hideArrows} />}
             label={t("ui.show_arrows") as string}
           />
         </FormGroup>
