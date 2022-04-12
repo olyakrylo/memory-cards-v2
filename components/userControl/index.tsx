@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/router";
 import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
@@ -9,12 +9,14 @@ import { State, User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
 import { request } from "../../utils/request";
+import { setUser } from "../../redux/actions/main";
 
 type UserControlProps = {
   user?: User;
+  setUser: (user?: User) => void;
 };
 
-export const UserControl = ({ user }: UserControlProps) => {
+export const UserControl = ({ user, setUser }: UserControlProps) => {
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
 
   const router = useRouter();
@@ -23,6 +25,7 @@ export const UserControl = ({ user }: UserControlProps) => {
 
   const handleLogout = async () => {
     await request("users", "logout", "get");
+    setUser(undefined);
     await router.push("/auth");
   };
 
@@ -101,4 +104,8 @@ const mapStateToProps = (state: { main: State }) => {
   return { user: state.main.user };
 };
 
-export default connect(mapStateToProps)(UserControl);
+const mapDispatchToProps = {
+  setUser,
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(UserControl);

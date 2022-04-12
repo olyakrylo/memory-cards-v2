@@ -42,7 +42,7 @@ export type UsersAPI = {
   };
   logout: {
     get: {
-      result: {};
+      result: UpdatedResult;
     };
   };
 };
