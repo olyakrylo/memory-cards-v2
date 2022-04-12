@@ -2,7 +2,7 @@ import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetServerSideProps } from "next";
 
 import { request } from "../../utils/request";
 import { flip } from "../../utils/flip";
@@ -47,6 +47,7 @@ const Auth = () => {
   const handleAuth = async (): Promise<void> => {
     if (mode === "signIn") {
       await handleLogin();
+      return;
     }
     await handleSignUp();
   };

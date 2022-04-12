@@ -11,8 +11,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const cookies = new Cookies(req, res);
   const { SECRET, NO_CONNECTION } = process.env;
 
-  const catcher = (error: Error) => res.status(400).json({ error });
-
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
       if (NO_CONNECTION) {
@@ -40,7 +38,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const checked = user.password === password;
       if (checked) {
         setCookie(cookies, "id_token", SECRET as string, user._id);
-        res.send({ user });
+        res.json({ user });
+        return;
       } else {
         res.json({ error: { wrong_password: true } });
       }

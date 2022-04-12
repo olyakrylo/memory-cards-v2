@@ -6,7 +6,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
 
   const handleCase: ResponseFuncs = {
-    GET: async (req: NextApiRequest, res: NextApiResponse) => {
+    GET: (req: NextApiRequest, res: NextApiResponse) => {
       const cookies = new Cookies(req, res);
       cookies.set("id_token", undefined);
       res.json({});

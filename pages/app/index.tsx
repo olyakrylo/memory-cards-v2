@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 import { useEffect } from "react";
-import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import { GetServerSideProps } from "next";
 
 import { setUser } from "../../redux/actions/main";
 import { User } from "../../utils/types";

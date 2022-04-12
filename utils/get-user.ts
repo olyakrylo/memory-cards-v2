@@ -1,8 +1,4 @@
-import {
-  GetServerSidePropsContext,
-  NextApiRequest,
-  NextApiResponse,
-} from "next";
+import { GetServerSidePropsContext } from "next";
 import { User } from "./types";
 import Cookies from "cookies";
 import { getCookie } from "./cookies";
