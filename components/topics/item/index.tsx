@@ -7,13 +7,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import {
-  AppNotification,
-  State,
-  Topic,
-  UpdatedResult,
-  User,
-} from "../../../utils/types";
+import { AppNotification, State, Topic, User } from "../../../utils/types";
 import { setNotification, setTopics } from "../../../redux/actions/main";
 import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
@@ -21,7 +15,7 @@ import styles from "../Topics.module.css";
 type TopicItemProps = {
   topic: Topic;
   topics: Topic[];
-  user: User;
+  user?: User;
   currentTopic?: Topic;
   setTopics: (t: Topic[]) => void;
   setNotification: (n: AppNotification) => void;
@@ -49,8 +43,9 @@ const TopicItem = ({
   };
 
   const deleteTopic = async () => {
+    if (!user) return;
     const { updated } = await request("topics", "", "delete", {
-      user_id: user._id,
+      user_id: user?._id,
       topic_id: topic._id,
     });
     if (updated) {

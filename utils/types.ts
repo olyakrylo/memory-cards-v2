@@ -8,7 +8,7 @@ export type AppNotification = {
 };
 
 export type State = {
-  user?: User | null;
+  user?: User;
   currentTopic?: Topic;
   topics: Topic[];
   darkMode?: boolean;

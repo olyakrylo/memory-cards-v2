@@ -27,7 +27,7 @@ import { setNotification, setTopics } from "../../redux/actions/main";
 import CardItem from "./item";
 
 type CardProps = {
-  user: User;
+  user?: User;
   currentTopic?: Topic;
   topics: Topic[];
   setTopics: (t: Topic[]) => void;
@@ -55,7 +55,7 @@ export const Cards = ({
   const { i18n, t } = useTranslation();
 
   const canEditTopic = () => {
-    return currentTopic?.author_id === user._id;
+    return currentTopic?.author_id === user?._id;
   };
 
   useEffect(() => {
@@ -91,10 +91,7 @@ export const Cards = ({
       topic_id: currentTopic._id,
     }).then((cards) => {
       const indexFromUrl = parseInt((router.query.card as string) ?? "");
-      const indexFromStorage = parseInt(
-        sessionStorage.getItem(currentTopic._id.toString()) ?? ""
-      );
-      setCurrCard(indexFromUrl || indexFromStorage || 0);
+      setCurrCard(indexFromUrl || 0);
 
       setCards(cards);
       setInverted(false);
@@ -114,7 +111,10 @@ export const Cards = ({
   const handleMove = async (_: Splide, index: number): Promise<void> => {
     if (!currentTopic) return;
     setInverted(false);
-    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
+    await router.replace({
+      pathname: router.pathname,
+      query: { ...router.query, card: index.toString() },
+    });
   };
 
   const addCards = (newCards: Card[]): void => {
@@ -285,7 +285,7 @@ export const Cards = ({
 
 const mapStateToProps = (state: { main: State }) => {
   return {
-    user: state.main.user as User,
+    user: state.main.user,
     currentTopic: state.main.currentTopic,
     topics: state.main.topics,
   };

@@ -20,7 +20,7 @@ import PublicTopics from "./public";
 import TopicItem from "./item";
 
 type TopicsProps = {
-  user: User;
+  user?: User;
   setCurrentTopic: (topic: Topic) => void;
   topics: Topic[];
   setTopics: (topics: Topic[]) => void;
@@ -55,14 +55,15 @@ export const Topics = ({
   }, [router.query]);
 
   useEffect(() => {
+    if (!user) return;
     setLoading(true);
     request("topics", "by_user", "post", {
-      user_id: user._id,
+      user_id: user?._id,
     }).then((resTopics) => {
       setTopics(resTopics);
       setLoading(false);
     });
-  }, [user._id]);
+  }, [user?._id]);
 
   const toggleMenu = () => {
     setHidden(!hidden);
@@ -77,11 +78,11 @@ export const Topics = ({
   };
 
   const selfTopics = (): Topic[] => {
-    return topics.filter((t) => t.author_id === user._id);
+    return topics.filter((t) => t.author_id === user?._id);
   };
 
   const publicTopics = (): Topic[] => {
-    return topics.filter((t) => t.author_id !== user._id);
+    return topics.filter((t) => t.author_id !== user?._id);
   };
 
   return (
@@ -128,7 +129,7 @@ export const Topics = ({
 
 const mapStateToProps = (state: { main: State }) => {
   return {
-    user: state.main.user as User,
+    user: state.main.user,
     topics: state.main.topics,
   };
 };

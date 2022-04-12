@@ -1,30 +1,18 @@
 import { Button, TextField } from "@mui/material";
 import { useRouter } from "next/router";
-import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
+import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
 import { request } from "../../utils/request";
-import { State, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
-import { setUser } from "../../redux/actions/main";
+import { getUser } from "../../utils/get-user";
 
 type Mode = "signIn" | "signUp";
 
-type AuthProps = {
-  user?: User | null;
-  setUser: (u?: User | null) => void;
-};
-
-type FieldProps = {
-  value: string;
-  onChangeValue: (event: BaseSyntheticEvent) => void;
-  error: string;
-};
-
-const Auth = ({ user, setUser }: AuthProps) => {
+const Auth = () => {
   const router = useRouter();
 
   const [mode, setMode] = useState<Mode>("signIn");
@@ -36,19 +24,6 @@ const Auth = ({ user, setUser }: AuthProps) => {
   const content = useRef<HTMLDivElement>(null);
 
   const { t } = useTranslation();
-
-  useEffect(() => {
-    if (user) {
-      router.push({ pathname: "/app" });
-      return;
-    }
-    setUser(undefined);
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        router.push({ pathname: "/app" });
-      }
-    });
-  }, [user, setUser, router]);
 
   const handleLoginChange = (event: BaseSyntheticEvent): void => {
     const { value } = event.target;
@@ -67,6 +42,13 @@ const Auth = ({ user, setUser }: AuthProps) => {
   const validateInput = (value: string): boolean => {
     if (!value) return true;
     return /\w/.test(value) && !value.includes(" ");
+  };
+
+  const handleAuth = async (): Promise<void> => {
+    if (mode === "signIn") {
+      await handleLogin();
+    }
+    await handleSignUp();
   };
 
   const handleLogin = async () => {
@@ -93,16 +75,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
     setLoginError("");
     setPasswordError("");
 
-    let validated = true;
-    if (login.length < 3) {
-      setLoginError("short_login");
-      validated = false;
-    }
-    if (password.length < 9) {
-      setPasswordError("short_password");
-      validated = false;
-    }
-    if (!validated) return;
+    if (!validateData()) return;
 
     const { user, error } = await request("users", "create", "post", {
       login,
@@ -117,6 +90,18 @@ const Auth = ({ user, setUser }: AuthProps) => {
     }
   };
 
+  const validateData = (): boolean => {
+    if (login.length < 3) {
+      setLoginError("short_login");
+      return false;
+    }
+    if (password.length < 9) {
+      setPasswordError("short_password");
+      return false;
+    }
+    return true;
+  };
+
   const changeMode = (type: Mode) => {
     if (!content.current) return;
     setLoginError("");
@@ -124,6 +109,10 @@ const Auth = ({ user, setUser }: AuthProps) => {
     setLogin("");
     setPassword("");
     flip(content.current, 200, () => setMode(type));
+  };
+
+  const oppositeMode = (): Mode => {
+    return mode === "signIn" ? "signUp" : "signIn";
   };
 
   return (
@@ -134,95 +123,59 @@ const Auth = ({ user, setUser }: AuthProps) => {
         <p className={styles.title}>{t(`auth.${mode}`)}</p>
 
         <div className={styles.form}>
-          <Login
+          <TextField
+            className={styles.input}
+            label={t("auth.placeholder.login").toLowerCase()}
             value={login}
-            onChangeValue={handleLoginChange}
-            error={loginError}
+            onChange={handleLoginChange}
+            error={!!loginError}
+            helperText={loginError ? t(`auth.error.${loginError}`) : ""}
+            size="small"
+            name="login"
           />
-          <Password
+          <TextField
+            className={styles.input}
+            label={t("auth.placeholder.password").toLowerCase()}
             value={password}
-            onChangeValue={handlePasswordChange}
-            error={passwordError}
+            onChange={handlePasswordChange}
+            error={!!passwordError}
+            helperText={passwordError ? t(`auth.error.${passwordError}`) : ""}
+            size="small"
+            type="password"
+            name="password"
           />
 
-          {mode === "signIn" && (
-            <div className={styles.buttonsContainer}>
-              <Button
-                variant="contained"
-                onClick={handleLogin}
-                disabled={!login || !password}
-              >
-                {t("auth.button.signIn")}
-              </Button>
-              {t("ui.or")}
-              <Button type="button" onClick={() => changeMode("signUp")}>
-                {t("auth.button.signUp")}
-              </Button>
-            </div>
-          )}
-
-          {mode === "signUp" && (
-            <div className={styles.buttonsContainer}>
-              <Button
-                variant="contained"
-                onClick={handleSignUp}
-                disabled={!login || !password}
-              >
-                {t("auth.button.signUp")}
-              </Button>
-              {t("ui.or")}
-              <Button type="button" onClick={() => changeMode("signIn")}>
-                {t("auth.button.signIn")}
-              </Button>
-            </div>
-          )}
+          <div className={styles.buttonsContainer}>
+            <Button
+              variant="contained"
+              onClick={handleAuth}
+              disabled={!login || !password}
+            >
+              {t(`auth.button.${mode}`)}
+            </Button>
+            {t("ui.or")}
+            <Button type="button" onClick={() => changeMode(oppositeMode())}>
+              {t(`auth.button.${oppositeMode()}`)}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-const Login = ({ value, onChangeValue, error }: FieldProps) => {
-  const { t } = useTranslation();
-  return (
-    <TextField
-      className={styles.input}
-      label={t("auth.placeholder.login").toLowerCase()}
-      value={value}
-      onChange={onChangeValue}
-      error={!!error}
-      helperText={error ? t(`auth.error.${error}`) : ""}
-      size="small"
-      name="login"
-    />
-  );
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const user = await getUser(context);
+  if (user) {
+    return {
+      redirect: {
+        destination: "/app",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: {} };
 };
 
-const Password = ({ value, onChangeValue, error }: FieldProps) => {
-  const { t } = useTranslation();
-  return (
-    <TextField
-      className={styles.input}
-      label={t("auth.placeholder.password").toLowerCase()}
-      value={value}
-      onChange={onChangeValue}
-      error={!!error}
-      helperText={error ? t(`auth.error.${error}`) : ""}
-      size="small"
-      type="password"
-      name="password"
-    />
-  );
-};
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-  };
-};
-
-const mapDispatchToProps = {
-  setUser,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default Auth;

@@ -1,48 +1,25 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { CircularProgress } from "@mui/material";
+import { useEffect } from "react";
+import { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
 
-import { request } from "../../utils/request";
 import { setUser } from "../../redux/actions/main";
-import { State, User } from "../../utils/types";
+import { User } from "../../utils/types";
 import styles from "./App.module.css";
 import Header from "../../components/header";
 import Topics from "../../components/topics";
 import Cards from "../../components/cards";
 
+import { getUser } from "../../utils/get-user";
+
 type AppProps = {
-  user?: User | null;
+  user: User;
   setUser: (user?: User) => void;
 };
 
 const App = ({ user, setUser }: AppProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
-
   useEffect(() => {
-    if (user === null) {
-      void router.push("/auth");
-      return;
-    }
-    if (user) {
-      setLoading(false);
-      return;
-    }
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        setUser(user);
-      } else {
-        void router.push("/auth");
-        return;
-      }
-      setLoading(false);
-    });
-  }, [user, setUser, router, setLoading]);
-
-  if (loading || !user) {
-    return <CircularProgress size={50} />;
-  }
+    setUser(user);
+  }, []);
 
   return (
     <div className={`${styles.container}`}>
@@ -57,14 +34,22 @@ const App = ({ user, setUser }: AppProps) => {
   );
 };
 
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-  };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const user = await getUser(context);
+  if (!user) {
+    return {
+      redirect: {
+        destination: "/auth",
+        permanent: false,
+      },
+    };
+  }
+
+  return { props: { user } };
 };
 
 const mapDispatchToProps = {
   setUser,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(undefined, mapDispatchToProps)(App);
