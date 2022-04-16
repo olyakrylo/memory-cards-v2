@@ -8,7 +8,7 @@ export const setCookie = (
   value?: string
 ): void => {
   const data = value ? encryptCookie(value.toString(), secret) : undefined;
-  cookies.set(name, data, { maxAge: 24 * 60 * 60 * 60 * 1000 });
+  cookies.set(name, data, { maxAge: 7 * 24 * 60 * 60 * 1000 });
 };
 
 export const getCookie = (

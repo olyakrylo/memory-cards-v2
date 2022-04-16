@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
@@ -8,12 +7,12 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import { State, User } from "../../utils/types";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
-import { setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
+import { setUser } from "../../redux/actions/main";
 
 type UserControlProps = {
   user?: User | null;
-  setUser: (v: User | undefined | null) => void;
+  setUser: (user?: User | null) => void;
 };
 
 export const UserControl = ({ user, setUser }: UserControlProps) => {
@@ -101,6 +100,8 @@ const mapStateToProps = (state: { main: State }) => {
   return { user: state.main.user };
 };
 
-const mapDispatchToProps = { setUser };
+const mapDispatchToProps = {
+  setUser,
+};
 
 export default connect(mapStateToProps, mapDispatchToProps)(UserControl);

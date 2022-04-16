@@ -13,12 +13,13 @@ import Cards from "../../components/cards";
 
 type AppProps = {
   user?: User | null;
-  setUser: (user?: User) => void;
+  setUser: (user?: User | null) => void;
 };
 
 const App = ({ user, setUser }: AppProps) => {
-  const [loading, setLoading] = useState<boolean>(true);
   const router = useRouter();
+
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
     if (user === null) {

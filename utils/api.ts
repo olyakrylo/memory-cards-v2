@@ -10,6 +10,7 @@ export type Paths = {
 export type UsersAPI = {
   "": {
     get: {
+      params: {};
       result: { user?: User };
     };
     post: {
@@ -42,7 +43,7 @@ export type UsersAPI = {
   };
   logout: {
     get: {
-      result: {};
+      result: UpdatedResult;
     };
   };
 };
