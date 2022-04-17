@@ -17,7 +17,8 @@
     "link_copied": "Link copied!",
     "topic_deleted": "Topic deleted",
     "share": "Share",
-    "delete": "Delete"
+    "delete": "Delete",
+    "send": "Send"
   },
   "add": {
     "topic_title": "Title",
@@ -44,12 +45,20 @@
       "login": "Login",
       "password": "Password"
     },
+    "recovery": {
+      "forgot": "Forgot password?",
+      "title": "Password recovery",
+      "message": "We will send you an email with your credentials",
+      "message_sent": "The email has been sent",
+      "sending_problem": "There was a problem while sending an email. Try again later"
+    },
     "error": {
       "user_exists": "This username is already occupied",
       "short_login": "At least 3 characters",
       "short_password": "At least 8 characters",
       "user_not_found": "User is not found",
-      "wrong_password": "Wrong password"
+      "wrong_password": "Wrong password",
+      "email": "Wrong format"
     }
   }
 }

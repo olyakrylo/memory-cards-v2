@@ -1,7 +1,7 @@
 import { Card, Topic, User } from "./utils/types";
 
 export const dataExample: { user: User; topics: Topic[]; cards: Card[] } = {
-  user: { _id: "test_user", login: "test user", password: "" },
+  user: { _id: "test_user", login: "test user", email: "name@example.com" },
   topics: [
     {
       _id: "test_topic_1",

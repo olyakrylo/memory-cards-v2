@@ -1,16 +1,17 @@
 import * as mongoose from "mongoose";
 
-const { MONGODB_URI } = process.env;
+import { config } from "./config";
 
 export const connect = async () => {
   const conn = await mongoose
-    .connect(MONGODB_URI as string)
+    .connect(config.db_uri)
     .catch((err) => console.log(err));
   console.log("Mongoose Connection Established");
 
   const UserSchema = new mongoose.Schema({
     login: String,
     password: String,
+    email: String,
   });
 
   const TopicSchema = new mongoose.Schema({

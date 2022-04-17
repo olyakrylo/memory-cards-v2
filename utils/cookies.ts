@@ -7,7 +7,7 @@ export const setCookie = (
   secret: string,
   value?: string
 ): void => {
-  const data = value ? encryptCookie(value.toString(), secret) : undefined;
+  const data = value ? encryptString(value.toString(), secret) : undefined;
   cookies.set(name, data, { maxAge: 7 * 24 * 60 * 60 * 1000 });
 };
 
@@ -17,12 +17,12 @@ export const getCookie = (
   secret: string
 ): string | undefined => {
   const value = cookies.get(name);
-  return value ? decryptCookie(value, secret) : undefined;
+  return value ? decryptString(value, secret) : undefined;
 };
 
 const algorithm = "AES-256-CBC";
 
-export function encryptCookie(str: string, key: string) {
+export function encryptString(str: string, key: string) {
   const iv = crypto.randomBytes(16);
   const cipher = crypto.createCipheriv(algorithm, key, iv);
   const encrypted = [
@@ -35,7 +35,7 @@ export function encryptCookie(str: string, key: string) {
   return encrypted.join("");
 }
 
-export function decryptCookie(str: string, key: string) {
+export function decryptString(str: string, key: string) {
   const encryptedArray = str.split(":");
 
   const iv = Buffer.from(encryptedArray[0], "hex");

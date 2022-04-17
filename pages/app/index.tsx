@@ -1,5 +1,5 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { CircularProgress } from "@mui/material";
 
@@ -41,19 +41,21 @@ const App = ({ user, setUser }: AppProps) => {
     });
   }, [user, setUser, router, setLoading]);
 
-  if (loading || !user) {
-    return <CircularProgress size={50} />;
-  }
-
   return (
     <div className={`${styles.container}`}>
       <Header />
 
-      <Topics />
+      {loading && <CircularProgress className={styles.loader} size={50} />}
 
-      <div className={styles.content}>
-        <Cards />
-      </div>
+      {!loading && (
+        <Fragment>
+          <Topics />
+
+          <div className={styles.content}>
+            <Cards />
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 };

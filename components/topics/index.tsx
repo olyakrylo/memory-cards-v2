@@ -57,9 +57,7 @@ export const Topics = ({
   useEffect(() => {
     if (!user) return;
     setLoading(true);
-    request("topics", "by_user", "post", {
-      user_id: user?._id,
-    }).then((resTopics) => {
+    request("topics", "by_user", "get").then((resTopics) => {
       setTopics(resTopics);
       setLoading(false);
     });

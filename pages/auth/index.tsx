@@ -10,6 +10,9 @@ import styles from "./Auth.module.css";
 import Header from "../../components/header";
 import { State, User } from "../../utils/types";
 import { setUser } from "../../redux/actions/main";
+import { encryptString } from "../../utils/cookies";
+import PasswordRecovery from "../../components/passwordRecovery";
+import { config } from "../../utils/config";
 
 type Mode = "signIn" | "signUp";
 
@@ -26,6 +29,8 @@ const Auth = ({ user, setUser }: AuthProps) => {
   const [password, setPassword] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
 
   const content = useRef<HTMLDivElement>(null);
 
@@ -58,6 +63,10 @@ const Auth = ({ user, setUser }: AuthProps) => {
     }
   };
 
+  const handleEmailChange = (event: BaseSyntheticEvent): void => {
+    setEmail(event.target.value);
+  };
+
   const validateInput = (value: string): boolean => {
     if (!value) return true;
     return /\w/.test(value) && !value.includes(" ");
@@ -76,7 +85,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
     setPasswordError("");
     const { user, error } = await request("users", "", "post", {
       login,
-      password,
+      password: encryptedPassword(),
     });
     if (error?.no_user) {
       setLoginError("user_not_found");
@@ -99,7 +108,8 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
     const { user, error } = await request("users", "create", "post", {
       login,
-      password,
+      password: encryptedPassword(),
+      email,
     });
     if (error?.user_exists) {
       setLoginError("user_exists");
@@ -111,15 +121,25 @@ const Auth = ({ user, setUser }: AuthProps) => {
   };
 
   const validateData = (): boolean => {
+    let result = true;
     if (login.length < 3) {
       setLoginError("short_login");
-      return false;
+      result = false;
     }
     if (password.length < 9) {
       setPasswordError("short_password");
-      return false;
+      result = false;
     }
-    return true;
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setEmailError("email");
+      result = false;
+    }
+    return result;
+  };
+
+  const encryptedPassword = (): string => {
+    const secretKey = process.env.NEXT_PUBLIC_SECRET as string;
+    return encryptString(password, secretKey);
   };
 
   const changeMode = (type: Mode) => {
@@ -151,8 +171,20 @@ const Auth = ({ user, setUser }: AuthProps) => {
             error={!!loginError}
             helperText={loginError ? t(`auth.error.${loginError}`) : ""}
             size="small"
-            name="login"
           />
+          {mode === "signUp" && (
+            <TextField
+              className={styles.input}
+              label="email"
+              value={email}
+              onChange={handleEmailChange}
+              error={!!emailError}
+              helperText={emailError ? t(`auth.error.${emailError}`) : ""}
+              size="small"
+              type="email"
+              name="email"
+            />
+          )}
           <TextField
             className={styles.input}
             label={t("auth.placeholder.password").toLowerCase()}
@@ -162,8 +194,9 @@ const Auth = ({ user, setUser }: AuthProps) => {
             helperText={passwordError ? t(`auth.error.${passwordError}`) : ""}
             size="small"
             type="password"
-            name="password"
           />
+
+          {mode === "signIn" && <PasswordRecovery />}
 
           <div className={styles.buttonsContainer}>
             <Button

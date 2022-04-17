@@ -19,7 +19,7 @@ export type UsersAPI = {
         password: string;
       };
       result: {
-        user?: string;
+        user?: User;
         error?: {
           no_user?: boolean;
           wrong_password?: boolean;
@@ -32,6 +32,7 @@ export type UsersAPI = {
       params: {
         login: string;
         password: string;
+        email: string;
       };
       result: {
         user?: User;
@@ -44,6 +45,15 @@ export type UsersAPI = {
   logout: {
     get: {
       result: UpdatedResult;
+    };
+  };
+  recovery: {
+    post: {
+      params: { email: string };
+      result: {
+        no_user?: boolean;
+        sent?: boolean;
+      };
     };
   };
 };
@@ -81,6 +91,10 @@ export type TopicsAPI = {
     };
   };
   by_user: {
+    get: {
+      params: {};
+      result: Topic[];
+    };
     post: {
       params: { user_id: string };
       result: Topic[];
