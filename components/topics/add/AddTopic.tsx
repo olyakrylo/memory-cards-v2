@@ -1,4 +1,3 @@
-import { connect } from "react-redux";
 import {
   Button,
   Checkbox,
@@ -12,11 +11,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import AddBoxRoundedIcon from "@mui/icons-material/AddBoxRounded";
+import { AddBoxRounded } from "@mui/icons-material";
 import { BaseSyntheticEvent, useState } from "react";
 
 import styles from "../Topics.module.css";
-import { State, Topic, User } from "../../../utils/types";
+import { Topic, User } from "../../../utils/types";
 import { request } from "../../../utils/request";
 
 type AddTopicProps = {
@@ -24,7 +23,7 @@ type AddTopicProps = {
   addTopic: (topic: Topic) => void;
 };
 
-const AddTopic = ({ user, addTopic }: AddTopicProps) => {
+export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
   const [dialogOpened, setDialogOpened] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(false);
@@ -71,7 +70,7 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
         color="primary"
         onClick={() => setDialogOpened(true)}
       >
-        <AddBoxRoundedIcon />
+        <AddBoxRounded />
         <Typography className={styles.addButton__title}>
           {t("add.create_topic")}
         </Typography>
@@ -106,11 +105,3 @@ const AddTopic = ({ user, addTopic }: AddTopicProps) => {
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user as User,
-  };
-};
-
-export default connect(mapStateToProps)(AddTopic);

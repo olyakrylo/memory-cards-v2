@@ -1,14 +1,15 @@
 import { useRouter } from "next/router";
 import { BaseSyntheticEvent, Fragment, useEffect, useState } from "react";
-import { Button, CircularProgress, TextField, Typography } from "@mui/material";
+import { Button, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 
 import { User } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./Recovery.module.css";
 import { validateInput } from "../../utils/validate-auth-input";
 import { encryptString } from "../../utils/cookies";
-import { useTranslation } from "react-i18next";
+import AuthInput from "../../components/authInput";
 
 const REDIRECT_TIME = 5; // seconds
 
@@ -35,15 +36,15 @@ const Recovery = () => {
     });
   }, [router.query]);
 
-  const handlePassword = (event: BaseSyntheticEvent, first?: boolean) => {
+  const handlePassword = (event: BaseSyntheticEvent, repeat?: boolean) => {
     const { value } = event.target;
     setError("");
     if (!validateInput(value)) return;
 
-    if (first) {
-      setFirstPass(value);
-    } else {
+    if (repeat) {
       setSecondPass(value);
+    } else {
+      setFirstPass(value);
     }
   };
 
@@ -126,17 +127,18 @@ const Recovery = () => {
         <Typography variant="subtitle2">
           {t("auth.recovery.set_new_pass")}:
         </Typography>
-        <TextField
-          type="password"
+
+        <AuthInput
           label={t("auth.placeholder.password")}
-          size="small"
-          onChange={(e) => handlePassword(e, true)}
-        />
-        <TextField
+          value={firstPass}
+          changeHandler={handlePassword}
           type="password"
+        />
+        <AuthInput
           label={t("auth.placeholder.repeat")}
-          size="small"
-          onChange={handlePassword}
+          value={secondPass}
+          changeHandler={(e) => handlePassword(e, true)}
+          type="password"
         />
 
         {error && (

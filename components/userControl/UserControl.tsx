@@ -1,14 +1,12 @@
-import { connect } from "react-redux";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
+import { Settings } from "@mui/icons-material";
 
-import { State, User } from "../../utils/types";
+import { User } from "../../utils/types";
+import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
-import { request } from "../../utils/request";
-import { setUser } from "../../redux/actions/main";
 
 type UserControlProps = {
   user?: User | null;
@@ -37,7 +35,7 @@ export const UserControl = ({ user, setUser }: UserControlProps) => {
     <div className={styles.container}>
       {user?.login}
       <IconButton className={styles.settings} onClick={openUserMenu}>
-        <SettingsIcon />
+        <Settings />
       </IconButton>
 
       <Menu
@@ -95,13 +93,3 @@ const LanguageMenu = () => {
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return { user: state.main.user };
-};
-
-const mapDispatchToProps = {
-  setUser,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(UserControl);

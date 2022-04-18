@@ -1,18 +1,20 @@
-import { Button, TextField } from "@mui/material";
-import { useRouter } from "next/router";
+import { connect } from "react-redux";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { Button } from "@mui/material";
+import { useRouter } from "next/router";
 
+import { State } from "../../utils/types";
+import { setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
 import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
-import { State, User } from "../../utils/types";
-import { setUser } from "../../redux/actions/main";
+import { User } from "../../utils/types";
 import { encryptString } from "../../utils/cookies";
 import PasswordRecovery from "../../components/passwordRecovery";
 import { validateInput } from "../../utils/validate-auth-input";
+import AuthInput from "../../components/authInput";
 
 type Mode = "signIn" | "signUp";
 
@@ -38,13 +40,13 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
   useEffect(() => {
     if (user) {
-      router.push({ pathname: "/app" });
+      void router.push({ pathname: "/app" });
       return;
     }
     setUser(undefined);
     request("users", "", "get").then(({ user }) => {
       if (user) {
-        router.push({ pathname: "/app" });
+        void router.push({ pathname: "/app" });
       }
     });
   }, [user, setUser, router]);
@@ -57,7 +59,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
   };
 
   const handlePasswordChange = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target;
+    const { value } = event.target as { value: string };
     if (validateInput(value)) {
       setPassword(value);
     }
@@ -158,36 +160,28 @@ const Auth = ({ user, setUser }: AuthProps) => {
         <p className={styles.title}>{t(`auth.${mode}`)}</p>
 
         <div className={styles.form}>
-          <TextField
-            className={styles.input}
+          <AuthInput
             label={t("auth.placeholder.login").toLowerCase()}
             value={login}
-            onChange={handleLoginChange}
-            error={!!loginError}
-            helperText={loginError ? t(`auth.error.${loginError}`) : ""}
-            size="small"
+            changeHandler={handleLoginChange}
+            error={loginError ? t(`auth.error.${loginError}`) : ""}
+            type="text"
           />
           {mode === "signUp" && (
-            <TextField
-              className={styles.input}
+            <AuthInput
               label="email"
               value={email}
-              onChange={handleEmailChange}
-              error={!!emailError}
-              helperText={emailError ? t(`auth.error.${emailError}`) : ""}
-              size="small"
+              changeHandler={handleEmailChange}
+              error={emailError ? t(`auth.error.${emailError}`) : ""}
               type="email"
               name="email"
             />
           )}
-          <TextField
-            className={styles.input}
+          <AuthInput
             label={t("auth.placeholder.password").toLowerCase()}
             value={password}
-            onChange={handlePasswordChange}
-            error={!!passwordError}
-            helperText={passwordError ? t(`auth.error.${passwordError}`) : ""}
-            size="small"
+            changeHandler={handlePasswordChange}
+            error={passwordError ? t(`auth.error.${passwordError}`) : ""}
             type="password"
           />
 

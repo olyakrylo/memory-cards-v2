@@ -1,5 +1,5 @@
-import { connect } from "react-redux";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   Button,
   Dialog,
@@ -9,9 +9,8 @@ import {
   TextField,
   Tooltip,
 } from "@mui/material";
-import { useTranslation } from "react-i18next";
 
-import { Card, State, Topic } from "../../../utils/types";
+import { Card, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
 
 type CardControlProps = {
@@ -148,11 +147,3 @@ export const CardControl = ({
     </Dialog>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    currentTopic: state.main.currentTopic,
-  };
-};
-
-export default connect(mapStateToProps)(CardControl);

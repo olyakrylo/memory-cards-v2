@@ -1,7 +1,8 @@
-import { connect } from "react-redux";
-import ArrowCircleDownRoundedIcon from "@mui/icons-material/ArrowCircleDownRounded";
-import ShuffleRoundedIcon from "@mui/icons-material/ShuffleRounded";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { useRouter } from "next/router";
+import React, { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
+import { Splide } from "@splidejs/splide";
+import { Splide as ReactSplide } from "@splidejs/react-splide";
+import { useTranslation } from "react-i18next";
 import {
   CircularProgress,
   FormControlLabel,
@@ -11,19 +12,18 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
-import { Splide } from "@splidejs/splide";
-import { Splide as ReactSplide } from "@splidejs/react-splide";
-import { useTranslation } from "react-i18next";
+import {
+  ShuffleRounded,
+  AddRounded,
+  ArrowCircleDownRounded,
+} from "@mui/icons-material";
 import arrayShuffle from "array-shuffle";
-import { useRouter } from "next/router";
 
-import { AppNotification, Card, State, Topic, User } from "../../utils/types";
+import { AppNotification, Card, Topic, User } from "../../utils/types";
 import { flip } from "../../utils/flip";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import AddCard from "./add";
-import { setNotification, setTopics } from "../../redux/actions/main";
 import CardItem from "./item";
 
 type CardProps = {
@@ -199,7 +199,7 @@ export const Cards = ({
             aria-checked={!!shuffledCards}
             aria-hidden={!cards.length}
           >
-            <ShuffleRoundedIcon />
+            <ShuffleRounded />
           </IconButton>
 
           <div className={styles.control__topic}>
@@ -207,7 +207,7 @@ export const Cards = ({
             {currentTopic && !isSelfTopic() && (
               <Tooltip title={t("add.save_topic") ?? ""}>
                 <IconButton onClick={addCurrentTopic}>
-                  <AddRoundedIcon />
+                  <AddRounded />
                 </IconButton>
               </Tooltip>
             )}
@@ -227,7 +227,7 @@ export const Cards = ({
 
       {!loading && !currentTopic && (
         <div className={styles.tip}>
-          <ArrowCircleDownRoundedIcon className={styles.tip__icon_topics} />
+          <ArrowCircleDownRounded className={styles.tip__icon_topics} />
           {t("ui.choose_topic")}
         </div>
       )}
@@ -235,7 +235,7 @@ export const Cards = ({
       {!loading && !!currentTopic && canEditTopic() && !cards.length && (
         <div className={styles.tip}>
           {t("ui.add_first_card")}{" "}
-          <ArrowCircleDownRoundedIcon className={styles.tip__icon_add} />
+          <ArrowCircleDownRounded className={styles.tip__icon_add} />
         </div>
       )}
 
@@ -282,18 +282,3 @@ export const Cards = ({
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-    currentTopic: state.main.currentTopic,
-    topics: state.main.topics,
-  };
-};
-
-const mapDispatchToProps = {
-  setTopics,
-  setNotification,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Cards);

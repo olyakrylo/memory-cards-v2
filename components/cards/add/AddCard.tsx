@@ -1,19 +1,23 @@
 import { useState } from "react";
-import AddRoundedIcon from "@mui/icons-material/AddRounded";
+import { AddRounded } from "@mui/icons-material";
 import { IconButton } from "@mui/material";
 
-import styles from "../Cards.module.css";
-import CardControl from "../control";
 import { request } from "../../../utils/request";
+import styles from "../Cards.module.css";
 import { Card, Topic } from "../../../utils/types";
+import CardControl from "../control";
 
-export type AddCardProps = {
+type AddCardProps = {
   currentTopic: Topic;
   setLoading: (v: boolean) => void;
   addCards: (cards: Card[]) => void;
 };
 
-const AddCard = ({ currentTopic, setLoading, addCards }: AddCardProps) => {
+export const AddCard = ({
+  currentTopic,
+  setLoading,
+  addCards,
+}: AddCardProps) => {
   const [newCardOpen, setNewCardOpen] = useState<boolean>(false);
 
   const openNewCardDialog = (e: any) => {
@@ -40,11 +44,9 @@ const AddCard = ({ currentTopic, setLoading, addCards }: AddCardProps) => {
 
   return (
     <IconButton className={styles.control__add} onClick={openNewCardDialog}>
-      <AddRoundedIcon />
+      <AddRounded />
 
       <CardControl open={newCardOpen} onClose={onCloseNewCardDialog} />
     </IconButton>
   );
 };
-
-export default AddCard;

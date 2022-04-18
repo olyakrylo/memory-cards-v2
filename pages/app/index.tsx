@@ -1,14 +1,15 @@
 import { connect } from "react-redux";
-import { Fragment, useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Fragment, useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 
-import { request } from "../../utils/request";
 import { setUser } from "../../redux/actions/main";
-import { State, User } from "../../utils/types";
+import { State } from "../../utils/types";
+import { User } from "../../utils/types";
+import { request } from "../../utils/request";
 import styles from "./App.module.css";
-import Header from "../../components/header";
 import Topics from "../../components/topics";
+import Header from "../../components/header";
 import Cards from "../../components/cards";
 
 type AppProps = {

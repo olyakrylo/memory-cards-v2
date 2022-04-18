@@ -1,23 +1,21 @@
-import { connect } from "react-redux";
+import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
 import {
   CircularProgress,
   Divider,
   IconButton,
   Typography,
 } from "@mui/material";
-import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
-import { useTranslation } from "react-i18next";
+import { MenuRounded } from "@mui/icons-material";
 
-import { State, Topic, User } from "../../utils/types";
-import { setCurrentTopic, setTopics } from "../../redux/actions/main";
+import { Topic, User } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./Topics.module.css";
-import UserControl from "../userControl";
+import TopicItem from "./item";
 import AddTopic from "./add";
 import PublicTopics from "./public";
-import TopicItem from "./item";
+import UserControl from "../userControl";
 
 type TopicsProps = {
   user?: User | null;
@@ -116,7 +114,7 @@ export const Topics = ({
 
       <div className={styles.control}>
         <IconButton className={styles.control__toggle} onClick={toggleMenu}>
-          <MenuRoundedIcon />
+          <MenuRounded />
         </IconButton>
 
         <UserControl />
@@ -124,17 +122,3 @@ export const Topics = ({
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-    topics: state.main.topics,
-  };
-};
-
-const mapDispatchToProps = {
-  setCurrentTopic,
-  setTopics,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Topics);

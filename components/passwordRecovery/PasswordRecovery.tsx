@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, Fragment, useState } from "react";
 import {
   Button,
@@ -9,18 +10,18 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import styles from "./PasswordRecovery.module.css";
-import { useTranslation } from "react-i18next";
-import { request } from "../../utils/request";
-import { setNotification } from "../../redux/actions/main";
-import { connect } from "react-redux";
+
 import { AppNotification } from "../../utils/types";
+import { request } from "../../utils/request";
+import styles from "./PasswordRecovery.module.css";
 
 type PasswordRecoveryProps = {
   setNotification: (n: AppNotification) => void;
 };
 
-const PasswordRecovery = ({ setNotification }: PasswordRecoveryProps) => {
+export const PasswordRecovery = ({
+  setNotification,
+}: PasswordRecoveryProps) => {
   const { t } = useTranslation();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -117,9 +118,3 @@ const PasswordRecovery = ({ setNotification }: PasswordRecoveryProps) => {
     </Fragment>
   );
 };
-
-const mapDispatchToProps = {
-  setNotification,
-};
-
-export default connect(undefined, mapDispatchToProps)(PasswordRecovery);

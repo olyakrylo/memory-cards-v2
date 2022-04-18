@@ -1,13 +1,12 @@
-import { IconButton, Tooltip, Typography } from "@mui/material";
-import DeleteTwoToneIcon from "@mui/icons-material/DeleteTwoTone";
-import { BaseSyntheticEvent, SetStateAction, Dispatch } from "react";
-import ShareIcon from "@mui/icons-material/Share";
-import { SplideSlide } from "@splidejs/react-splide";
+import { BaseSyntheticEvent, Dispatch, SetStateAction } from "react";
 import { useTranslation } from "react-i18next";
+import { SplideSlide } from "@splidejs/react-splide";
+import { IconButton, Tooltip, Typography } from "@mui/material";
+import { DeleteTwoTone, Share } from "@mui/icons-material";
 
-import EditCard from "./edit";
 import { Card } from "../../../utils/types";
 import styles from "./CardItem.module.css";
+import EditCard from "./edit";
 
 type CardItemProps = {
   card: Card;
@@ -60,7 +59,7 @@ export const CardItem = ({
             color="secondary"
             onClick={handleDelete}
           >
-            <DeleteTwoToneIcon />
+            <DeleteTwoTone />
           </IconButton>
         )}
 
@@ -75,7 +74,7 @@ export const CardItem = ({
         {card._id && (
           <Tooltip title={t("ui.share") ?? ""}>
             <IconButton className={styles.card__share} onClick={handleShare}>
-              <ShareIcon />
+              <Share />
             </IconButton>
           </Tooltip>
         )}
@@ -83,5 +82,3 @@ export const CardItem = ({
     </SplideSlide>
   );
 };
-
-export default CardItem;

@@ -1,11 +1,11 @@
 import { useState } from "react";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { IconButton } from "@mui/material";
+import { EditRounded } from "@mui/icons-material";
 
 import { Card } from "../../../../utils/types";
-import styles from "../CardItem.module.css";
-import CardControl from "../../control";
 import { request } from "../../../../utils/request";
+import styles from "../CardItem.module.css";
+import { CardControl } from "../../control/CardControl";
 
 type EditCardProps = {
   card: Card;
@@ -13,7 +13,7 @@ type EditCardProps = {
   updateCard: (card: Card) => void;
 };
 
-const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
+export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
   const [editCardOpen, setEditCardOpen] = useState<boolean>(false);
 
   const openEditCardDialog = (e: any) => {
@@ -46,7 +46,7 @@ const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
       color="primary"
       onClick={openEditCardDialog}
     >
-      <EditRoundedIcon />
+      <EditRounded />
 
       <CardControl
         card={card}
@@ -56,5 +56,3 @@ const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
     </IconButton>
   );
 };
-
-export default EditCard;
