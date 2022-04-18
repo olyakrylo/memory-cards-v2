@@ -52,10 +52,10 @@
     "recovery": {
       "forgot": "Forgot password?",
       "title": "Password recovery",
-      "message": "We will send you an email with your credentials",
+      "message": "We will send you an email with password reset link",
       "message_sent": "The email has been sent",
       "sending_problem": "There was a problem while sending an email. Try again later",
-      "set_new_pass": "Set new password",
+      "set_new_pass": "Enter new password",
       "update": "Update password",
       "success": "Password changed successfully",
       "to_auth": "Go to authorization"
