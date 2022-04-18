@@ -1,0 +1,19 @@
+.content {
+  margin: auto;
+  display: grid;
+  grid-gap: 16px;
+  width: 350px;
+  max-width: 100%;
+  background: #fff;
+  padding: 16px;
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.loader {
+  margin: auto;
+}
+
+.link:hover {
+  text-decoration: underline;
+}

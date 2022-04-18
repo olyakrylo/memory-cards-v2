@@ -56,6 +56,19 @@ export type UsersAPI = {
       };
     };
   };
+  recovery_user: {
+    post: {
+      params: { id: string };
+      result: { user?: User };
+    };
+    put: {
+      params: {
+        id: string;
+        password: string;
+      };
+      result: UpdatedResult;
+    };
+  };
 };
 
 export type TopicsAPI = {

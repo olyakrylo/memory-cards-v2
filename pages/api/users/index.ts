@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
+
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
 import { decryptString, getCookie, setCookie } from "../../../utils/cookies";
@@ -36,7 +37,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      const checked = user.password === decryptString(password, secret);
+      const checked =
+        decryptString(user.password, secret) ===
+        decryptString(password, secret);
 
       if (checked) {
         setCookie(cookies, "id_token", secret, user._id);

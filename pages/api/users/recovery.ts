@@ -6,15 +6,17 @@ import { UsersAPI } from "../../../utils/api";
 import { connect } from "../../../utils/connection";
 import { transporter } from "../../../utils/transporter";
 import { config } from "../../../utils/config";
+import { encryptString } from "../../../utils/cookies";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
+  const { secret } = config;
 
   const handleCase: ResponseFuncs = {
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { email } = req.body as UsersAPI["recovery"]["post"]["params"];
 
-      const { User } = await connect();
+      const { User, Recovery } = await connect();
       const user = await User.findOne({ email });
 
       if (!user) {
@@ -22,14 +24,30 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
+      const recoveryData = await Recovery.findOne({ user_id: user._id });
+      let count;
+      if (recoveryData) {
+        count = recoveryData.count;
+      } else {
+        await Recovery.create({ user_id: user._id, count: 1 });
+        count = 1;
+      }
+
+      const data = encryptString(
+        JSON.stringify({
+          id: user._id.toString(),
+          count,
+        }),
+        secret
+      );
+
       const mailOptions: Mail.Options = {
         from: `Memory cards ${config.mail.address}`,
         to: email,
         subject: "Password recovery",
         html: `<h1>Hi, ${user.login}!</h1>
-            <p>Your credentials:</p>
-            <div><b>Login:</b> ${user.login}</div>
-            <div><b>Password:</b> ${user.password}</div>`,
+            <p>Follow this link:</p>
+            <div>${req.headers.origin}/recovery?id=${data}</div>`,
       };
 
       transporter.sendMail(mailOptions, (err) => {

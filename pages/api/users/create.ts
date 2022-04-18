@@ -3,7 +3,7 @@ import Cookies from "cookies";
 
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
-import { decryptString, setCookie } from "../../../utils/cookies";
+import { setCookie } from "../../../utils/cookies";
 import { UsersAPI } from "../../../utils/api";
 import { transporter } from "../../../utils/transporter";
 import { config } from "../../../utils/config";
@@ -21,7 +21,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       let userData = req.body as UsersAPI["create"]["post"]["params"];
       userData = {
         ...userData,
-        password: decryptString(userData.password, secret),
       };
 
       const existingUser = await User.findOne({ login: userData.login });

@@ -18,7 +18,10 @@
     "topic_deleted": "Topic deleted",
     "share": "Share",
     "delete": "Delete",
-    "send": "Send"
+    "send": "Send",
+    "redirect-in-seconds_one": "Redirect in {{count}} second",
+    "redirect-in-seconds_other": "Redirect in {{count}} seconds",
+    "non_working_link": "Non-working link"
   },
   "add": {
     "topic_title": "Title",
@@ -43,14 +46,19 @@
     },
     "placeholder": {
       "login": "Login",
-      "password": "Password"
+      "password": "Password",
+      "repeat": "Repeat password"
     },
     "recovery": {
       "forgot": "Forgot password?",
       "title": "Password recovery",
       "message": "We will send you an email with your credentials",
       "message_sent": "The email has been sent",
-      "sending_problem": "There was a problem while sending an email. Try again later"
+      "sending_problem": "There was a problem while sending an email. Try again later",
+      "set_new_pass": "Set new password",
+      "update": "Update password",
+      "success": "Password changed successfully",
+      "to_auth": "Go to authorization"
     },
     "error": {
       "user_exists": "This username is already occupied",
@@ -58,7 +66,8 @@
       "short_password": "At least 8 characters",
       "user_not_found": "User is not found",
       "wrong_password": "Wrong password",
-      "email": "Wrong format"
+      "email": "Wrong format",
+      "not_same_pass": "Passwords don't match"
     }
   }
 }

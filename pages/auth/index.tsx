@@ -12,7 +12,7 @@ import { State, User } from "../../utils/types";
 import { setUser } from "../../redux/actions/main";
 import { encryptString } from "../../utils/cookies";
 import PasswordRecovery from "../../components/passwordRecovery";
-import { config } from "../../utils/config";
+import { validateInput } from "../../utils/validate-auth-input";
 
 type Mode = "signIn" | "signUp";
 
@@ -65,11 +65,6 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
   const handleEmailChange = (event: BaseSyntheticEvent): void => {
     setEmail(event.target.value);
-  };
-
-  const validateInput = (value: string): boolean => {
-    if (!value) return true;
-    return /\w/.test(value) && !value.includes(" ");
   };
 
   const handleAuth = async (): Promise<void> => {

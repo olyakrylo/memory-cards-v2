@@ -27,9 +27,16 @@ export const connect = async () => {
     answer: String,
   });
 
+  const RecoverySchema = new mongoose.Schema({
+    user_id: String,
+    count: Number,
+  });
+
   const User = mongoose.models.User || mongoose.model("User", UserSchema);
   const Topic = mongoose.models.Topic || mongoose.model("Topic", TopicSchema);
   const Card = mongoose.models.Card || mongoose.model("Card", CardSchema);
+  const Recovery =
+    mongoose.models.Recovery || mongoose.model("Recovery", RecoverySchema);
 
-  return { conn, User, Topic, Card };
+  return { conn, User, Topic, Card, Recovery };
 };
