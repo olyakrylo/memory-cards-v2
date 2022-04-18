@@ -167,6 +167,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
             changeHandler={handleLoginChange}
             error={loginError ? t(`auth.error.${loginError}`) : ""}
             type="text"
+            name="username"
           />
           {mode === "signUp" && (
             <AuthInput
@@ -175,7 +176,6 @@ const Auth = ({ user, setUser }: AuthProps) => {
               changeHandler={handleEmailChange}
               error={emailError ? t(`auth.error.${emailError}`) : ""}
               type="email"
-              name="email"
             />
           )}
           <AuthInput

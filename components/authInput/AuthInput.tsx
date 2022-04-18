@@ -45,7 +45,7 @@ export const AuthInput = ({
         error={!!error}
         label={label}
         type={visible ? "text" : type}
-        name={name}
+        name={name ?? type}
         endAdornment={
           type === "password" ? (
             <InputAdornment position="end">
