@@ -78,7 +78,7 @@ export const Cards = ({
     return () => {
       window.removeEventListener("keyup", handleKeyup);
     };
-  }, [inverted]);
+  });
 
   useEffect(() => {
     if (!currentTopic) {
@@ -94,7 +94,7 @@ export const Cards = ({
       setCurrCard(indexFromUrl || 0);
 
       setCards(cards);
-      setInverted(false);
+      resetInversion();
       setLoading(false);
     });
 
@@ -108,10 +108,12 @@ export const Cards = ({
     flip(card, 200, () => setInverted(!inverted));
   };
 
-  const handleMove = async (_: Splide, index: number): Promise<void> => {
-    if (!currentTopic) return;
+  const resetInversion = (): void => {
     setInverted(false);
-    await router.replace({
+  };
+
+  const updateRoute = (_: Splide, index: number): void => {
+    void router.replace({
       pathname: router.pathname,
       query: { ...router.query, card: index.toString() },
     });
@@ -242,7 +244,8 @@ export const Cards = ({
       {!loading && !!cards.length && (
         <ReactSplide
           ref={sliderRef}
-          onMove={handleMove}
+          onMove={resetInversion}
+          onMoved={updateRoute}
           className={styles.slider}
           options={{
             height: 400,
