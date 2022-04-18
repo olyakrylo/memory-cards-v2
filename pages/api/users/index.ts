@@ -31,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { User } = await connect();
       const { login, password } = req.body as UsersAPI[""]["post"]["params"];
-      const user = await User.findOne({ login });
+      const user = await User.findOne({ $or: [{ login }, { email: login }] });
       if (!user) {
         res.json({ error: { no_user: true } });
         return;
