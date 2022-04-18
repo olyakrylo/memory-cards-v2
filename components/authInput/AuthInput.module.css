@@ -1,0 +1,10 @@
+.formField {
+  width: 100%;
+  font-family: var(--base-font-family);
+  font-size: 14px;
+  color: var(--dark-gray);
+}
+
+.formField > input {
+  height: 24px !important;
+}

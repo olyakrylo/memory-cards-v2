@@ -1,7 +1,11 @@
-import CollectionsBookmarkRoundedIcon from "@mui/icons-material/CollectionsBookmarkRounded";
-import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
-import AddCircleRoundedIcon from "@mui/icons-material/AddCircleRounded";
-import RemoveCircleRoundedIcon from "@mui/icons-material/RemoveCircleRounded";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
+import {
+  RemoveCircleRounded,
+  CollectionsBookmarkRounded,
+  KeyboardArrowDownRounded,
+  AddCircleRounded,
+} from "@mui/icons-material";
 import {
   Button,
   CircularProgress,
@@ -14,15 +18,11 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { connect } from "react-redux";
 
 import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
 import { request } from "../../../utils/request";
-import { Card, State, Topic, TopicExt, User } from "../../../utils/types";
-import { setTopics } from "../../../redux/actions/main";
+import { Card, Topic, TopicExt } from "../../../utils/types";
 
 type PublicTopicsProps = {
   topics: Topic[];
@@ -115,7 +115,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
         className={mainStyles.addButton}
         onClick={openDialog}
       >
-        <CollectionsBookmarkRoundedIcon />
+        <CollectionsBookmarkRounded />
         <Typography className={mainStyles.addButton__title}>
           {t("add.existing_topics")}
         </Typography>
@@ -145,7 +145,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
                     onClick={() => toggleExpand(topic._id)}
                     disabled={!topic.cards_count}
                   >
-                    <KeyboardArrowDownRoundedIcon />
+                    <KeyboardArrowDownRounded />
                   </IconButton>
                   <Typography className={styles.topic__title}>
                     {topic.title}
@@ -167,9 +167,9 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
                     onClick={() => toggleTopic(topic._id)}
                   >
                     {selectedTopics.includes(topic._id) ? (
-                      <RemoveCircleRoundedIcon />
+                      <RemoveCircleRounded />
                     ) : (
-                      <AddCircleRoundedIcon />
+                      <AddCircleRounded />
                     )}
                   </IconButton>
                 </div>
@@ -211,16 +211,3 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user as User,
-    topics: state.main.topics,
-  };
-};
-
-const mapDispatchToProps = {
-  setTopics,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(PublicTopics);

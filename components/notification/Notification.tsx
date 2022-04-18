@@ -1,10 +1,8 @@
-import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { BaseSyntheticEvent } from "react";
-import { connect } from "react-redux";
 
-import { AppNotification, State } from "../../utils/types";
-import { setNotification } from "../../redux/actions/main";
+import { AppNotification } from "../../utils/types";
 
 type NotificationProps = {
   notification: AppNotification;
@@ -43,15 +41,3 @@ export const Notification = ({
     </Snackbar>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    notification: state.main.notification,
-  };
-};
-
-const mapDispatchToProps = {
-  setNotification,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Notification);

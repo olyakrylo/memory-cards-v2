@@ -1,9 +1,9 @@
 import { connect } from "react-redux";
 
-import { State } from "../../../utils/types";
-import { setNotification, setTopics } from "../../../redux/actions/main";
+import { State } from "../../utils/types";
+import { setNotification, setTopics } from "../../redux/actions/main";
 
-import { TopicItem } from "./TopicItem";
+import { Cards } from "./Cards";
 
 const mapStateToProps = (state: { main: State }) => {
   return {
@@ -18,4 +18,4 @@ const mapDispatchToProps = {
   setNotification,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(TopicItem);
+export default connect(mapStateToProps, mapDispatchToProps)(Cards);

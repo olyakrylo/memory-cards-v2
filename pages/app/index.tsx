@@ -1,14 +1,15 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { Fragment, useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 
-import { request } from "../../utils/request";
 import { setUser } from "../../redux/actions/main";
-import { State, User } from "../../utils/types";
+import { State } from "../../utils/types";
+import { User } from "../../utils/types";
+import { request } from "../../utils/request";
 import styles from "./App.module.css";
-import Header from "../../components/header";
 import Topics from "../../components/topics";
+import Header from "../../components/header";
 import Cards from "../../components/cards";
 
 type AppProps = {
@@ -41,19 +42,21 @@ const App = ({ user, setUser }: AppProps) => {
     });
   }, [user, setUser, router, setLoading]);
 
-  if (loading || !user) {
-    return <CircularProgress size={50} />;
-  }
-
   return (
     <div className={`${styles.container}`}>
       <Header />
 
-      <Topics />
+      {loading && <CircularProgress className={styles.loader} size={50} />}
 
-      <div className={styles.content}>
-        <Cards />
-      </div>
+      {!loading && (
+        <Fragment>
+          <Topics />
+
+          <div className={styles.content}>
+            <Cards />
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 };

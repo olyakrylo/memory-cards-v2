@@ -1,30 +1,32 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
+
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
-import { getCookie, setCookie } from "../../../utils/cookies";
-import { dataExample } from "../../../data.example";
+import { decryptString, getCookie, setCookie } from "../../../utils/cookies";
 import { UsersAPI } from "../../../utils/api";
+import { config } from "../../../utils/config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
   const cookies = new Cookies(req, res);
-  const { SECRET, NO_CONNECTION } = process.env;
+  const { secret } = config;
 
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
-      if (NO_CONNECTION) {
-        res.json({ user: dataExample.user });
-        return;
-      }
-      const id = getCookie(cookies, "id_token", SECRET as string);
+      const id = getCookie(cookies, "id_token", secret);
       if (!id) {
         res.json({ user: null });
         return;
       }
       const { User } = await connect();
       const user = await User.findById(id);
-      res.json({ user });
+
+      res.json({
+        user: user
+          ? { _id: user._id, login: user.login, email: user.email }
+          : null,
+      });
     },
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { User } = await connect();
@@ -35,10 +37,17 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         return;
       }
 
-      const checked = user.password === password;
+      const checked =
+        decryptString(user.password, secret) ===
+        decryptString(password, secret);
+
       if (checked) {
-        setCookie(cookies, "id_token", SECRET as string, user._id);
-        res.json({ user });
+        setCookie(cookies, "id_token", secret, user._id);
+        res.json({
+          user: user
+            ? { _id: user._id, login: user.login, email: user.email }
+            : null,
+        });
         return;
       } else {
         res.json({ error: { wrong_password: true } });

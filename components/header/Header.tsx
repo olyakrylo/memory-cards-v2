@@ -1,11 +1,8 @@
-import { connect } from "react-redux";
+import { useEffect } from "react";
 import { Brightness4 } from "@mui/icons-material";
 
-import { State } from "../../utils/types";
-import { setDarkMode } from "../../redux/actions/main";
-import styles from "./Header.module.css";
-import { useEffect } from "react";
 import { request } from "../../utils/request";
+import styles from "./Header.module.css";
 
 type HeaderProps = {
   darkMode?: boolean;
@@ -40,15 +37,3 @@ export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
     </div>
   );
 };
-
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    darkMode: state.main.darkMode,
-  };
-};
-
-const mapDispatchToProps = {
-  setDarkMode,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Header);

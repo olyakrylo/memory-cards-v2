@@ -1,15 +1,20 @@
-import { Button, TextField } from "@mui/material";
-import { useRouter } from "next/router";
+import { connect } from "react-redux";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { connect } from "react-redux";
+import { Button } from "@mui/material";
+import { useRouter } from "next/router";
 
+import { State } from "../../utils/types";
+import { setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
 import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
-import { State, User } from "../../utils/types";
-import { setUser } from "../../redux/actions/main";
+import { User } from "../../utils/types";
+import { encryptString } from "../../utils/cookies";
+import PasswordRecovery from "../../components/passwordRecovery";
+import { validateInput } from "../../utils/validate-auth-input";
+import AuthInput from "../../components/authInput";
 
 type Mode = "signIn" | "signUp";
 
@@ -26,6 +31,8 @@ const Auth = ({ user, setUser }: AuthProps) => {
   const [password, setPassword] = useState<string>("");
   const [loginError, setLoginError] = useState<string>("");
   const [passwordError, setPasswordError] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [emailError, setEmailError] = useState<string>("");
 
   const content = useRef<HTMLDivElement>(null);
 
@@ -33,13 +40,13 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
   useEffect(() => {
     if (user) {
-      router.push({ pathname: "/app" });
+      void router.push({ pathname: "/app" });
       return;
     }
     setUser(undefined);
     request("users", "", "get").then(({ user }) => {
       if (user) {
-        router.push({ pathname: "/app" });
+        void router.push({ pathname: "/app" });
       }
     });
   }, [user, setUser, router]);
@@ -52,15 +59,14 @@ const Auth = ({ user, setUser }: AuthProps) => {
   };
 
   const handlePasswordChange = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target;
+    const { value } = event.target as { value: string };
     if (validateInput(value)) {
       setPassword(value);
     }
   };
 
-  const validateInput = (value: string): boolean => {
-    if (!value) return true;
-    return /\w/.test(value) && !value.includes(" ");
+  const handleEmailChange = (event: BaseSyntheticEvent): void => {
+    setEmail(event.target.value);
   };
 
   const handleAuth = async (): Promise<void> => {
@@ -76,7 +82,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
     setPasswordError("");
     const { user, error } = await request("users", "", "post", {
       login,
-      password,
+      password: encryptedPassword(),
     });
     if (error?.no_user) {
       setLoginError("user_not_found");
@@ -99,7 +105,8 @@ const Auth = ({ user, setUser }: AuthProps) => {
 
     const { user, error } = await request("users", "create", "post", {
       login,
-      password,
+      password: encryptedPassword(),
+      email,
     });
     if (error?.user_exists) {
       setLoginError("user_exists");
@@ -111,15 +118,25 @@ const Auth = ({ user, setUser }: AuthProps) => {
   };
 
   const validateData = (): boolean => {
+    let result = true;
     if (login.length < 3) {
       setLoginError("short_login");
-      return false;
+      result = false;
     }
     if (password.length < 9) {
       setPasswordError("short_password");
-      return false;
+      result = false;
     }
-    return true;
+    if (!/^\S+@\S+\.\S+$/.test(email)) {
+      setEmailError("email");
+      result = false;
+    }
+    return result;
+  };
+
+  const encryptedPassword = (): string => {
+    const secretKey = process.env.NEXT_PUBLIC_SECRET as string;
+    return encryptString(password, secretKey);
   };
 
   const changeMode = (type: Mode) => {
@@ -143,27 +160,32 @@ const Auth = ({ user, setUser }: AuthProps) => {
         <p className={styles.title}>{t(`auth.${mode}`)}</p>
 
         <div className={styles.form}>
-          <TextField
-            className={styles.input}
+          <AuthInput
             label={t("auth.placeholder.login").toLowerCase()}
             value={login}
-            onChange={handleLoginChange}
-            error={!!loginError}
-            helperText={loginError ? t(`auth.error.${loginError}`) : ""}
-            size="small"
-            name="login"
+            changeHandler={handleLoginChange}
+            error={loginError ? t(`auth.error.${loginError}`) : ""}
+            type="text"
           />
-          <TextField
-            className={styles.input}
+          {mode === "signUp" && (
+            <AuthInput
+              label="email"
+              value={email}
+              changeHandler={handleEmailChange}
+              error={emailError ? t(`auth.error.${emailError}`) : ""}
+              type="email"
+              name="email"
+            />
+          )}
+          <AuthInput
             label={t("auth.placeholder.password").toLowerCase()}
             value={password}
-            onChange={handlePasswordChange}
-            error={!!passwordError}
-            helperText={passwordError ? t(`auth.error.${passwordError}`) : ""}
-            size="small"
+            changeHandler={handlePasswordChange}
+            error={passwordError ? t(`auth.error.${passwordError}`) : ""}
             type="password"
-            name="password"
           />
+
+          {mode === "signIn" && <PasswordRecovery />}
 
           <div className={styles.buttonsContainer}>
             <Button

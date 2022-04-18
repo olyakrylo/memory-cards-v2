@@ -17,7 +17,12 @@
     "link_copied": "Ссылка скопирована!",
     "topic_deleted": "Тема удалена",
     "share": "Поделиться",
-    "delete": "Удалить"
+    "delete": "Удалить",
+    "send": "Отправить",
+    "redirect-in-seconds_one": "Редирект через {{count}} секунду",
+    "redirect-in-seconds_few": "Редирект через {{count}} секунды",
+    "redirect-in-seconds_many": "Редирект через {{count}} секунд",
+    "non_working_link": "Нерабочая ссылка"
   },
   "add": {
     "topic_title": "Название",
@@ -44,14 +49,28 @@
     },
     "placeholder": {
       "login": "Логин",
-      "password": "Пароль"
+      "password": "Пароль",
+      "repeat": "Повторите пароль"
+    },
+    "recovery": {
+      "forgot": "Забыли пароль?",
+      "title": "Восстановление пароля",
+      "message": "Мы отправим вам письмо со ссылкой для сброса пароля",
+      "message_sent": "Письмо отправлено",
+      "sending_problem": "Во время отправки письма произошла ошибка. Попробуйте еще раз позже",
+      "set_new_pass": "Введите новый пароль",
+      "update": "Обновить пароль",
+      "success": "Пароль успешно изменен",
+      "to_auth": "Авторизация"
     },
     "error": {
       "user_exists": "Имя занято",
       "short_login": "Не менее 3-х символов",
       "short_password": "Не менее 8-ми символов",
       "user_not_found": "Пользователь не найден",
-      "wrong_password": "Неверный пароль"
+      "wrong_password": "Неверный пароль",
+      "email": "Неверный формат",
+      "not_same_pass": "Пароли не совпадают"
     }
   }
 }
