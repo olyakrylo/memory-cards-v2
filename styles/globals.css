@@ -14,6 +14,9 @@
   --bg-color: #e5e5e5;
 
   --shadow: 0px 5px 20px rgba(0, 0, 0, 0.1);
+
+  --body-padding-vertical: 60px;
+  --body-padding-horizontal: 40px;
 }
 
 :root.dark {
@@ -35,7 +38,7 @@ body {
 }
 
 body {
-  padding: 60px 40px;
+  padding: var(--body-padding-vertical) var(--body-padding-horizontal);
   background: var(--bg-color);
 }
 

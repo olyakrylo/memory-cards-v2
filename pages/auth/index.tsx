@@ -43,10 +43,11 @@ const Auth = ({ user, setUser }: AuthProps) => {
       void router.push({ pathname: "/app" });
       return;
     }
-    setUser(undefined);
+    if (user === null) return;
+
     request("users", "", "get").then(({ user }) => {
       if (user) {
-        void router.push({ pathname: "/app" });
+        setUser(user);
       }
     });
   }, [user, setUser, router]);
@@ -93,7 +94,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
       return;
     }
     if (user) {
-      await router.push("/app");
+      setUser(user);
     }
   };
 
@@ -113,7 +114,7 @@ const Auth = ({ user, setUser }: AuthProps) => {
       return;
     }
     if (user) {
-      await router.push("/app");
+      setUser(user);
     }
   };
 

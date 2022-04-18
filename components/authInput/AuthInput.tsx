@@ -37,9 +37,8 @@ export const AuthInput = ({
 
   return (
     <FormControl variant={"outlined"} size="small">
-      <InputLabel htmlFor="auth-password">{label}</InputLabel>
+      <InputLabel>{label}</InputLabel>
       <OutlinedInput
-        id="auth-password"
         className={styles.formField}
         value={value}
         onChange={changeHandler}

@@ -112,8 +112,10 @@ const Recovery = () => {
 
   if (!user) {
     return (
-      <div className={styles.content}>
-        <Typography>{t("ui.non_working_link")} :(</Typography>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <Typography>{t("ui.non_working_link")} :(</Typography>
+        </div>
       </div>
     );
   }
