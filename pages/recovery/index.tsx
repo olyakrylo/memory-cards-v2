@@ -1,5 +1,5 @@
 import { useRouter } from "next/router";
-import { BaseSyntheticEvent, Fragment, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { Button, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -90,22 +90,30 @@ const Recovery = () => {
 
   if (loading) {
     return (
-      <div className={styles.content}>
-        <CircularProgress className={styles.loader} />
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <CircularProgress className={styles.loader} />
+        </div>
       </div>
     );
   }
 
   if (success) {
     return (
-      <div className={styles.content}>
-        <Typography>{t("auth.recovery.success")}</Typography>
-        <Typography variant="subtitle1" color="primary" className={styles.link}>
-          <Link href="/auth">{t("auth.recovery.to_auth")}</Link>
-        </Typography>
-        <Typography variant="subtitle2">
-          {t("ui.redirect-in-seconds", { count: remainedSeconds })}
-        </Typography>
+      <div className={styles.container}>
+        <div className={styles.content}>
+          <Typography>{t("auth.recovery.success")}</Typography>
+          <Typography
+            variant="subtitle1"
+            color="primary"
+            className={styles.link}
+          >
+            <Link href="/auth">{t("auth.recovery.to_auth")}</Link>
+          </Typography>
+          <Typography variant="subtitle2">
+            {t("ui.redirect-in-seconds", { count: remainedSeconds })}
+          </Typography>
+        </div>
       </div>
     );
   }
@@ -121,8 +129,8 @@ const Recovery = () => {
   }
 
   return (
-    <div className={styles.content}>
-      <Fragment>
+    <div className={styles.container}>
+      <div className={styles.content}>
         <Typography color="primary" fontWeight={500} variant="h5">
           Hi, {user?.login}!
         </Typography>
@@ -152,7 +160,7 @@ const Recovery = () => {
         <Button variant="contained" onClick={update}>
           {t("auth.recovery.update")}
         </Button>
-      </Fragment>
+      </div>
     </div>
   );
 };
