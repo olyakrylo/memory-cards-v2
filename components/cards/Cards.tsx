@@ -91,10 +91,13 @@ export const Cards = ({
       topic_id: currentTopic._id,
     }).then((cards) => {
       const indexFromUrl = parseInt((router.query.card as string) ?? "");
-      setCurrCard(indexFromUrl || 0);
+      const indexFromStorage = parseInt(
+        sessionStorage.getItem(currentTopic._id.toString()) ?? ""
+      );
+      setCurrCard(indexFromUrl || indexFromStorage || 0);
 
       setCards(cards);
-      resetInversion();
+      setInverted(false);
       setLoading(false);
     });
 
@@ -108,15 +111,10 @@ export const Cards = ({
     flip(card, 200, () => setInverted(!inverted));
   };
 
-  const resetInversion = (): void => {
+  const handleMove = (_: Splide, index: number): void => {
+    if (!currentTopic) return;
     setInverted(false);
-  };
-
-  const updateRoute = (_: Splide, index: number): void => {
-    void router.replace({
-      pathname: router.pathname,
-      query: { ...router.query, card: index.toString() },
-    });
+    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
   };
 
   const addCards = (newCards: Card[]): void => {
@@ -244,8 +242,7 @@ export const Cards = ({
       {!loading && !!cards.length && (
         <ReactSplide
           ref={sliderRef}
-          onMove={resetInversion}
-          onMoved={updateRoute}
+          onMove={handleMove}
           className={styles.slider}
           options={{
             height: 400,
