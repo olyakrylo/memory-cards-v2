@@ -236,6 +236,7 @@ export const Cards = ({
           onMoved={handleMoved}
           className={styles.slider}
           options={{
+            keyboard: "global",
             height: 400,
             arrows: !hideArrows,
             classes: {
