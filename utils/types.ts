@@ -23,6 +23,14 @@ export interface ResponseFuncs {
   PATCH?: Function;
 }
 
+export type AuthMode = "signIn" | "signUp";
+
+export type AuthCredentials = {
+  login: string;
+  password: string;
+  email: string;
+};
+
 export interface User {
   _id: string;
   login: string;

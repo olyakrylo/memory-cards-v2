@@ -1,8 +1,16 @@
+.cardContainer {
+  height: calc(100% - 50px);
+  margin: 24px;
+}
+
+.cardContainer_arrows {
+  margin: 24px 40px;
+}
+
 .card {
   position: relative;
   background-color: var(--white);
-  margin: 24px;
-  height: calc(100% - 50px);
+  height: 100%;
   box-shadow: var(--shadow);
   border-radius: 8px;
   display: flex;
@@ -23,10 +31,6 @@
   color: var(--black);
 }
 
-.card_arrows {
-  margin: 24px 55px;
-}
-
 .card__del {
   position: absolute !important;
   top: 12px;
@@ -43,4 +47,12 @@
   position: absolute !important;
   bottom: 12px;
   right: 12px;
+}
+
+.card__flip {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  color: var(--medium-gray);
+  opacity: 0.5;
 }

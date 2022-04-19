@@ -42,6 +42,14 @@ body {
   background: var(--bg-color);
 }
 
+.splide__arrow--prev {
+  left: 0 !important;
+}
+
+.splide__arrow--next {
+  right: 0 !important;
+}
+
 @media (max-width: 500px) {
   body {
     padding: 60px 20px;

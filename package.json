@@ -13,8 +13,8 @@
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.0",
     "@mui/material": "^5.2.0",
-    "@splidejs/react-splide": "^0.6.17",
-    "@splidejs/splide": "^3.6.9",
+    "@splidejs/react-splide": "0.7.5",
+    "@splidejs/splide": "4.0.1",
     "@types/nodemailer": "^6.4.4",
     "array-shuffle": "^3.0.0",
     "cookies": "^0.8.0",
@@ -26,11 +26,13 @@
     "nodemailer": "^6.7.3",
     "prettier": "^2.4.1",
     "react": "17.0.2",
+    "react-card-flip": "^1.1.5",
     "react-dom": "17.0.2",
     "react-i18next": "^11.14.3",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",
-    "redux-thunk": "^2.4.1"
+    "redux-thunk": "^2.4.1",
+    "rxjs": "^7.5.5"
   },
   "devDependencies": {
     "@types/cookies": "^0.7.7",
