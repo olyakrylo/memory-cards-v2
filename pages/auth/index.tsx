@@ -1,42 +1,32 @@
 import { connect } from "react-redux";
-import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { Button } from "@mui/material";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import ReactCardFlip from "react-card-flip";
 
-import { State } from "../../utils/types";
-import { setUser } from "../../redux/actions/main";
+import {
+  AppNotification,
+  AuthCredentials,
+  AuthMode,
+  State,
+} from "../../utils/types";
+import { setNotification, setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
-import { flip } from "../../utils/flip";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
 import { User } from "../../utils/types";
 import { encryptString } from "../../utils/cookies";
-import PasswordRecovery from "../../components/passwordRecovery";
-import { validateInput } from "../../utils/validate-auth-input";
-import AuthInput from "../../components/authInput";
-
-type Mode = "signIn" | "signUp";
+import AuthSide from "../../components/authSide";
 
 type AuthProps = {
   user?: User | null;
   setUser: (u?: User | null) => void;
+  setNotification: (n: AppNotification) => void;
 };
 
-const Auth = ({ user, setUser }: AuthProps) => {
+const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   const router = useRouter();
 
-  const [mode, setMode] = useState<Mode>("signIn");
-  const [login, setLogin] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
-  const [loginError, setLoginError] = useState<string>("");
-  const [passwordError, setPasswordError] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
-  const [emailError, setEmailError] = useState<string>("");
-
-  const content = useRef<HTMLDivElement>(null);
-
-  const { t } = useTranslation();
+  const [mode, setMode] = useState<AuthMode>("signIn");
 
   useEffect(() => {
     if (user) {
@@ -52,45 +42,35 @@ const Auth = ({ user, setUser }: AuthProps) => {
     });
   }, [user, setUser, router]);
 
-  const handleLoginChange = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target;
-    if (validateInput(value)) {
-      setLogin(value);
-    }
-  };
-
-  const handlePasswordChange = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target as { value: string };
-    if (validateInput(value)) {
-      setPassword(value);
-    }
-  };
-
-  const handleEmailChange = (event: BaseSyntheticEvent): void => {
-    setEmail(event.target.value);
-  };
-
-  const handleAuth = async (): Promise<void> => {
+  const onAuth = async (data: AuthCredentials): Promise<void> => {
     if (mode === "signIn") {
-      await handleLogin();
+      await handleLogin(data);
       return;
     }
-    await handleSignUp();
+    await handleSignUp(data);
   };
 
-  const handleLogin = async () => {
-    setLoginError("");
-    setPasswordError("");
+  const handleLogin = async (data: AuthCredentials) => {
     const { user, error } = await request("users", "", "post", {
-      login,
-      password: encryptedPassword(),
+      login: data.login,
+      password: encryptedPassword(data.password),
     });
     if (error?.no_user) {
-      setLoginError("user_not_found");
+      setNotification({
+        severity: "error",
+        text: "auth.error.user_not_found",
+        translate: true,
+        autoHide: 5000,
+      });
       return;
     }
     if (error?.wrong_password) {
-      setPasswordError("wrong_password");
+      setNotification({
+        severity: "error",
+        text: "auth.error.wrong_password",
+        translate: true,
+        autoHide: 5000,
+      });
       return;
     }
     if (user) {
@@ -98,19 +78,18 @@ const Auth = ({ user, setUser }: AuthProps) => {
     }
   };
 
-  const handleSignUp = async () => {
-    setLoginError("");
-    setPasswordError("");
-
-    if (!validateData()) return;
-
+  const handleSignUp = async (data: AuthCredentials) => {
     const { user, error } = await request("users", "create", "post", {
-      login,
-      password: encryptedPassword(),
-      email,
+      ...data,
+      password: encryptedPassword(data.password),
     });
     if (error?.user_exists) {
-      setLoginError("user_exists");
+      setNotification({
+        severity: "warning",
+        text: "auth.error.user_exists",
+        translate: true,
+        autoHide: 5000,
+      });
       return;
     }
     if (user) {
@@ -118,91 +97,35 @@ const Auth = ({ user, setUser }: AuthProps) => {
     }
   };
 
-  const validateData = (): boolean => {
-    let result = true;
-    if (login.length < 3) {
-      setLoginError("short_login");
-      result = false;
-    }
-    if (password.length < 9) {
-      setPasswordError("short_password");
-      result = false;
-    }
-    if (!/^\S+@\S+\.\S+$/.test(email)) {
-      setEmailError("email");
-      result = false;
-    }
-    return result;
-  };
-
-  const encryptedPassword = (): string => {
+  const encryptedPassword = (password: string): string => {
     const secretKey = process.env.NEXT_PUBLIC_SECRET as string;
     return encryptString(password, secretKey);
   };
 
-  const changeMode = (type: Mode) => {
-    if (!content.current) return;
-    setLoginError("");
-    setPasswordError("");
-    setLogin("");
-    setPassword("");
-    flip(content.current, 200, () => setMode(type));
-  };
-
-  const oppositeMode = (): Mode => {
-    return mode === "signIn" ? "signUp" : "signIn";
+  const changeMode = (type: AuthMode) => {
+    setMode(type);
   };
 
   return (
     <div className={styles.container}>
       <Header />
 
-      <div ref={content} className={styles.content}>
-        <p className={styles.title}>{t(`auth.${mode}`)}</p>
-
-        <div className={styles.form}>
-          <AuthInput
-            label={t("auth.placeholder.login").toLowerCase()}
-            value={login}
-            changeHandler={handleLoginChange}
-            error={loginError ? t(`auth.error.${loginError}`) : ""}
-            type="text"
-            name="username"
-          />
-          {mode === "signUp" && (
-            <AuthInput
-              label="email"
-              value={email}
-              changeHandler={handleEmailChange}
-              error={emailError ? t(`auth.error.${emailError}`) : ""}
-              type="email"
-            />
-          )}
-          <AuthInput
-            label={t("auth.placeholder.password").toLowerCase()}
-            value={password}
-            changeHandler={handlePasswordChange}
-            error={passwordError ? t(`auth.error.${passwordError}`) : ""}
-            type="password"
-          />
-
-          {mode === "signIn" && <PasswordRecovery />}
-
-          <div className={styles.buttonsContainer}>
-            <Button
-              variant="contained"
-              onClick={handleAuth}
-              disabled={!login || !password}
-            >
-              {t(`auth.button.${mode}`)}
-            </Button>
-            {t("ui.or")}
-            <Button type="button" onClick={() => changeMode(oppositeMode())}>
-              {t(`auth.button.${oppositeMode()}`)}
-            </Button>
-          </div>
-        </div>
-      </div>
+      <ReactCardFlip
+        isFlipped={mode === "signUp"}
+        flipDirection="vertical"
+        containerClassName={styles.flipContainer}
+      >
+        <AuthSide
+          mode="signIn"
+          emitAuth={onAuth}
+          changeMode={() => changeMode("signUp")}
+        />
+        <AuthSide
+          mode="signUp"
+          emitAuth={onAuth}
+          changeMode={() => changeMode("signIn")}
+        />
+      </ReactCardFlip>
     </div>
   );
 };
@@ -215,6 +138,7 @@ const mapStateToProps = (state: { main: State }) => {
 
 const mapDispatchToProps = {
   setUser,
+  setNotification,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Auth);

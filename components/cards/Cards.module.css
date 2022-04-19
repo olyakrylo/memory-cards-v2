@@ -3,7 +3,6 @@
 }
 
 .control {
-  margin: 0 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -59,7 +58,6 @@
 }
 
 .arrowControl {
-  margin-left: 24px;
   color: var(--black);
 }
 
@@ -83,6 +81,14 @@
 
 .arrow {
   top: calc(400px / 2);
+}
+
+.arrow.splide__arrow--prev {
+  left: 0;
+}
+
+.arrow.splide__arrow--next {
+  right: 0;
 }
 
 .arrow:disabled {

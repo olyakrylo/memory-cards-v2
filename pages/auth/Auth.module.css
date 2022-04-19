@@ -17,6 +17,11 @@
   transition: transform 0.2s ease-in-out;
 }
 
+.flipContainer {
+  margin: auto;
+  height: 300px;
+}
+
 .title {
   margin-top: 0;
   text-align: center;

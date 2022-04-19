@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import React, { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
+import { Subject } from "rxjs";
 import { Splide } from "@splidejs/splide";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
@@ -20,7 +21,6 @@ import {
 import arrayShuffle from "array-shuffle";
 
 import { AppNotification, Card, Topic, User } from "../../utils/types";
-import { flip } from "../../utils/flip";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import AddCard from "./add";
@@ -45,7 +45,6 @@ export const Cards = ({
 
   const [loading, setLoading] = useState<boolean>(false);
   const [cards, setCards] = useState<Card[]>([]);
-  const [inverted, setInverted] = useState<boolean>(false);
   const [hideArrows, setHideArrows] = useState<boolean>(false);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
   const [currCard, setCurrCard] = useState<number>(0);
@@ -54,24 +53,18 @@ export const Cards = ({
 
   const { i18n, t } = useTranslation();
 
-  const canEditTopic = () => {
-    return currentTopic?.author_id === user?._id;
-  };
+  const resetCards = new Subject<void>();
+  const flipCard = new Subject<number>();
 
   useEffect(() => {
     const handleKeyup = (event: any) => {
-      if (event.key !== "Enter" || event.target.tagName !== "BODY") {
+      if (
+        !["Enter", "Space"].includes(event.code) ||
+        event.target.tagName !== "BODY"
+      ) {
         return;
       }
-      const index = sliderRef.current?.splide?.index;
-      if (typeof index !== "number") return;
-
-      const splideRef = sliderRef.current?.splideRef.current;
-      const list = splideRef?.children[1]?.children?.[0];
-      const elem = list?.children?.[index]?.children?.[0];
-
-      if (!elem) return;
-      flip(elem as HTMLElement, 200, () => setInverted(!inverted));
+      flipCard.next(currCard);
     };
 
     window.addEventListener("keyup", handleKeyup);
@@ -97,7 +90,7 @@ export const Cards = ({
       setCurrCard(indexFromUrl || indexFromStorage || 0);
 
       setCards(cards);
-      setInverted(false);
+      resetCards.next();
       setLoading(false);
     });
 
@@ -106,15 +99,15 @@ export const Cards = ({
     });
   }, [currentTopic, i18n]);
 
-  const toggleCard = (event: BaseSyntheticEvent) => {
-    const card = event.currentTarget as HTMLDivElement;
-    flip(card, 200, () => setInverted(!inverted));
+  const canEditTopic = () => {
+    return currentTopic?.author_id === user?._id;
   };
 
-  const handleMove = (_: Splide, index: number): void => {
+  const handleMoved = (_: Splide, index: number): void => {
     if (!currentTopic) return;
-    setInverted(false);
     sessionStorage.setItem(currentTopic._id.toString(), index.toString());
+    setCurrCard(index);
+    resetCards.next();
   };
 
   const addCards = (newCards: Card[]): void => {
@@ -242,7 +235,7 @@ export const Cards = ({
       {!loading && !!cards.length && (
         <ReactSplide
           ref={sliderRef}
-          onMove={handleMove}
+          onMoved={handleMoved}
           className={styles.slider}
           options={{
             height: 400,
@@ -256,16 +249,17 @@ export const Cards = ({
         >
           {(shuffledCards ?? cards).map((card, i) => (
             <CardItem
+              index={i}
               key={card._id}
               card={card}
               showArrows={!hideArrows}
               canEditTopic={canEditTopic()}
-              inverted={inverted}
               setLoading={setLoading}
-              toggleCard={toggleCard}
               deleteCard={() => deleteCard(card._id)}
               updateCard={updateCard}
               shareCard={() => shareCard(i)}
+              resetCards={resetCards}
+              flipCard={flipCard}
             />
           ))}
         </ReactSplide>
