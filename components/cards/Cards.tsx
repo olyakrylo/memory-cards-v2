@@ -47,7 +47,6 @@ export const Cards = ({
   const [cards, setCards] = useState<Card[]>([]);
   const [hideArrows, setHideArrows] = useState<boolean>(false);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
-  const [currCard, setCurrCard] = useState<number>(0);
 
   const sliderRef = useRef<ReactSplide>(null);
 
@@ -64,7 +63,9 @@ export const Cards = ({
       ) {
         return;
       }
-      flipCard.next(currCard);
+      const index = sliderRef.current?.splide?.index;
+      if (typeof index !== "number") return;
+      flipCard.next(index);
     };
 
     window.addEventListener("keyup", handleKeyup);
@@ -79,16 +80,9 @@ export const Cards = ({
     }
 
     setLoading(true);
-    setCurrCard(0);
     request("cards", "by_topic", "post", {
       topic_id: currentTopic._id,
     }).then((cards) => {
-      const indexFromUrl = parseInt((router.query.card as string) ?? "");
-      const indexFromStorage = parseInt(
-        sessionStorage.getItem(currentTopic._id.toString()) ?? ""
-      );
-      setCurrCard(indexFromUrl || indexFromStorage || 0);
-
       setCards(cards);
       resetCards.next();
       setLoading(false);
@@ -106,7 +100,6 @@ export const Cards = ({
   const handleMoved = (_: Splide, index: number): void => {
     if (!currentTopic) return;
     sessionStorage.setItem(currentTopic._id.toString(), index.toString());
-    setCurrCard(index);
     resetCards.next();
   };
 
@@ -182,6 +175,11 @@ export const Cards = ({
     });
   };
 
+  const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
+  const startIndexFromStorage = parseInt(
+    sessionStorage.getItem(currentTopic?._id.toString() ?? "") ?? ""
+  );
+
   return (
     <div>
       {currentTopic && (
@@ -244,7 +242,7 @@ export const Cards = ({
               arrow: `splide__arrow ${styles.arrow}`,
               pagination: `splide__pagination ${styles.pagination}`,
             },
-            start: currCard,
+            start: startIndexFromUrl || startIndexFromStorage || 0,
           }}
         >
           {(shuffledCards ?? cards).map((card, i) => (

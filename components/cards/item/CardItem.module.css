@@ -1,6 +1,6 @@
 .cardContainer {
   height: calc(100% - 50px);
-  margin: 24px 0;
+  margin: 24px;
 }
 
 .cardContainer_arrows {
