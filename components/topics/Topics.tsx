@@ -50,7 +50,7 @@ export const Topics = ({
         setCurrentTopic(topic);
       }
     );
-  }, [router.query]);
+  }, [router.query.topic]);
 
   useEffect(() => {
     if (!user) return;

@@ -99,8 +99,12 @@ export const Cards = ({
 
   const handleMoved = (_: Splide, index: number): void => {
     if (!currentTopic) return;
-    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
     resetCards.next();
+    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
+    void router.replace({
+      pathname: "/app",
+      query: { ...router.query, card: index },
+    });
   };
 
   const addCards = (newCards: Card[]): void => {

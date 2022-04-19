@@ -34,7 +34,7 @@ const Recovery = () => {
       setUser(user);
       setLoading(false);
     });
-  }, [router.query]);
+  }, [router.query.id]);
 
   const handlePassword = (event: BaseSyntheticEvent, repeat?: boolean) => {
     const { value } = event.target;
