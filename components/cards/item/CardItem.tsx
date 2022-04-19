@@ -75,8 +75,6 @@ export const CardItem = ({
         containerClassName={`${styles.cardContainer} ${
           showArrows && styles.cardContainer_arrows
         }`}
-        flipSpeedFrontToBack={0.4}
-        flipSpeedBackToFront={0.4}
       >
         <div className={styles.card} onClick={toggleCard}>
           <Typography className={styles.card__text}>{card.question}</Typography>
