@@ -75,6 +75,7 @@ export const CardItem = ({
         containerClassName={`${styles.cardContainer} ${
           showArrows && styles.cardContainer_arrows
         }`}
+        cardZIndex={"100"}
       >
         <div className={styles.card} onClick={toggleCard}>
           <Typography className={styles.card__text}>{card.question}</Typography>
