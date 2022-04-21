@@ -8,13 +8,28 @@ import {
 import { useTranslation } from "react-i18next";
 import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
-import { IconButton, Tooltip, Typography } from "@mui/material";
-import { DeleteTwoTone, Share, LoopRounded } from "@mui/icons-material";
+import {
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Divider,
+  IconButton,
+  Tooltip,
+  Typography,
+} from "@mui/material";
+import {
+  DeleteTwoTone,
+  Share,
+  ZoomOutMap,
+  ZoomInMap,
+} from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
 
 import { Card } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
+
+const MAX_TEXT_LENGTH = 300;
 
 type CardItemProps = {
   index: number;
@@ -43,7 +58,8 @@ export const CardItem = ({
 }: CardItemProps) => {
   const { t } = useTranslation();
 
-  const [flipped, setFlipped] = useState(false);
+  const [flipped, setFlipped] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
   useEffect(() => {
     resetCards.subscribe(() => setFlipped(false));
@@ -52,6 +68,15 @@ export const CardItem = ({
       setFlipped(!flipped);
     });
   });
+
+  const openDialog = (e: BaseSyntheticEvent) => {
+    e.stopPropagation();
+    setDialogOpen(true);
+  };
+
+  const closeDialog = () => {
+    setDialogOpen(false);
+  };
 
   const handleDelete = (event: BaseSyntheticEvent): void => {
     event.stopPropagation();
@@ -67,6 +92,11 @@ export const CardItem = ({
     setFlipped(!flipped);
   };
 
+  const cropText = (text: string): string => {
+    if (text.length < MAX_TEXT_LENGTH) return text;
+    return `${text.slice(0, MAX_TEXT_LENGTH)}...`;
+  };
+
   return (
     <SplideSlide>
       <ReactCardFlip
@@ -75,12 +105,16 @@ export const CardItem = ({
         containerClassName={`${styles.cardContainer} ${
           showArrows && styles.cardContainer_arrows
         }`}
+        cardZIndex={"100"}
       >
         <div className={styles.card} onClick={toggleCard}>
-          <Typography className={styles.card__text}>{card.question}</Typography>
+          <Typography className={styles.card__text}>
+            {cropText(card.question)}
+          </Typography>
 
           {card._id && canEditTopic && (
             <IconButton
+              size={"small"}
               className={styles.card__del}
               color="secondary"
               onClick={handleDelete}
@@ -99,23 +133,64 @@ export const CardItem = ({
 
           {card._id && (
             <Tooltip title={t("ui.share") ?? ""}>
-              <IconButton className={styles.card__share} onClick={handleShare}>
+              <IconButton
+                className={styles.card__share}
+                onClick={handleShare}
+                size={"small"}
+              >
                 <Share />
               </IconButton>
             </Tooltip>
           )}
 
-          <LoopRounded className={styles.card__flip} />
+          <IconButton
+            className={styles.card__flip}
+            size={"small"}
+            onClick={openDialog}
+          >
+            <ZoomOutMap />
+          </IconButton>
         </div>
 
         <div
           className={`${styles.card} ${showArrows && styles.card_arrows}`}
           onClick={toggleCard}
         >
-          <Typography className={styles.card__text}>{card.answer}</Typography>
-          <LoopRounded className={styles.card__flip} />
+          <Typography className={styles.card__text}>
+            {cropText(card.answer)}
+          </Typography>
+
+          <IconButton
+            className={styles.card__flip}
+            size={"small"}
+            onClick={openDialog}
+          >
+            <ZoomOutMap />
+          </IconButton>
         </div>
       </ReactCardFlip>
+
+      <Dialog open={dialogOpen}>
+        <DialogContent className={styles.dialog__content}>
+          <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
+            {t("ui.question")}
+          </Typography>
+          <Typography>{card.question}</Typography>
+
+          <Divider className={styles.dialog__divider} />
+
+          <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
+            {t("ui.answer")}
+          </Typography>
+          <Typography>{card.answer}</Typography>
+        </DialogContent>
+
+        <DialogActions>
+          <IconButton onClick={closeDialog}>
+            <ZoomInMap />
+          </IconButton>
+        </DialogActions>
+      </Dialog>
     </SplideSlide>
   );
 };

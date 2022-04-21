@@ -45,6 +45,7 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
       className={styles.card__edit}
       color="primary"
       onClick={openEditCardDialog}
+      size={"small"}
     >
       <EditRounded />
 

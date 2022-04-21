@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
-import React, { useEffect, useRef, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { Splide } from "@splidejs/splide";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import {
@@ -19,12 +18,14 @@ import {
   ArrowCircleDownRounded,
 } from "@mui/icons-material";
 import arrayShuffle from "array-shuffle";
+import { isBrowser } from "react-device-detect";
 
 import { AppNotification, Card, Topic, User } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import AddCard from "./add";
 import CardItem from "./item";
+import { getCardsMatrix, utils, getCardIndex } from "./utils";
 
 type CardProps = {
   user?: User | null;
@@ -56,6 +57,7 @@ export const Cards = ({
   const flipCard = new Subject<number>();
 
   useEffect(() => {
+    if (!isBrowser) return;
     const handleKeyup = (event: any) => {
       if (
         !["Enter", "Space"].includes(event.code) ||
@@ -97,14 +99,12 @@ export const Cards = ({
     return currentTopic?.author_id === user?._id;
   };
 
-  const handleMoved = (_: Splide, index: number): void => {
+  const handleMoved = (splideIndex: number, cardIndex: number): void => {
     if (!currentTopic) return;
     resetCards.next();
+
+    const index = getCardIndex(splideIndex, cardIndex);
     sessionStorage.setItem(currentTopic._id.toString(), index.toString());
-    void router.replace({
-      pathname: "/app",
-      query: { ...router.query, card: index },
-    });
   };
 
   const addCards = (newCards: Card[]): void => {
@@ -179,102 +179,112 @@ export const Cards = ({
     });
   };
 
+  if (loading) {
+    return <CircularProgress className={styles.loader} />;
+  }
+
   const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
   const startIndexFromStorage = parseInt(
     sessionStorage.getItem(currentTopic?._id.toString() ?? "") ?? ""
   );
+  const startIndex = startIndexFromUrl || startIndexFromStorage || 0;
 
   return (
     <div>
       {currentTopic && (
-        <div className={styles.control}>
-          <IconButton
-            onClick={toggleShuffle}
-            className={styles.shuffle}
-            aria-checked={!!shuffledCards}
-            aria-hidden={!cards.length}
-          >
-            <ShuffleRounded />
-          </IconButton>
+        <Fragment>
+          <div className={styles.control}>
+            <IconButton
+              onClick={toggleShuffle}
+              className={styles.shuffle}
+              aria-checked={!!shuffledCards}
+              aria-hidden={!cards.length}
+            >
+              <ShuffleRounded />
+            </IconButton>
 
-          <div className={styles.control__topic}>
-            <Typography>{currentTopic.title}</Typography>
-            {currentTopic && !isSelfTopic() && (
-              <Tooltip title={t("add.save_topic") ?? ""}>
-                <IconButton onClick={addCurrentTopic}>
-                  <AddRounded />
-                </IconButton>
-              </Tooltip>
+            <div className={styles.control__topic}>
+              <Typography>{currentTopic.title}</Typography>
+              {currentTopic && !isSelfTopic() && (
+                <Tooltip title={t("add.save_topic") ?? ""}>
+                  <IconButton onClick={addCurrentTopic}>
+                    <AddRounded />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </div>
+
+            {canEditTopic() && (
+              <AddCard
+                currentTopic={currentTopic}
+                setLoading={setLoading}
+                addCards={addCards}
+              />
             )}
           </div>
 
-          {canEditTopic() && (
-            <AddCard
-              currentTopic={currentTopic}
-              setLoading={setLoading}
-              addCards={addCards}
-            />
+          {canEditTopic() && !cards.length && (
+            <div className={styles.tip}>
+              {t("ui.add_first_card")}{" "}
+              <ArrowCircleDownRounded className={styles.tip__icon_add} />
+            </div>
           )}
-        </div>
+        </Fragment>
       )}
 
-      {loading && <CircularProgress className={styles.loader} />}
-
-      {!loading && !currentTopic && (
+      {!currentTopic && (
         <div className={styles.tip}>
           <ArrowCircleDownRounded className={styles.tip__icon_topics} />
           {t("ui.choose_topic")}
         </div>
       )}
 
-      {!loading && !!currentTopic && canEditTopic() && !cards.length && (
-        <div className={styles.tip}>
-          {t("ui.add_first_card")}{" "}
-          <ArrowCircleDownRounded className={styles.tip__icon_add} />
-        </div>
-      )}
+      {!!cards.length && (
+        <Fragment>
+          {getCardsMatrix(shuffledCards ?? cards).map(
+            (cardsSlice, splideIndex) => (
+              <ReactSplide
+                key={splideIndex}
+                ref={sliderRef}
+                onMoved={(_, index) => handleMoved(splideIndex, index)}
+                className={styles.slider}
+                options={{
+                  keyboard: isBrowser ? "global" : false,
+                  height: 400,
+                  arrows: !hideArrows,
+                  classes: {
+                    arrow: `splide__arrow ${styles.arrow}`,
+                    pagination: `splide__pagination ${styles.pagination}`,
+                  },
+                  start: utils(splideIndex, startIndex),
+                }}
+              >
+                {cardsSlice.map((card, i) => (
+                  <CardItem
+                    index={getCardIndex(splideIndex, i)}
+                    key={card._id}
+                    card={card}
+                    showArrows={!hideArrows}
+                    canEditTopic={canEditTopic()}
+                    setLoading={setLoading}
+                    deleteCard={() => deleteCard(card._id)}
+                    updateCard={updateCard}
+                    shareCard={() => shareCard(getCardIndex(splideIndex, i))}
+                    resetCards={resetCards}
+                    flipCard={flipCard}
+                  />
+                ))}
+              </ReactSplide>
+            )
+          )}
 
-      {!loading && !!cards.length && (
-        <ReactSplide
-          ref={sliderRef}
-          onMoved={handleMoved}
-          className={styles.slider}
-          options={{
-            keyboard: "global",
-            height: 400,
-            arrows: !hideArrows,
-            classes: {
-              arrow: `splide__arrow ${styles.arrow}`,
-              pagination: `splide__pagination ${styles.pagination}`,
-            },
-            start: startIndexFromUrl || startIndexFromStorage || 0,
-          }}
-        >
-          {(shuffledCards ?? cards).map((card, i) => (
-            <CardItem
-              index={i}
-              key={card._id}
-              card={card}
-              showArrows={!hideArrows}
-              canEditTopic={canEditTopic()}
-              setLoading={setLoading}
-              deleteCard={() => deleteCard(card._id)}
-              updateCard={updateCard}
-              shareCard={() => shareCard(i)}
-              resetCards={resetCards}
-              flipCard={flipCard}
+          <FormGroup className={styles.arrowControl}>
+            <FormControlLabel
+              control={<Switch onChange={toggleArrows} checked={!hideArrows} />}
+              label={t("ui.show_arrows") as string}
             />
-          ))}
-        </ReactSplide>
-      )}
-
-      {!loading && !!cards.length && (
-        <FormGroup className={styles.arrowControl}>
-          <FormControlLabel
-            control={<Switch onChange={toggleArrows} checked={!hideArrows} />}
-            label={t("ui.show_arrows") as string}
-          />
-        </FormGroup>
+          </FormGroup>
+        </Fragment>
       )}
     </div>
   );
