@@ -21,6 +21,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       let userData = req.body as UsersAPI["create"]["post"]["params"];
       userData = {
         ...userData,
+        login: userData.login.toLowerCase(),
       };
 
       const existingUser = await User.findOne({ login: userData.login });
