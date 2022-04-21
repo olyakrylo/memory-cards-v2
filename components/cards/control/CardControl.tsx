@@ -12,6 +12,7 @@ import {
 
 import { Card, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
+import DialogTransition from "../../dialog-transition";
 
 type CardControlProps = {
   currentTopic?: Topic;
@@ -92,17 +93,22 @@ export const CardControl = ({
   };
 
   return (
-    <Dialog open={open} className={styles.container}>
-      <DialogTitle>
+    <Dialog
+      open={open}
+      className={styles.container}
+      fullScreen
+      TransitionComponent={DialogTransition}
+    >
+      <DialogTitle className={styles.title}>
         {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
-        <span className={styles.topic}> {currentTopic?.title}</span>
+        <span className={styles.topic}>{currentTopic?.title}</span>
       </DialogTitle>
 
       <DialogContent className={styles.content}>
         <TextField
-          className={styles.input}
           required
           multiline
+          rows={3}
           label={t("ui.question")}
           defaultValue={question}
           onChange={(e) => onChangeField(e, setQuestion)}
@@ -111,6 +117,7 @@ export const CardControl = ({
         <TextField
           required
           multiline
+          rows={5}
           label={t("ui.answer")}
           defaultValue={answer}
           onChange={(e) => onChangeField(e, setAnswer)}
@@ -121,7 +128,11 @@ export const CardControl = ({
 
         {!card && (
           <Tooltip title={`(.txt, .tsv ${t("ui.or")} .csv)`}>
-            <Button variant="contained" component="label">
+            <Button
+              variant="contained"
+              component="label"
+              className={styles.fileInput}
+            >
               {t("ui.upload_from_file")}
               <input type="file" hidden onChange={handleFile} accept=".txt" />
             </Button>

@@ -23,6 +23,7 @@ import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
 import { request } from "../../../utils/request";
 import { Card, Topic, TopicExt } from "../../../utils/types";
+import DialogTransition from "../../dialog-transition";
 
 type PublicTopicsProps = {
   topics: Topic[];
@@ -121,7 +122,11 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
         </Typography>
       </Button>
 
-      <Dialog open={dialogOpened}>
+      <Dialog
+        open={dialogOpened}
+        fullScreen
+        TransitionComponent={DialogTransition}
+      >
         <DialogTitle>
           <TextField
             className={styles.dialog__search}

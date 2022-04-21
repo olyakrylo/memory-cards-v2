@@ -1,10 +1,6 @@
 .dialog__search {
+  margin: 16px 0;
   width: 100%;
-}
-
-.dialog__content {
-  width: 600px;
-  max-width: 80vw;
 }
 
 .dialog__actions {

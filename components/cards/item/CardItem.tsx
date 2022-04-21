@@ -28,6 +28,7 @@ import ReactCardFlip from "react-card-flip";
 import { Card } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
+import DialogTransition from "../../dialog-transition";
 
 const MAX_TEXT_LENGTH = 300;
 
@@ -170,7 +171,11 @@ export const CardItem = ({
         </div>
       </ReactCardFlip>
 
-      <Dialog open={dialogOpen}>
+      <Dialog
+        fullScreen
+        open={dialogOpen}
+        TransitionComponent={DialogTransition}
+      >
         <DialogContent className={styles.dialog__content}>
           <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
             {t("ui.question")}
