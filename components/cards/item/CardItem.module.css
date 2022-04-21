@@ -1,6 +1,7 @@
 .cardContainer {
   height: calc(100% - 50px);
   margin: 24px;
+  transition: margin 0.2s ease-in-out;
 }
 
 .cardContainer_arrows {
@@ -8,51 +9,50 @@
 }
 
 .card {
-  position: relative;
   background-color: var(--white);
   height: 100%;
   box-shadow: var(--shadow);
   border-radius: 8px;
-  display: flex;
+
+  display: grid;
   align-items: center;
-  justify-content: center;
-  overflow-y: auto;
-  transition-property: transform, margin;
-  transition-duration: 0.2s;
-  transition-timing-function: ease-in-out;
+  grid-template-areas: "edit a del" "b text c" "share d flip";
+  grid-template-columns: minmax(34px, max-content) 1fr minmax(34px, max-content);
+  grid-template-rows: minmax(34px, max-content) 1fr minmax(34px, max-content);
+  padding: 8px;
 }
 
 .card__text {
-  max-height: calc(100% - 110px);
-  overflow: auto;
-  padding: 0 24px;
+  grid-area: text;
+
+  max-height: 100%;
+  overflow: hidden;
   line-height: 20px;
   letter-spacing: 0.25px;
   color: var(--black);
+  text-align: center;
 }
 
 .card__del {
-  position: absolute !important;
-  top: 12px;
-  right: 12px;
+  grid-area: del;
 }
 
 .card__edit {
-  position: absolute !important;
-  top: 12px;
-  left: 12px;
+  grid-area: edit;
 }
 
 .card__share {
-  position: absolute !important;
-  bottom: 12px;
-  right: 12px;
+  grid-area: share;
 }
 
 .card__flip {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  color: var(--medium-gray);
-  opacity: 0.5;
+  grid-area: flip;
+}
+
+.dialog__divider {
+  margin: 16px 0 8px;
+}
+
+.dialog__content {
+  min-width: 200px;
 }
