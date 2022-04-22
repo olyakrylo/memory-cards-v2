@@ -1,0 +1,40 @@
+.content {
+  width: 350px;
+  min-width: max-content;
+  max-width: 90vw;
+  margin: auto;
+  padding: 16px;
+  background-color: var(--white);
+  border-radius: 6px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out;
+}
+
+.title {
+  margin-top: 0;
+  text-align: center;
+  font-size: 20px;
+  font-family: var(--brand-font-family);
+  color: var(--light-red);
+}
+
+.loader {
+  position: absolute;
+  top: 20px;
+  right: 16px;
+}
+
+.form {
+  display: grid;
+  gap: 16px;
+}
+
+.buttonsContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  column-gap: 16px;
+  color: var(--medium-gray);
+  font-size: 12px;
+}

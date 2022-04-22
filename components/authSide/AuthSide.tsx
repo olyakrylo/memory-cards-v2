@@ -1,9 +1,9 @@
 import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, useState } from "react";
-import { Button } from "@mui/material";
+import { Button, CircularProgress } from "@mui/material";
 
 import { validateInput } from "../../utils/validate-auth-input";
-import styles from "../../pages/auth/Auth.module.css";
+import styles from "./AuthSide.module.css";
 import AuthInput from "../authInput";
 import { AuthCredentials, AuthMode } from "../../utils/types";
 import PasswordRecovery from "../passwordRecovery";
@@ -12,9 +12,15 @@ type AuthSideProps = {
   mode: AuthMode;
   emitAuth: (data: AuthCredentials) => void;
   changeMode: () => void;
+  loading: boolean;
 };
 
-export const AuthSide = ({ mode, emitAuth, changeMode }: AuthSideProps) => {
+export const AuthSide = ({
+  mode,
+  emitAuth,
+  changeMode,
+  loading,
+}: AuthSideProps) => {
   const { t } = useTranslation();
 
   const [login, setLogin] = useState<string>("");
@@ -77,7 +83,10 @@ export const AuthSide = ({ mode, emitAuth, changeMode }: AuthSideProps) => {
 
   return (
     <div className={styles.content}>
-      <p className={styles.title}>{t(`auth.${mode}`)}</p>
+      <p className={styles.title}>
+        {t(`auth.${mode}`)}
+        {loading && <CircularProgress size={24} className={styles.loader} />}
+      </p>
 
       <div className={styles.form}>
         <AuthInput

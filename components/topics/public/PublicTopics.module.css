@@ -1,10 +1,5 @@
 .dialog__search {
-  margin: 16px 0;
   width: 100%;
-}
-
-.dialog__actions {
-  padding: 8px 16px 16px !important;
 }
 
 .topic {

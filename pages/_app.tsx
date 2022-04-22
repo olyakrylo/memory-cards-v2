@@ -1,9 +1,11 @@
 import { connect } from "react-redux";
+import Head from "next/head";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
 import "@splidejs/splide/dist/css/splide.min.css";
 
 import "../styles/globals.css";
+import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../locales/i18n";
@@ -25,14 +27,22 @@ function MyApp({
       fontWeightRegular: 300,
       fontWeightBold: 500,
     },
+    spacing: (f: number) => f * 2,
   });
 
-  return (
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
+  // theme.spacing(2);
 
-      <Notification />
-    </ThemeProvider>
+  return (
+    <>
+      <Head>
+        <title>Memory cards</title>
+      </Head>
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
+
+        <Notification />
+      </ThemeProvider>
+    </>
   );
 }
 

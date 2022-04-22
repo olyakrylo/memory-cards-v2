@@ -203,14 +203,14 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
         </DialogContent>
 
         <DialogActions className={styles.dialog__actions}>
+          <Button onClick={closeDialog} color="secondary">
+            {t("ui.cancel")}
+          </Button>
           {!!selectedTopics.length && (
             <Button variant="contained" onClick={updateTopics}>
               {t("add.add-topics", { count: selectedTopics.length })}
             </Button>
           )}
-          <Button onClick={closeDialog} color="secondary">
-            {t("ui.cancel")}
-          </Button>
         </DialogActions>
       </Dialog>
     </div>

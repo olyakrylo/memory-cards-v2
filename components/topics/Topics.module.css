@@ -94,22 +94,12 @@
   line-height: 20px;
 }
 
-.add__content {
-  padding-top: 8px !important;
-  width: 300px;
-  max-width: 100%;
-}
-
 .add__form {
   display: grid;
   gap: 8px;
 }
 
-.add__actions {
-  padding: 0 16px 16px !important;
-}
-
-.menu_item {
+.menuItem {
   display: flex;
   justify-content: space-between;
   align-items: center;

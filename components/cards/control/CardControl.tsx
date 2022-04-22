@@ -117,7 +117,7 @@ export const CardControl = ({
         <TextField
           required
           multiline
-          rows={5}
+          rows={6}
           label={t("ui.answer")}
           defaultValue={answer}
           onChange={(e) => onChangeField(e, setAnswer)}
