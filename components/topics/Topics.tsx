@@ -87,22 +87,32 @@ export const Topics = ({
         {loading && <CircularProgress className={styles.loader} size={24} />}
 
         {!loading && (
-          <div className={styles.topicsList}>
-            <Divider className={styles.topicsList__divider} textAlign="left">
+          <div>
+            <Divider className={styles.topicsDivider} textAlign="left">
               <Typography>{t("ui.created")}</Typography>
             </Divider>
 
-            {selfTopics().map((topic) => (
-              <TopicItem key={topic._id} topic={topic} />
-            ))}
+            <div className={styles.topicsList}>
+              {selfTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+              {selfTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+              {selfTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+            </div>
 
-            <Divider className={styles.topicsList__divider} textAlign="left">
+            <Divider className={styles.topicsDivider} textAlign="left">
               <Typography>{t("ui.added")}</Typography>
             </Divider>
 
-            {publicTopics().map((topic) => (
-              <TopicItem key={topic._id} topic={topic} />
-            ))}
+            <div className={styles.topicsList}>
+              {publicTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+            </div>
           </div>
         )}
 

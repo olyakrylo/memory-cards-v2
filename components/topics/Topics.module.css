@@ -26,16 +26,19 @@
 }
 
 .topicsList {
-  max-height: 60vh;
+  max-height: 25vh;
   overflow-y: auto;
+  margin: 8px 0 0;
+  display: grid;
+  grid-gap: 4px;
 }
 
-.topicsList__divider {
+.topicsDivider {
   color: var(--medium-gray);
-  margin-top: 20px !important;
+  margin-top: 16px !important;
 }
 
-.topicsList__divider p {
+.topicsDivider p {
   font-size: 14px !important;
 }
 
@@ -43,7 +46,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 2px 0;
   font-family: var(--brand-font-family);
   font-size: 18px;
   color: var(--seagreen);

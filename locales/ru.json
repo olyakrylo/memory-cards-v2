@@ -38,7 +38,8 @@
     "add-topics_one": "Добавить {{count}} тему",
     "add-topics_few": "Добавить {{count}} темы",
     "add-topics_many": "Добавить {{count}} тем",
-    "save_topic": "Сохранить тему"
+    "save_topic": "Сохранить тему",
+    "file_formats": "TXT, TSV или CSV"
   },
   "auth": {
     "signIn": "Авторизация",

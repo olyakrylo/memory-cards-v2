@@ -254,6 +254,8 @@ export const Cards = ({
                   arrows: !hideArrows,
                   classes: {
                     arrow: `splide__arrow ${styles.arrow}`,
+                    prev: `splide__arrow--prev ${styles.arrow_prev}`,
+                    next: `splide__arrow--next ${styles.arrow_next}`,
                     pagination: `splide__pagination ${styles.pagination}`,
                   },
                   start: utils(splideIndex, startIndex),
@@ -281,7 +283,7 @@ export const Cards = ({
           <FormGroup className={styles.arrowControl}>
             <FormControlLabel
               control={<Switch onChange={toggleArrows} checked={!hideArrows} />}
-              label={t("ui.show_arrows") as string}
+              label={<Typography>{t("ui.show_arrows")}</Typography>}
             />
           </FormGroup>
         </Fragment>

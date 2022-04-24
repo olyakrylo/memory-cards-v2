@@ -11,6 +11,14 @@
   margin: 0 auto;
 }
 
+@media (max-width: 700px) {
+  .content {
+    width: 100vw;
+    max-width: unset;
+    margin-left: -20px;
+  }
+}
+
 .loader {
   margin: auto;
 }

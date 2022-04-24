@@ -1,18 +1,10 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Tooltip,
-} from "@mui/material";
+import { Button, TextField, Tooltip } from "@mui/material";
 
 import { Card, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
-import DialogTransition from "../../dialog-transition";
+import AppDialog from "../../dialog";
 
 type CardControlProps = {
   currentTopic?: Topic;
@@ -93,68 +85,70 @@ export const CardControl = ({
   };
 
   return (
-    <Dialog
+    <AppDialog
       open={open}
-      className={styles.container}
-      fullScreen
-      TransitionComponent={DialogTransition}
-    >
-      <DialogTitle className={styles.title}>
-        {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
-        <span className={styles.topic}>{currentTopic?.title}</span>
-      </DialogTitle>
+      size={"sm"}
+      responsive={true}
+      title={
+        <>
+          {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
+          <span className={styles.topic}>{currentTopic?.title}</span>
+        </>
+      }
+      content={
+        <div className={styles.content}>
+          <TextField
+            required
+            multiline
+            rows={3}
+            label={t("ui.question")}
+            defaultValue={question}
+            onChange={(e) => onChangeField(e, setQuestion)}
+            disabled={!!cardsFromFile.length}
+          />
+          <TextField
+            required
+            multiline
+            rows={6}
+            label={t("ui.answer")}
+            defaultValue={answer}
+            onChange={(e) => onChangeField(e, setAnswer)}
+            disabled={!!cardsFromFile.length}
+          />
 
-      <DialogContent className={styles.content}>
-        <TextField
-          required
-          multiline
-          rows={3}
-          label={t("ui.question")}
-          defaultValue={question}
-          onChange={(e) => onChangeField(e, setQuestion)}
-          disabled={!!cardsFromFile.length}
-        />
-        <TextField
-          required
-          multiline
-          rows={6}
-          label={t("ui.answer")}
-          defaultValue={answer}
-          onChange={(e) => onChangeField(e, setAnswer)}
-          disabled={!!cardsFromFile.length}
-        />
+          {!card && <div className={styles.or}>{t("ui.or")}</div>}
 
-        {!card && <div className={styles.or}>{t("ui.or")}</div>}
+          {!card && (
+            <Tooltip title={`${t("add.file_formats")}`}>
+              <Button
+                variant="contained"
+                component="label"
+                className={styles.fileInput}
+              >
+                {t("ui.upload_from_file")}
+                <input type="file" hidden onChange={handleFile} accept=".txt" />
+              </Button>
+            </Tooltip>
+          )}
 
-        {!card && (
-          <Tooltip title={`(.txt, .tsv ${t("ui.or")} .csv)`}>
-            <Button
-              variant="contained"
-              component="label"
-              className={styles.fileInput}
-            >
-              {t("ui.upload_from_file")}
-              <input type="file" hidden onChange={handleFile} accept=".txt" />
-            </Button>
-          </Tooltip>
-        )}
-
-        {cardsFromFile.map((card, i) => (
-          <div className={styles.card} key={i}>
-            <span className={styles.card__question}>{card.question}</span>
-            <span className={styles.card__answer}>{card.answer}</span>
-          </div>
-        ))}
-      </DialogContent>
-
-      <DialogActions className={styles.actions}>
-        <Button onClick={onCloseDialog} color="secondary">
-          {t("ui.cancel")}
-        </Button>
-        <Button variant="contained" onClick={onSave}>
-          {t("ui.save")}
-        </Button>
-      </DialogActions>
-    </Dialog>
+          {cardsFromFile.map((card, i) => (
+            <div className={styles.card} key={i}>
+              <span className={styles.card__question}>{card.question}</span>
+              <span className={styles.card__answer}>{card.answer}</span>
+            </div>
+          ))}
+        </div>
+      }
+      actions={
+        <>
+          <Button onClick={onCloseDialog} color="secondary">
+            {t("ui.cancel")}
+          </Button>
+          <Button variant="contained" onClick={onSave}>
+            {t("ui.save")}
+          </Button>
+        </>
+      }
+    />
   );
 };

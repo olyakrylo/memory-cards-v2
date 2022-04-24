@@ -35,7 +35,8 @@
     "cards-count_other": "{{count}} cards",
     "add-topics_one": "Add {{count}} topic",
     "add-topics_other": "Add {{count}} topics",
-    "save_topic": "Save topic"
+    "save_topic": "Save topic",
+    "file_formats": "TXT, TSV or CSV"
   },
   "auth": {
     "signIn": "Authorization",
