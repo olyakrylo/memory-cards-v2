@@ -1,5 +1,11 @@
 import { useRouter } from "next/router";
-import React, { Fragment, useEffect, useRef, useState } from "react";
+import React, {
+  BaseSyntheticEvent,
+  Fragment,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { Subject } from "rxjs";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
@@ -140,12 +146,13 @@ export const Cards = ({
     }
   };
 
-  const toggleShuffle = () => {
+  const toggleShuffle = (event: BaseSyntheticEvent) => {
     if (shuffledCards) {
       setShuffledCards(null);
     } else {
       setShuffledCards(arrayShuffle(cards));
     }
+    event.target.blur();
   };
 
   const toggleArrows = () => {

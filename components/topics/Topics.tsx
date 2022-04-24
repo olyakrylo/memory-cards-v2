@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import {
   CircularProgress,
@@ -61,7 +61,8 @@ export const Topics = ({
     });
   }, [user?._id]);
 
-  const toggleMenu = () => {
+  const toggleMenu = (event: BaseSyntheticEvent): void => {
+    event.target.blur();
     setHidden(!hidden);
   };
 
