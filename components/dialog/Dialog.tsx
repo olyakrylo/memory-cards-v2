@@ -9,7 +9,6 @@ import {
 import { useTheme } from "@mui/material/styles";
 
 import DialogTransition from "./transition";
-import styles from "./Dialog.module.css";
 
 type DialogProps = {
   open: boolean;
@@ -42,17 +41,11 @@ export const AppDialog = ({
       TransitionComponent={DialogTransition}
       onClose={onClose}
     >
-      {title && (
-        <DialogTitle classes={{ root: styles.title }}>{title}</DialogTitle>
-      )}
+      {title && <DialogTitle>{title}</DialogTitle>}
 
-      <DialogContent classes={{ root: styles.content }}>
-        {content}
-      </DialogContent>
+      <DialogContent dividers={true}>{content}</DialogContent>
 
-      <DialogActions classes={{ root: styles.actions }}>
-        {actions}
-      </DialogActions>
+      <DialogActions>{actions}</DialogActions>
     </Dialog>
   );
 };

@@ -71,7 +71,7 @@ export const PasswordRecovery = ({
     <Fragment>
       <Button
         color="secondary"
-        className={styles.forgotPassButton}
+        classes={{ root: styles.forgotPassButton }}
         onClick={openDialog}
       >
         {t("auth.recovery.forgot")}
@@ -108,11 +108,11 @@ export const PasswordRecovery = ({
         }
         actions={
           <>
-            <Button onClick={send} variant="contained">
-              {t("ui.send")}
-            </Button>
             <Button onClick={closeDialog} color="secondary">
               {t("ui.cancel")}
+            </Button>
+            <Button onClick={send} variant="contained">
+              {t("ui.send")}
             </Button>
           </>
         }

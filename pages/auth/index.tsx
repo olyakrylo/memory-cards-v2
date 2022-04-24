@@ -128,13 +128,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
           mode="signIn"
           emitAuth={onAuth}
           changeMode={() => changeMode("signUp")}
-          loading={loading}
+          loading={mode === "signIn" && loading}
         />
         <AuthSide
           mode="signUp"
           emitAuth={onAuth}
           changeMode={() => changeMode("signIn")}
-          loading={loading}
+          loading={mode === "signUp" && loading}
         />
       </ReactCardFlip>
     </div>

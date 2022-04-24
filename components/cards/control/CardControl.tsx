@@ -1,6 +1,6 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, TextField, Tooltip } from "@mui/material";
+import { Button, TextField, Tooltip, Typography } from "@mui/material";
 
 import { Card, Topic } from "../../../utils/types";
 import styles from "./CardControl.module.css";
@@ -133,8 +133,10 @@ export const CardControl = ({
 
           {cardsFromFile.map((card, i) => (
             <div className={styles.card} key={i}>
-              <span className={styles.card__question}>{card.question}</span>
-              <span className={styles.card__answer}>{card.answer}</span>
+              <Typography classes={{ root: styles.card__question }}>
+                {card.question}
+              </Typography>
+              <Typography>{card.answer}</Typography>
             </div>
           ))}
         </div>

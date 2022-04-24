@@ -27,7 +27,7 @@
 
 .topic__title {
   grid-area: title;
-  font-family: var(--brand-font-family) !important;
+  font-family: var(--brand-font-family);
   color: var(--black);
 }
 
@@ -39,7 +39,6 @@
 .topic__cards {
   grid-area: cards;
   color: var(--black);
-  font-size: 14px !important;
 }
 
 .topic__toggle {
@@ -67,5 +66,5 @@
 }
 
 .card__question {
-  font-family: var(--brand-font-family) !important;
+  font-family: var(--brand-font-family);
 }

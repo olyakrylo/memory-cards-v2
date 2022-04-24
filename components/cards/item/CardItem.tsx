@@ -179,7 +179,7 @@ export const CardItem = ({
             </Typography>
             <Typography>{card.question}</Typography>
 
-            <Divider className={styles.dialog__divider} />
+            <Divider classes={{ root: styles.dialog__divider }} />
 
             <Typography
               fontWeight={500}

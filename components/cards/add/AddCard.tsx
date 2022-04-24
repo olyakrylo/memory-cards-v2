@@ -43,7 +43,10 @@ export const AddCard = ({
   };
 
   return (
-    <IconButton className={styles.control__add} onClick={openNewCardDialog}>
+    <IconButton
+      classes={{ root: styles.control__add }}
+      onClick={openNewCardDialog}
+    >
       <AddRounded />
 
       <CardControl open={newCardOpen} onClose={onCloseNewCardDialog} />

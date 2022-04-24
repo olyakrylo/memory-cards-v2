@@ -196,7 +196,7 @@ export const Cards = ({
           <div className={styles.control}>
             <IconButton
               onClick={toggleShuffle}
-              className={styles.shuffle}
+              classes={{ root: styles.shuffle }}
               aria-checked={!!shuffledCards}
               aria-hidden={!cards.length}
             >

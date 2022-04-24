@@ -5,6 +5,6 @@
   color: var(--dark-gray);
 }
 
-.formField > input {
+.input {
   height: 24px !important;
 }

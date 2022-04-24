@@ -67,12 +67,12 @@ export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
   return (
     <div>
       <Button
-        className={styles.addButton}
+        classes={{ root: styles.addButton }}
         color="primary"
         onClick={() => setDialogOpen(true)}
       >
         <AddBoxRounded />
-        <Typography className={styles.addButton__title}>
+        <Typography className={styles.addButton__title} variant={"subtitle2"}>
           {t("add.create_topic")}
         </Typography>
       </Button>

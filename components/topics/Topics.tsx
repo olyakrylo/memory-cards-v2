@@ -89,23 +89,17 @@ export const Topics = ({
         {!loading && (
           <div>
             <Divider className={styles.topicsDivider} textAlign="left">
-              <Typography>{t("ui.created")}</Typography>
+              <Typography variant={"subtitle2"}>{t("ui.created")}</Typography>
             </Divider>
 
             <div className={styles.topicsList}>
               {selfTopics().map((topic) => (
                 <TopicItem key={topic._id} topic={topic} />
               ))}
-              {selfTopics().map((topic) => (
-                <TopicItem key={topic._id} topic={topic} />
-              ))}
-              {selfTopics().map((topic) => (
-                <TopicItem key={topic._id} topic={topic} />
-              ))}
             </div>
 
-            <Divider className={styles.topicsDivider} textAlign="left">
-              <Typography>{t("ui.added")}</Typography>
+            <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
+              <Typography variant={"subtitle2"}>{t("ui.added")}</Typography>
             </Divider>
 
             <div className={styles.topicsList}>
@@ -123,7 +117,10 @@ export const Topics = ({
       </div>
 
       <div className={styles.control}>
-        <IconButton className={styles.control__toggle} onClick={toggleMenu}>
+        <IconButton
+          classes={{ root: styles.control__toggle }}
+          onClick={toggleMenu}
+        >
           <MenuRounded />
         </IconButton>
 

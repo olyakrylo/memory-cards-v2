@@ -63,11 +63,11 @@
 }
 
 .shuffle {
-  color: var(--dark-gray) !important;
+  color: var(--dark-gray);
 }
 
 .shuffle[aria-checked="true"] {
-  color: var(--red) !important;
+  color: var(--red);
 }
 
 .shuffle[aria-hidden="true"] {

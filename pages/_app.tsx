@@ -5,6 +5,7 @@ import { ThemeProvider } from "@mui/system";
 import "@splidejs/splide/dist/css/splide.min.css";
 
 import "../styles/globals.css";
+import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../locales/i18n";

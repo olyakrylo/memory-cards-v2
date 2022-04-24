@@ -110,11 +110,14 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
     <div>
       <Button
         color="secondary"
-        className={mainStyles.addButton}
+        classes={{ root: mainStyles.addButton }}
         onClick={openDialog}
       >
         <CollectionsBookmarkRounded />
-        <Typography className={mainStyles.addButton__title}>
+        <Typography
+          className={mainStyles.addButton__title}
+          variant={"subtitle2"}
+        >
           {t("add.existing_topics")}
         </Typography>
       </Button>
@@ -148,13 +151,16 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
                     >
                       <KeyboardArrowDownRounded />
                     </IconButton>
-                    <Typography className={styles.topic__title}>
+                    <Typography classes={{ root: styles.topic__title }}>
                       {topic.title}
                     </Typography>
                     <Typography className={styles.topic__author}>
                       ({topic.author_name})
                     </Typography>
-                    <Typography className={styles.topic__cards}>
+                    <Typography
+                      className={styles.topic__cards}
+                      variant="subtitle2"
+                    >
                       {t("add.cards-count", { count: topic.cards_count ?? 0 })}
                     </Typography>
                     <IconButton
@@ -182,10 +188,16 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
                       {(topicCards[topic._id] ?? []).map((card) => {
                         return (
                           <div key={card._id} className={styles.card}>
-                            <Typography className={styles.card__question}>
+                            <Typography
+                              className={styles.card__question}
+                              variant="subtitle2"
+                            >
                               {card.question}
                             </Typography>
-                            <Typography className={styles.card__answer}>
+                            <Typography
+                              className={styles.card__answer}
+                              variant="subtitle2"
+                            >
                               {card.answer}
                             </Typography>
                           </div>

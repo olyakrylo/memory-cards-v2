@@ -35,11 +35,7 @@
 
 .topicsDivider {
   color: var(--medium-gray);
-  margin-top: 16px !important;
-}
-
-.topicsDivider p {
-  font-size: 14px !important;
+  margin-top: 16px;
 }
 
 .topic {
@@ -78,7 +74,7 @@
 
 .control__toggle {
   margin: 10px -10px !important;
-  color: var(--medium-gray);
+  color: var(--medium-gray) !important;
 }
 
 .addButton {
@@ -92,7 +88,6 @@
 
 .addButton__title {
   border-bottom: 1px solid;
-  font-size: 14px !important;
   line-height: 20px;
 }
 

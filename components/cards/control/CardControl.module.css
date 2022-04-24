@@ -32,5 +32,5 @@
 }
 
 .card__question {
-  font-family: var(--brand-font-family) !important;
+  font-family: var(--brand-font-family);
 }
