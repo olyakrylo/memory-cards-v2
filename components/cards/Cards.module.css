@@ -16,6 +16,7 @@
 }
 
 .control__add:hover {
+  background: var(--seagreen);
   opacity: 0.8;
 }
 

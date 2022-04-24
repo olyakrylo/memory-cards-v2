@@ -12,8 +12,8 @@ import { Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import {
   DeleteTwoTone,
   Share,
-  ZoomOutMap,
-  ZoomInMap,
+  ZoomOutMapRounded,
+  ZoomInMapRounded,
 } from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
 
@@ -141,7 +141,7 @@ export const CardItem = ({
             size={"small"}
             onClick={openDialog}
           >
-            <ZoomOutMap />
+            <ZoomOutMapRounded />
           </IconButton>
         </div>
 
@@ -158,7 +158,7 @@ export const CardItem = ({
             size={"small"}
             onClick={openDialog}
           >
-            <ZoomOutMap />
+            <ZoomOutMapRounded />
           </IconButton>
         </div>
       </ReactCardFlip>
@@ -193,7 +193,7 @@ export const CardItem = ({
         }
         actions={
           <IconButton onClick={closeDialog}>
-            <ZoomInMap />
+            <ZoomInMapRounded />
           </IconButton>
         }
       />
