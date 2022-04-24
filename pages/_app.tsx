@@ -2,6 +2,7 @@ import { connect } from "react-redux";
 import Head from "next/head";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
+import { StyledEngineProvider } from "@mui/material/styles";
 import "@splidejs/splide/dist/css/splide.min.css";
 
 import "../styles/globals.css";
@@ -27,13 +28,10 @@ function MyApp({
       fontWeightRegular: 300,
       fontWeightBold: 500,
     },
-    spacing: (f: number) => f * 2,
   });
 
-  // theme.spacing(2);
-
   return (
-    <>
+    <StyledEngineProvider injectFirst>
       <Head>
         <title>Memory cards</title>
       </Head>
@@ -42,7 +40,7 @@ function MyApp({
 
         <Notification />
       </ThemeProvider>
-    </>
+    </StyledEngineProvider>
   );
 }
 
