@@ -8,26 +8,19 @@ import {
 import { useTranslation } from "react-i18next";
 import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
-import {
-  Dialog,
-  DialogActions,
-  DialogContent,
-  Divider,
-  IconButton,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import {
   DeleteTwoTone,
   Share,
-  ZoomOutMap,
-  ZoomInMap,
+  ZoomOutMapRounded,
+  ZoomInMapRounded,
 } from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
 
 import { Card } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
+import AppDialog from "../../dialog";
 
 const MAX_TEXT_LENGTH = 300;
 
@@ -148,7 +141,7 @@ export const CardItem = ({
             size={"small"}
             onClick={openDialog}
           >
-            <ZoomOutMap />
+            <ZoomOutMapRounded />
           </IconButton>
         </div>
 
@@ -165,32 +158,45 @@ export const CardItem = ({
             size={"small"}
             onClick={openDialog}
           >
-            <ZoomOutMap />
+            <ZoomOutMapRounded />
           </IconButton>
         </div>
       </ReactCardFlip>
 
-      <Dialog open={dialogOpen}>
-        <DialogContent className={styles.dialog__content}>
-          <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
-            {t("ui.question")}
-          </Typography>
-          <Typography>{card.question}</Typography>
+      <AppDialog
+        open={dialogOpen}
+        size={"sm"}
+        responsive={true}
+        onClose={closeDialog}
+        content={
+          <>
+            <Typography
+              fontWeight={500}
+              variant={"subtitle1"}
+              color={"primary"}
+            >
+              {t("ui.question")}
+            </Typography>
+            <Typography>{card.question}</Typography>
 
-          <Divider className={styles.dialog__divider} />
+            <Divider classes={{ root: styles.dialog__divider }} />
 
-          <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
-            {t("ui.answer")}
-          </Typography>
-          <Typography>{card.answer}</Typography>
-        </DialogContent>
-
-        <DialogActions>
+            <Typography
+              fontWeight={500}
+              variant={"subtitle1"}
+              color={"primary"}
+            >
+              {t("ui.answer")}
+            </Typography>
+            <Typography>{card.answer}</Typography>
+          </>
+        }
+        actions={
           <IconButton onClick={closeDialog}>
-            <ZoomInMap />
+            <ZoomInMapRounded />
           </IconButton>
-        </DialogActions>
-      </Dialog>
+        }
+      />
     </SplideSlide>
   );
 };

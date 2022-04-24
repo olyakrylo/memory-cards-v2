@@ -1,19 +1,11 @@
 import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, Fragment, useState } from "react";
-import {
-  Button,
-  CircularProgress,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 
 import { AppNotification } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./PasswordRecovery.module.css";
+import AppDialog from "../dialog";
 
 type PasswordRecoveryProps = {
   setNotification: (n: AppNotification) => void;
@@ -79,42 +71,52 @@ export const PasswordRecovery = ({
     <Fragment>
       <Button
         color="secondary"
-        className={styles.forgotPassButton}
+        classes={{ root: styles.forgotPassButton }}
         onClick={openDialog}
       >
         {t("auth.recovery.forgot")}
       </Button>
 
-      <Dialog open={dialogOpen} onClose={closeDialog}>
-        <DialogTitle className={styles.title} color="primary">
-          {t("auth.recovery.title")}
-          {loading && <CircularProgress size={32} />}
-        </DialogTitle>
-        <DialogContent className={styles.content}>
-          <TextField
-            value={email}
-            onChange={handleEmailChange}
-            error={!!emailError}
-            helperText={emailError ? t(`auth.error.${emailError}`) : undefined}
-            label="email"
-            type="email"
-            name="email"
-            size="small"
-          />
-
-          <Typography variant={"subtitle2"}>
-            {t("auth.recovery.message")}.
+      <AppDialog
+        open={dialogOpen}
+        size={"xs"}
+        title={
+          <Typography variant={"h6"} className={styles.title} color={"primary"}>
+            {t("auth.recovery.title")}
+            {loading && <CircularProgress size={32} />}
           </Typography>
-        </DialogContent>
-        <DialogActions className={styles.actions}>
-          <Button onClick={send} variant="contained">
-            {t("ui.send")}
-          </Button>
-          <Button onClick={closeDialog} color="secondary">
-            {t("ui.cancel")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        }
+        content={
+          <div className={styles.content}>
+            <TextField
+              value={email}
+              onChange={handleEmailChange}
+              error={!!emailError}
+              helperText={
+                emailError ? t(`auth.error.${emailError}`) : undefined
+              }
+              label="email"
+              type="email"
+              name="email"
+              size="small"
+            />
+
+            <Typography variant={"subtitle2"}>
+              {t("auth.recovery.message")}.
+            </Typography>
+          </div>
+        }
+        actions={
+          <>
+            <Button onClick={closeDialog} color="secondary">
+              {t("ui.cancel")}
+            </Button>
+            <Button onClick={send} variant="contained">
+              {t("ui.send")}
+            </Button>
+          </>
+        }
+      />
     </Fragment>
   );
 };

@@ -17,6 +17,7 @@ import { BaseSyntheticEvent, useState } from "react";
 import styles from "../Topics.module.css";
 import { Topic, User } from "../../../utils/types";
 import { request } from "../../../utils/request";
+import AppDialog from "../../dialog";
 
 type AddTopicProps = {
   user?: User;
@@ -24,14 +25,14 @@ type AddTopicProps = {
 };
 
 export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
-  const [dialogOpened, setDialogOpened] = useState<boolean>(false);
+  const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [title, setTitle] = useState<string>("");
   const [isPublic, setIsPublic] = useState<boolean>(false);
 
   const { t } = useTranslation();
 
   const clear = () => {
-    setDialogOpened(false);
+    setDialogOpen(false);
     setTitle("");
     setIsPublic(false);
   };
@@ -66,20 +67,21 @@ export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
   return (
     <div>
       <Button
-        className={styles.addButton}
+        classes={{ root: styles.addButton }}
         color="primary"
-        onClick={() => setDialogOpened(true)}
+        onClick={() => setDialogOpen(true)}
       >
         <AddBoxRounded />
-        <Typography className={styles.addButton__title}>
+        <Typography className={styles.addButton__title} variant={"subtitle2"}>
           {t("add.create_topic")}
         </Typography>
       </Button>
 
-      <Dialog open={dialogOpened}>
-        <DialogTitle>{t("add.new_topic")}</DialogTitle>
-
-        <DialogContent className={styles.add__content}>
+      <AppDialog
+        open={dialogOpen}
+        size={"xs"}
+        title={t("add.new_topic")}
+        content={
           <FormGroup className={styles.add__form}>
             <TextField
               onChange={onTitleChange}
@@ -91,17 +93,18 @@ export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
               label={t("add.make_public") as string}
             />
           </FormGroup>
-        </DialogContent>
-
-        <DialogActions className={styles.add__actions}>
-          <Button onClick={closeDialog} color="secondary">
-            {t("ui.cancel")}
-          </Button>
-          <Button variant="contained" onClick={add}>
-            {t("ui.save")}
-          </Button>
-        </DialogActions>
-      </Dialog>
+        }
+        actions={
+          <>
+            <Button onClick={closeDialog} color="secondary">
+              {t("ui.cancel")}
+            </Button>
+            <Button variant="contained" onClick={add}>
+              {t("ui.save")}
+            </Button>
+          </>
+        }
+      />
     </div>
   );
 };

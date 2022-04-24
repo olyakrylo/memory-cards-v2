@@ -39,6 +39,7 @@ export const AuthInput = ({
     <FormControl variant={"outlined"} size="small">
       <InputLabel>{label}</InputLabel>
       <OutlinedInput
+        classes={{ input: styles.input }}
         className={styles.formField}
         value={value}
         onChange={changeHandler}

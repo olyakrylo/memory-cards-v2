@@ -1,9 +1,12 @@
 import { connect } from "react-redux";
+import Head from "next/head";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
+import { StyledEngineProvider } from "@mui/material/styles";
 import "@splidejs/splide/dist/css/splide.min.css";
 
 import "../styles/globals.css";
+import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../locales/i18n";
@@ -28,11 +31,16 @@ function MyApp({
   });
 
   return (
-    <ThemeProvider theme={theme}>
-      <Component {...pageProps} />
+    <StyledEngineProvider injectFirst>
+      <Head>
+        <title>Memory cards</title>
+      </Head>
+      <ThemeProvider theme={theme}>
+        <Component {...pageProps} />
 
-      <Notification />
-    </ThemeProvider>
+        <Notification />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

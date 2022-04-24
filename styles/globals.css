@@ -42,14 +42,6 @@ body {
   background: var(--bg-color);
 }
 
-.splide__arrow--prev {
-  left: 0 !important;
-}
-
-.splide__arrow--next {
-  right: 0 !important;
-}
-
 @media (max-width: 500px) {
   body {
     padding: 60px 20px;
@@ -67,21 +59,24 @@ a {
 
 @font-face {
   font-family: "Roboto";
-  src: url("../assets/fonts/Roboto-Light.woff");
+  src: url("/fonts/Roboto-Light.woff");
   font-style: normal;
   font-weight: 300;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Roboto";
-  src: url("../assets/fonts/Roboto-Regular.woff");
+  src: url("/fonts/Roboto-Regular.woff");
   font-style: normal;
   font-weight: 400;
+  font-display: swap;
 }
 
 @font-face {
   font-family: "Noto Sans";
-  src: url("../assets/fonts/NotoSans-Bold.woff");
+  src: url("/fonts/NotoSans-Bold.woff");
   font-style: normal;
   font-weight: 700;
+  font-display: swap;
 }

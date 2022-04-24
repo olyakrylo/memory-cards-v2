@@ -104,11 +104,11 @@ export const TopicItem = ({
           "aria-labelledby": "basic-button",
         }}
       >
-        <MenuItem className={styles.menu_item} onClick={deleteTopic}>
+        <MenuItem className={styles.menuItem} onClick={deleteTopic}>
           {t("ui.delete")}
           <DeleteTwoTone color="secondary" />
         </MenuItem>
-        <MenuItem className={styles.menu_item} onClick={shareTopic}>
+        <MenuItem className={styles.menuItem} onClick={shareTopic}>
           {t("ui.share")}
           <Share color="primary" />
         </MenuItem>

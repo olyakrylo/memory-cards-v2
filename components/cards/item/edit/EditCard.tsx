@@ -5,7 +5,7 @@ import { EditRounded } from "@mui/icons-material";
 import { Card } from "../../../../utils/types";
 import { request } from "../../../../utils/request";
 import styles from "../CardItem.module.css";
-import { CardControl } from "../../control/CardControl";
+import CardControl from "../../control";
 
 type EditCardProps = {
   card: Card;

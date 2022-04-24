@@ -27,6 +27,7 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   const router = useRouter();
 
   const [mode, setMode] = useState<AuthMode>("signIn");
+  const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (user) {
@@ -35,11 +36,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
     }
     if (user === null) return;
 
+    setLoading(true);
     request("users", "", "get").then(({ user }) => {
       if (user) {
         setUser(user);
       }
     });
+    setLoading(false);
   }, [user, setUser, router]);
 
   const onAuth = async (data: AuthCredentials): Promise<void> => {
@@ -51,10 +54,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   };
 
   const handleLogin = async (data: AuthCredentials) => {
+    setLoading(true);
     const { user, error } = await request("users", "", "post", {
       login: data.login,
       password: encryptedPassword(data.password),
     });
+    setLoading(false);
+
     if (error?.no_user) {
       setNotification({
         severity: "error",
@@ -79,10 +85,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   };
 
   const handleSignUp = async (data: AuthCredentials) => {
+    setLoading(true);
     const { user, error } = await request("users", "create", "post", {
       ...data,
       password: encryptedPassword(data.password),
     });
+    setLoading(false);
+
     if (error?.user_exists) {
       setNotification({
         severity: "warning",
@@ -119,11 +128,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
           mode="signIn"
           emitAuth={onAuth}
           changeMode={() => changeMode("signUp")}
+          loading={mode === "signIn" && loading}
         />
         <AuthSide
           mode="signUp"
           emitAuth={onAuth}
           changeMode={() => changeMode("signIn")}
+          loading={mode === "signUp" && loading}
         />
       </ReactCardFlip>
     </div>

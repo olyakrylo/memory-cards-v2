@@ -5,7 +5,7 @@
 }
 
 .cardContainer_arrows {
-  margin: 24px 40px;
+  margin: 24px 56px;
 }
 
 .card {
@@ -50,9 +50,9 @@
 }
 
 .dialog__divider {
-  margin: 16px 0 8px !important;
+  margin: 16px 0 8px;
 }
 
 .dialog__content {
-  min-width: 200px;
+  margin-top: 16px;
 }

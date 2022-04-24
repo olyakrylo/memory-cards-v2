@@ -87,22 +87,26 @@ export const Topics = ({
         {loading && <CircularProgress className={styles.loader} size={24} />}
 
         {!loading && (
-          <div className={styles.topicsList}>
-            <Divider className={styles.topicsList__divider} textAlign="left">
-              <Typography>{t("ui.created")}</Typography>
+          <div>
+            <Divider className={styles.topicsDivider} textAlign="left">
+              <Typography variant={"subtitle2"}>{t("ui.created")}</Typography>
             </Divider>
 
-            {selfTopics().map((topic) => (
-              <TopicItem key={topic._id} topic={topic} />
-            ))}
+            <div className={styles.topicsList}>
+              {selfTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+            </div>
 
-            <Divider className={styles.topicsList__divider} textAlign="left">
-              <Typography>{t("ui.added")}</Typography>
+            <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
+              <Typography variant={"subtitle2"}>{t("ui.added")}</Typography>
             </Divider>
 
-            {publicTopics().map((topic) => (
-              <TopicItem key={topic._id} topic={topic} />
-            ))}
+            <div className={styles.topicsList}>
+              {publicTopics().map((topic) => (
+                <TopicItem key={topic._id} topic={topic} />
+              ))}
+            </div>
           </div>
         )}
 
@@ -113,7 +117,10 @@ export const Topics = ({
       </div>
 
       <div className={styles.control}>
-        <IconButton className={styles.control__toggle} onClick={toggleMenu}>
+        <IconButton
+          classes={{ root: styles.control__toggle }}
+          onClick={toggleMenu}
+        >
           <MenuRounded />
         </IconButton>
 
