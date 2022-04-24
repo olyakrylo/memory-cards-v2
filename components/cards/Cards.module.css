@@ -11,8 +11,8 @@
 }
 
 .control__add {
-  background: var(--seagreen) !important;
-  color: var(--bg-color) !important;
+  background: var(--seagreen);
+  color: var(--bg-color);
 }
 
 .control__add:hover {

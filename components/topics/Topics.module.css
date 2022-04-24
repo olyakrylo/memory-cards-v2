@@ -73,8 +73,8 @@
 }
 
 .control__toggle {
-  margin: 10px -10px !important;
-  color: var(--medium-gray) !important;
+  margin: 10px -10px;
+  color: var(--medium-gray);
 }
 
 .addButton {
@@ -82,8 +82,8 @@
   align-items: flex-start;
   justify-content: flex-start;
   gap: 8px;
-  margin-left: -8px !important;
-  text-transform: lowercase !important;
+  margin-left: -8px;
+  text-transform: lowercase;
 }
 
 .addButton__title {
