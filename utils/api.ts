@@ -93,6 +93,12 @@ export type TopicsAPI = {
       result: UpdatedResult;
     };
   };
+  public_count: {
+    get: {
+      params: {};
+      result: { count: number };
+    };
+  };
   public: {
     get: {
       params: {};
@@ -103,13 +109,15 @@ export type TopicsAPI = {
       result: Topic[];
     };
   };
+  by_user_count: {
+    get: {
+      params: {};
+      result: TopicsCount;
+    };
+  };
   by_user: {
     get: {
       params: {};
-      result: Topic[];
-    };
-    post: {
-      params: { user_id: string };
       result: Topic[];
     };
   };
@@ -162,4 +170,9 @@ export type ConfigAPI = {
       result: UpdatedResult;
     };
   };
+};
+
+export type TopicsCount = {
+  self: number;
+  public: number;
 };

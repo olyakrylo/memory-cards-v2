@@ -7,13 +7,17 @@ import { getUserId } from "../../../utils/get-user-id";
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
 
-  const catcher = (error: Error) => res.status(400).json({ error });
-
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic } = await connect();
+
       const userId = getUserId(req, res);
-      res.json(await Topic.find({ users_id: userId }).catch(catcher));
+      const count = await Topic.count({
+        public: true,
+        users_id: { $ne: userId },
+      });
+
+      res.json({ count });
     },
   };
 

@@ -49,6 +49,14 @@
   transform: rotate(-90deg);
 }
 
+.skeleton {
+  margin: 24px;
+}
+
+.skeleton_arrows {
+  margin: 24px 56px;
+}
+
 .slider {
   margin: auto;
   width: 100%;

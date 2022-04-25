@@ -10,7 +10,6 @@ import { Subject } from "rxjs";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import {
-  CircularProgress,
   FormControlLabel,
   FormGroup,
   IconButton,
@@ -32,6 +31,7 @@ import styles from "./Cards.module.css";
 import AddCard from "./add";
 import CardItem from "./item";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
+import SkeletonLoader from "../skeletonLoader";
 
 type CardProps = {
   user?: User | null;
@@ -186,9 +186,9 @@ export const Cards = ({
     });
   };
 
-  if (loading) {
-    return <CircularProgress className={styles.loader} />;
-  }
+  // if (loading) {
+  //   return <CircularProgress className={styles.loader} />;
+  // }
 
   const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
   const startIndexFromStorage = parseInt(
@@ -230,7 +230,7 @@ export const Cards = ({
             )}
           </div>
 
-          {canEditTopic() && !cards.length && (
+          {!loading && !cards.length && canEditTopic() && (
             <div className={styles.tip}>
               {t("ui.add_first_card")}{" "}
               <ArrowCircleDownRounded className={styles.tip__icon_add} />
@@ -246,7 +246,17 @@ export const Cards = ({
         </div>
       )}
 
-      {!!cards.length && (
+      {loading && (
+        <SkeletonLoader
+          height={350}
+          count={1}
+          classes={`${styles.skeleton} ${
+            hideArrows ? "" : styles.skeleton_arrows
+          }`}
+        />
+      )}
+
+      {!loading && !!cards.length && (
         <Fragment>
           {getCardsMatrix(shuffledCards ?? cards).map(
             (cardsSlice, splideIndex) => (

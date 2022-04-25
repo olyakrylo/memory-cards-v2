@@ -6,6 +6,7 @@ import { ResponseFuncs, Topic } from "../../../utils/types";
 import { getCookie } from "../../../utils/cookies";
 import { TopicsAPI } from "../../../utils/api";
 import { config } from "../../../utils/config";
+import { getUserId } from "../../../utils/get-user-id";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -15,7 +16,13 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic, User, Card } = await connect();
-      let topics = await Topic.find({ public: true });
+
+      const userId = getUserId(req, res);
+      let topics = await Topic.find({
+        public: true,
+        users_id: { $ne: userId },
+      });
+
       topics = await Promise.all(
         topics.map(async (topic) => {
           const author_name = (await User.findById(topic.author_id))?.login;

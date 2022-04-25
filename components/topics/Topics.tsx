@@ -1,12 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import {
-  CircularProgress,
-  Divider,
-  IconButton,
-  Typography,
-} from "@mui/material";
+import { Divider, IconButton, Typography } from "@mui/material";
 import { MenuRounded } from "@mui/icons-material";
 
 import { Topic, User } from "../../utils/types";
@@ -16,6 +11,8 @@ import TopicItem from "./item";
 import AddTopic from "./add";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
+import { TopicsCount } from "../../utils/api";
+import SkeletonLoader from "../skeletonLoader";
 
 type TopicsProps = {
   user?: User | null;
@@ -31,8 +28,10 @@ export const Topics = ({
   setTopics,
 }: TopicsProps) => {
   const { t } = useTranslation();
+
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);
+  const [count, setCount] = useState<TopicsCount>({ self: 1, public: 0 });
 
   const router = useRouter();
 
@@ -55,10 +54,15 @@ export const Topics = ({
   useEffect(() => {
     if (!user) return;
     setLoading(true);
-    request("topics", "by_user", "get").then((resTopics) => {
-      setTopics(resTopics);
-      setLoading(false);
-    });
+    request("topics", "by_user_count", "get")
+      .then((count) => {
+        setCount(count);
+      })
+      .then(() => request("topics", "by_user", "get"))
+      .then((resTopics) => {
+        setTopics(resTopics);
+        setLoading(false);
+      });
   }, [user?._id]);
 
   const toggleMenu = (event: BaseSyntheticEvent): void => {
@@ -85,31 +89,31 @@ export const Topics = ({
   return (
     <div className={styles.container}>
       <div className={styles.content} aria-hidden={hidden}>
-        {loading && <CircularProgress className={styles.loader} size={24} />}
+        <div>
+          <Divider className={styles.topicsDivider} textAlign="left">
+            <Typography variant={"subtitle2"}>{t("ui.created")}</Typography>
+          </Divider>
 
-        {!loading && (
-          <div>
-            <Divider className={styles.topicsDivider} textAlign="left">
-              <Typography variant={"subtitle2"}>{t("ui.created")}</Typography>
-            </Divider>
+          <div className={styles.topicsList}>
+            {loading && <SkeletonLoader height={34} count={count.self} />}
 
-            <div className={styles.topicsList}>
-              {selfTopics().map((topic) => (
-                <TopicItem key={topic._id} topic={topic} />
-              ))}
-            </div>
-
-            <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
-              <Typography variant={"subtitle2"}>{t("ui.added")}</Typography>
-            </Divider>
-
-            <div className={styles.topicsList}>
-              {publicTopics().map((topic) => (
-                <TopicItem key={topic._id} topic={topic} />
-              ))}
-            </div>
+            {selfTopics().map((topic) => (
+              <TopicItem key={topic._id} topic={topic} />
+            ))}
           </div>
-        )}
+
+          <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
+            <Typography variant={"subtitle2"}>{t("ui.added")}</Typography>
+          </Divider>
+
+          <div className={styles.topicsList}>
+            {loading && <SkeletonLoader height={34} count={count.public} />}
+
+            {publicTopics().map((topic) => (
+              <TopicItem key={topic._id} topic={topic} />
+            ))}
+          </div>
+        </div>
 
         <div>
           <AddTopic addTopic={addTopic} />
