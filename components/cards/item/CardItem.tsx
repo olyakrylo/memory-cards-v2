@@ -16,11 +16,13 @@ import {
   ZoomInMapRounded,
 } from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
+import Image from "next/image";
 
-import { Card } from "../../../utils/types";
+import { Card, CardField } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
+import Field from "../control/field";
 
 const MAX_TEXT_LENGTH = 300;
 
@@ -101,8 +103,16 @@ export const CardItem = ({
         cardZIndex={"100"}
       >
         <div className={styles.card} onClick={toggleCard}>
+          {card.question.image && (
+            <Image
+              src={card.question.image}
+              layout={"fill"}
+              objectFit={"contain"}
+            />
+          )}
+
           <Typography className={styles.card__text}>
-            {cropText(card.question)}
+            {cropText(card.question.text)}
           </Typography>
 
           {card._id && canEditTopic && (
@@ -149,8 +159,16 @@ export const CardItem = ({
           className={`${styles.card} ${showArrows && styles.card_arrows}`}
           onClick={toggleCard}
         >
+          {card.answer.image && (
+            <Image
+              src={card.answer.image}
+              layout={"fill"}
+              objectFit={"contain"}
+            />
+          )}
+
           <Typography className={styles.card__text}>
-            {cropText(card.answer)}
+            {cropText(card.answer.text)}
           </Typography>
 
           <IconButton
@@ -170,25 +188,9 @@ export const CardItem = ({
         onClose={closeDialog}
         content={
           <>
-            <Typography
-              fontWeight={500}
-              variant={"subtitle1"}
-              color={"primary"}
-            >
-              {t("ui.question")}
-            </Typography>
-            <Typography>{card.question}</Typography>
-
+            <CardDialogContent field={"question"} card={card} />
             <Divider classes={{ root: styles.dialog__divider }} />
-
-            <Typography
-              fontWeight={500}
-              variant={"subtitle1"}
-              color={"primary"}
-            >
-              {t("ui.answer")}
-            </Typography>
-            <Typography>{card.answer}</Typography>
+            <CardDialogContent field={"answer"} card={card} />
           </>
         }
         actions={
@@ -198,5 +200,30 @@ export const CardItem = ({
         }
       />
     </SplideSlide>
+  );
+};
+
+type CardDialogContentProps = {
+  field: "question" | "answer";
+  card: Card;
+};
+
+const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
+  const { t } = useTranslation();
+
+  return (
+    <>
+      <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
+        {t(`ui.${field}`)}
+      </Typography>
+      <Typography>{card[field].text}</Typography>
+      {card[field].image && (
+        <img
+          src={card[field].image}
+          alt={t(`ui.${field}`)}
+          className={styles.dialog__image}
+        />
+      )}
+    </>
   );
 };

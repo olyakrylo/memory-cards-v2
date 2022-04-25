@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 
 import { request } from "../../../utils/request";
 import styles from "../Cards.module.css";
-import { Card, Topic } from "../../../utils/types";
+import { Card, ShortCard, Topic } from "../../../utils/types";
 import CardControl from "../control";
 
 type AddCardProps = {
@@ -25,9 +25,7 @@ export const AddCard = ({
     setNewCardOpen(true);
   };
 
-  const onCloseNewCardDialog = async (
-    cards: { question: string; answer: string }[] | null
-  ) => {
+  const onCloseNewCardDialog = async (cards: ShortCard[] | null) => {
     setNewCardOpen(false);
     if (!cards) return;
     setLoading(true);

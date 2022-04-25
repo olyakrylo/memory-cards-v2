@@ -49,10 +49,24 @@
   grid-area: flip;
 }
 
+.card__del,
+.card__edit,
+.card__share,
+.card__flip,
+.card__del:hover,
+.card__edit:hover,
+.card__share:hover,
+.card__flip:hover {
+  background: rgba(255, 255, 255, 0.85);
+}
+
 .dialog__divider {
   margin: 16px 0 8px;
 }
 
-.dialog__content {
-  margin-top: 16px;
+.dialog__image {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  max-height: 700px;
 }

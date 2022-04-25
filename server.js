@@ -12,6 +12,7 @@ const httpsOptions = {
   key: fs.readFileSync("../certs/key.pem"),
   cert: fs.readFileSync("../certs/cert.pem"),
 };
+
 app.prepare().then(() => {
   createServer(httpsOptions, (req, res) => {
     const parsedUrl = parse(req.url, true);

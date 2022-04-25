@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { EditRounded } from "@mui/icons-material";
 
-import { Card } from "../../../../utils/types";
+import { Card, ShortCard } from "../../../../utils/types";
 import { request } from "../../../../utils/request";
 import styles from "../CardItem.module.css";
 import CardControl from "../../control";
@@ -22,7 +22,7 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
   };
 
   const onCloseEditCardDialog = async (
-    newCards: { question: string; answer: string }[] | null,
+    newCards: ShortCard[] | null,
     card?: Card
   ) => {
     setEditCardOpen(false);

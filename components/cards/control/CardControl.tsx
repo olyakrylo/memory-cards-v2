@@ -1,38 +1,50 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, TextField, Tooltip, Typography } from "@mui/material";
+import { Button, Tooltip, Typography } from "@mui/material";
 
-import { Card, Topic } from "../../../utils/types";
+import {
+  AppNotification,
+  Card,
+  CardField,
+  ShortCard,
+  Topic,
+} from "../../../utils/types";
 import styles from "./CardControl.module.css";
 import AppDialog from "../../dialog";
+import CardControlField from "./field";
+import { setNotification } from "../../../redux/actions/main";
 
 type CardControlProps = {
   currentTopic?: Topic;
   open: boolean;
-  onClose: (
-    newCards: { question: string; answer: string }[] | null,
-    card?: Card
-  ) => void;
+  onClose: (newCards: ShortCard[] | null, card?: Card) => void;
   card?: Card;
+  setNotification: (n: AppNotification) => void;
 };
 
-type ShortCard = Omit<Card, "_id" | "topic_id">;
+export type Field = "question" | "answer";
 
 export const CardControl = ({
   currentTopic,
   open,
   onClose,
   card,
+  setNotification,
 }: CardControlProps) => {
-  const [question, setQuestion] = useState<string>("");
-  const [answer, setAnswer] = useState<string>("");
+  const [question, setQuestion] = useState<CardField>({ text: "" });
+  const [answer, setAnswer] = useState<CardField>({ text: "" });
 
   const [cardsFromFile, setCardsFromFile] = useState<ShortCard[]>([]);
 
   useEffect(() => {
     if (open) {
-      setQuestion(card?.question ?? "");
-      setAnswer(card?.answer ?? "");
+      if (card) {
+        setQuestion(card.question);
+        setAnswer(card.answer);
+      } else {
+        setQuestion({ text: "" });
+        setAnswer({ text: "" });
+      }
       setCardsFromFile([]);
     }
   }, [open, card]);
@@ -53,10 +65,44 @@ export const CardControl = ({
     onClose(null);
   };
 
-  const onChangeField = (event: any, updateFunc: (value: string) => void) => {
+  const onChangeField = (event: BaseSyntheticEvent, field: Field) => {
     event.stopPropagation();
     const { value } = event.target as { value: string };
-    updateFunc(value);
+    if (field === "question") {
+      setQuestion({ ...question, text: value });
+    } else {
+      setAnswer({ ...answer, text: value });
+    }
+  };
+
+  const onChangeAttach = (event: BaseSyntheticEvent, field: Field) => {
+    const reader = new FileReader();
+
+    const file = event.target.files[0];
+    console.log(file);
+    if (!file) return;
+
+    if (file.type.startsWith("image")) {
+      if (file.size > 900000) {
+        setNotification({
+          autoHide: 5000,
+          severity: "error",
+          text: "too large image",
+        });
+        return;
+      }
+
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const fileString = reader.result as string;
+
+        if (field === "question") {
+          setQuestion({ ...question, image: fileString });
+        } else {
+          setAnswer({ ...answer, image: fileString });
+        }
+      };
+    }
   };
 
   const handleFile = async (event: BaseSyntheticEvent): Promise<void> => {
@@ -76,7 +122,7 @@ export const CardControl = ({
           if (!q || !a) {
             throw new Error();
           }
-          return { question: q, answer: a };
+          return { question: { text: q }, answer: { text: a } };
         });
       setCardsFromFile(cardsData);
     } catch {
@@ -97,22 +143,21 @@ export const CardControl = ({
       }
       content={
         <div className={styles.content}>
-          <TextField
-            required
-            multiline
-            rows={3}
-            label={t("ui.question")}
-            defaultValue={question}
-            onChange={(e) => onChangeField(e, setQuestion)}
+          <CardControlField
+            field="question"
+            value={question}
+            rowsCount={3}
+            handleChange={onChangeField}
+            handleAttach={onChangeAttach}
             disabled={!!cardsFromFile.length}
           />
-          <TextField
-            required
-            multiline
-            rows={6}
-            label={t("ui.answer")}
-            defaultValue={answer}
-            onChange={(e) => onChangeField(e, setAnswer)}
+
+          <CardControlField
+            field="answer"
+            value={answer}
+            rowsCount={6}
+            handleChange={onChangeField}
+            handleAttach={onChangeAttach}
             disabled={!!cardsFromFile.length}
           />
 
