@@ -34,6 +34,10 @@ function MyApp({
     <StyledEngineProvider injectFirst>
       <Head>
         <title>Memory cards</title>
+        <meta
+          name="viewport"
+          content="width=device-width,initial-scale=1,maximum-scale=1"
+        />
       </Head>
       <ThemeProvider theme={theme}>
         <Component {...pageProps} />
