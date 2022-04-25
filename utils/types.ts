@@ -1,4 +1,5 @@
 import { AlertColor } from "@mui/material";
+import { string } from "prop-types";
 
 export type AppNotification = {
   severity: AlertColor;
@@ -45,11 +46,16 @@ export interface Topic {
   public?: boolean;
 }
 
+export interface CardField {
+  text: string;
+  image?: string;
+}
+
 export interface Card {
   _id: string;
   topic_id: string;
-  question: string;
-  answer: string;
+  question: CardField;
+  answer: CardField;
 }
 
 export type TopicExt = Topic & {
@@ -58,3 +64,5 @@ export type TopicExt = Topic & {
 };
 
 export type UpdatedResult = { updated: boolean };
+
+export type ShortCard = Omit<Card, "_id" | "topic_id">;

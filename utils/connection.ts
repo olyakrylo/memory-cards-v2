@@ -23,8 +23,14 @@ export const connect = async () => {
 
   const CardSchema = new mongoose.Schema({
     topic_id: String,
-    question: String,
-    answer: String,
+    question: {
+      text: String,
+      image: String,
+    },
+    answer: {
+      text: String,
+      image: String,
+    },
   });
 
   const RecoverySchema = new mongoose.Schema({
