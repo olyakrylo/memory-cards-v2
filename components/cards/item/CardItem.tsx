@@ -18,7 +18,7 @@ import {
 import ReactCardFlip from "react-card-flip";
 import Image from "next/image";
 
-import { Card, CardField } from "../../../utils/types";
+import { Card, CardFieldContent } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
@@ -220,7 +220,7 @@ const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
       {card[field].image && (
         <img
           src={card[field].image}
-          alt={t(`ui.${field}`)}
+          alt={t(`ui.${field}_image`)}
           className={styles.dialog__image}
         />
       )}

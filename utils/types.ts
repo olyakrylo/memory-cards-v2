@@ -46,17 +46,17 @@ export interface Topic {
   public?: boolean;
 }
 
-export interface CardField {
+export type CardField = "question" | "answer";
+
+export interface CardFieldContent {
   text: string;
   image?: string;
 }
 
-export interface Card {
+export type Card = Record<CardField, CardFieldContent> & {
   _id: string;
   topic_id: string;
-  question: CardField;
-  answer: CardField;
-}
+};
 
 export type TopicExt = Topic & {
   author_name: string;

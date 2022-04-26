@@ -6,6 +6,8 @@
     "show_arrows": "Show arrows",
     "question": "Question",
     "answer": "Answer",
+    "question_image": "Question image",
+    "answer_image": "Answer image",
     "save": "Save",
     "cancel": "Cancel",
     "add_first_card": "Add the first card",
@@ -36,7 +38,10 @@
     "add-topics_one": "Add {{count}} topic",
     "add-topics_other": "Add {{count}} topics",
     "save_topic": "Save topic",
-    "file_formats": "TXT, TSV or CSV"
+    "file_formats": "TXT, TSV or CSV",
+    "attach_image_or_text": "Attach image or text file",
+    "too_large_image": "Too large image (900B max)",
+    "invalid_file_content": "Invalid file content"
   },
   "auth": {
     "signIn": "Authorization",

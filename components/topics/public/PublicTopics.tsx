@@ -1,27 +1,15 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import {
-  RemoveCircleRounded,
-  CollectionsBookmarkRounded,
-  KeyboardArrowDownRounded,
-  AddCircleRounded,
-} from "@mui/icons-material";
-import {
-  Button,
-  CircularProgress,
-  debounce,
-  IconButton,
-  Skeleton,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { CollectionsBookmarkRounded } from "@mui/icons-material";
+import { Button, debounce, TextField, Typography } from "@mui/material";
 
 import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
 import { request } from "../../../utils/request";
-import { Card, Topic, TopicExt } from "../../../utils/types";
+import { Topic, TopicExt } from "../../../utils/types";
 import AppDialog from "../../dialog";
 import SkeletonLoader from "../../skeletonLoader";
+import PublicTopicItem from "./item";
 
 type PublicTopicsProps = {
   topics: Topic[];
@@ -39,8 +27,6 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
   const [selectedTopics, setSelectedTopics] = useState<string[]>([]);
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [expanded, setExpanded] = useState<{ [key: string]: boolean }>({});
-  const [topicCards, setTopicCards] = useState<{ [key: string]: Card[] }>({});
 
   useEffect(() => {
     if (!dialogOpen) return;
@@ -72,25 +58,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
     setDialogOpen(false);
   };
 
-  const loadCards = async (id: string): Promise<void> => {
-    if (topicCards[id]) return;
-    const cards = await request("cards", "by_topic", "post", {
-      topic_id: id,
-    });
-    setTopicCards({ ...topicCards, [id]: cards });
-  };
-
-  const toggleExpand = async (topic: TopicExt): Promise<void> => {
-    if (!topic.cards_count) return;
-
-    if (!expanded[topic._id]) {
-      await loadCards(topic._id);
-    }
-    setExpanded({ ...expanded, [topic._id]: !expanded[topic._id] });
-  };
-
-  const toggleTopic = (event: BaseSyntheticEvent, id: string): void => {
-    event.stopPropagation();
+  const toggleTopic = (id: string): void => {
     let updatedTopics = selectedTopics.slice();
     if (selectedTopics.includes(id)) {
       updatedTopics = updatedTopics.filter((topicId) => topicId !== id);
@@ -159,81 +127,14 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
               />
             )}
 
-            {filteredTopics.map((topic) => {
-              return (
-                <div key={topic._id} className={styles.topic}>
-                  <div
-                    className={styles.topic__head}
-                    onClick={() => toggleExpand(topic)}
-                    aria-disabled={!topic.cards_count}
-                  >
-                    <IconButton
-                      size="small"
-                      className={styles.topic__expand}
-                      aria-expanded={expanded[topic._id]}
-                      disabled={!topic.cards_count}
-                    >
-                      <KeyboardArrowDownRounded />
-                    </IconButton>
-                    <Typography classes={{ root: styles.topic__title }}>
-                      {topic.title}
-                    </Typography>
-                    <Typography className={styles.topic__author}>
-                      ({topic.author_name})
-                    </Typography>
-                    <Typography
-                      className={styles.topic__cards}
-                      variant="subtitle2"
-                    >
-                      {t("add.cards-count", { count: topic.cards_count ?? 0 })}
-                    </Typography>
-                    <IconButton
-                      size="small"
-                      className={styles.topic__toggle}
-                      color={
-                        selectedTopics.includes(topic._id)
-                          ? "secondary"
-                          : "primary"
-                      }
-                      onClick={(e) => toggleTopic(e, topic._id)}
-                    >
-                      {selectedTopics.includes(topic._id) ? (
-                        <RemoveCircleRounded />
-                      ) : (
-                        <AddCircleRounded />
-                      )}
-                    </IconButton>
-                  </div>
-
-                  {expanded[topic._id] && (
-                    <div className={styles.topic__content}>
-                      {!topicCards[topic._id] && (
-                        <SkeletonLoader height={64} count={topic.cards_count} />
-                      )}
-
-                      {(topicCards[topic._id] ?? []).map((card) => {
-                        return (
-                          <div key={card._id} className={styles.card}>
-                            <Typography
-                              className={styles.card__question}
-                              variant="subtitle2"
-                            >
-                              {card.question}
-                            </Typography>
-                            <Typography
-                              className={styles.card__answer}
-                              variant="subtitle2"
-                            >
-                              {card.answer}
-                            </Typography>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+            {filteredTopics.map((topic) => (
+              <PublicTopicItem
+                key={topic._id}
+                topic={topic}
+                selected={selectedTopics.includes(topic._id)}
+                toggleTopic={() => toggleTopic(topic._id)}
+              />
+            ))}
           </>
         }
         actions={

@@ -57,7 +57,7 @@
 .card__edit:hover,
 .card__share:hover,
 .card__flip:hover {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--white);
 }
 
 .dialog__divider {

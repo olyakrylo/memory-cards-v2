@@ -6,6 +6,8 @@
     "show_arrows": "Показывать стрелки",
     "question": "Вопрос",
     "answer": "Ответ",
+    "question_image": "Изображение из вопроса",
+    "answer_image": "Изображение из ответа",
     "save": "Сохранить",
     "cancel": "Отмена",
     "add_first_card": "Добавь первую карточку",
@@ -39,7 +41,10 @@
     "add-topics_few": "Добавить {{count}} темы",
     "add-topics_many": "Добавить {{count}} тем",
     "save_topic": "Сохранить тему",
-    "file_formats": "TXT, TSV или CSV"
+    "file_formats": "TXT, TSV or CSV",
+    "attach_image_or_text": "Прикрепить изображение или текст из файла",
+    "too_large_image": "Слишком большой размер изображения (максимум 900 байт)",
+    "invalid_file_content": "Неверное содержимое файла"
   },
   "auth": {
     "signIn": "Авторизация",

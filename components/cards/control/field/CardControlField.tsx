@@ -1,20 +1,22 @@
-import { BaseSyntheticEvent } from "react";
+import { BaseSyntheticEvent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded } from "@mui/icons-material";
-import Image from "next/image";
 
-import { Field } from "../CardControl";
 import styles from "./CardControlField.module.css";
-import { CardField } from "../../../../utils/types";
+import {
+  AppNotification,
+  CardField,
+  CardFieldContent,
+} from "../../../../utils/types";
 
 type CardControlFieldProps = {
-  field: Field;
-  value: CardField;
+  field: CardField;
+  value: CardFieldContent;
   rowsCount: number;
-  handleChange: (e: BaseSyntheticEvent, f: Field) => void;
-  handleAttach: (e: BaseSyntheticEvent, f: Field) => void;
+  handleChange: (f: CardField, data: Partial<CardFieldContent>) => void;
   disabled: boolean;
+  setNotification: (n: AppNotification) => void;
 };
 
 export const CardControlField = ({
@@ -22,20 +24,72 @@ export const CardControlField = ({
   value,
   rowsCount,
   handleChange,
-  handleAttach,
   disabled,
+  setNotification,
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
+
+  const inputRef = useRef<HTMLTextAreaElement | null>();
+
+  const onChangeInput = (event: BaseSyntheticEvent): void => {
+    const { value } = event.target;
+    handleChange(field, { text: value });
+  };
+
+  const onChangeAttach = async (event: BaseSyntheticEvent): Promise<void> => {
+    const reader = new FileReader();
+
+    const file = event.target.files[0] as File;
+    if (!file) return;
+
+    if (file.type.startsWith("image")) {
+      if (file.size > 900000) {
+        setNotification({
+          autoHide: 5000,
+          severity: "error",
+          text: "add.too_large_image",
+          translate: true,
+        });
+        return;
+      }
+
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        const fileString = reader.result as string;
+
+        handleChange(field, {
+          image: fileString,
+        });
+      };
+    } else if (file.type.startsWith("text")) {
+      const text = await file.text();
+      if (!text) {
+        setNotification({
+          autoHide: 5000,
+          severity: "error",
+          text: "add.invalid_file_content",
+          translate: true,
+        });
+      } else {
+        handleChange(field, { text });
+
+        if (inputRef.current) {
+          inputRef.current.focus();
+        }
+      }
+    }
+  };
 
   return (
     <div className={styles.container}>
       <TextField
         required
         multiline
+        inputRef={inputRef}
         rows={rowsCount}
         label={t(`ui.${field}`)}
         defaultValue={value.text}
-        onChange={(e) => handleChange(e, field)}
+        onChange={onChangeInput}
         disabled={disabled}
         InputProps={{
           endAdornment: (
@@ -44,12 +98,17 @@ export const CardControlField = ({
                 id={`${field}-file-input`}
                 className={styles.attachment}
                 type={"file"}
-                onChange={(e) => handleAttach(e, field)}
+                onChange={onChangeAttach}
+                disabled={disabled}
+                accept="text/*, image/*"
               />
-              <Tooltip title={"attach image of text file"}>
+              <Tooltip
+                title={disabled ? "" : t("add.attach_image_or_text") ?? ""}
+              >
                 <label
                   htmlFor={`${field}-file-input`}
                   className={styles.attachmentLabel}
+                  aria-disabled={disabled}
                 >
                   <AttachFileRounded />
                 </label>
@@ -60,7 +119,11 @@ export const CardControlField = ({
       />
 
       {value.image && (
-        <img src={value.image} alt={"image"} className={styles.image} />
+        <img
+          src={value.image}
+          alt={t(`ui.${field}_image`)}
+          className={styles.image}
+        />
       )}
     </div>
   );

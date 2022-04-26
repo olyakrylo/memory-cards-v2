@@ -51,6 +51,7 @@
 
 .skeleton {
   margin: 24px;
+  transition: margin 0.2s ease-in-out;
 }
 
 .skeleton_arrows {

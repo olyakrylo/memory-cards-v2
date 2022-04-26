@@ -6,13 +6,13 @@ import {
   AppNotification,
   Card,
   CardField,
+  CardFieldContent,
   ShortCard,
   Topic,
 } from "../../../utils/types";
 import styles from "./CardControl.module.css";
 import AppDialog from "../../dialog";
 import CardControlField from "./field";
-import { setNotification } from "../../../redux/actions/main";
 
 type CardControlProps = {
   currentTopic?: Topic;
@@ -22,8 +22,6 @@ type CardControlProps = {
   setNotification: (n: AppNotification) => void;
 };
 
-export type Field = "question" | "answer";
-
 export const CardControl = ({
   currentTopic,
   open,
@@ -31,8 +29,8 @@ export const CardControl = ({
   card,
   setNotification,
 }: CardControlProps) => {
-  const [question, setQuestion] = useState<CardField>({ text: "" });
-  const [answer, setAnswer] = useState<CardField>({ text: "" });
+  const [question, setQuestion] = useState<CardFieldContent>({ text: "" });
+  const [answer, setAnswer] = useState<CardFieldContent>({ text: "" });
 
   const [cardsFromFile, setCardsFromFile] = useState<ShortCard[]>([]);
 
@@ -65,43 +63,11 @@ export const CardControl = ({
     onClose(null);
   };
 
-  const onChangeField = (event: BaseSyntheticEvent, field: Field) => {
-    event.stopPropagation();
-    const { value } = event.target as { value: string };
+  const onChangeField = (field: CardField, data: Partial<CardFieldContent>) => {
     if (field === "question") {
-      setQuestion({ ...question, text: value });
+      setQuestion({ ...question, ...data });
     } else {
-      setAnswer({ ...answer, text: value });
-    }
-  };
-
-  const onChangeAttach = (event: BaseSyntheticEvent, field: Field) => {
-    const reader = new FileReader();
-
-    const file = event.target.files[0];
-    console.log(file);
-    if (!file) return;
-
-    if (file.type.startsWith("image")) {
-      if (file.size > 900000) {
-        setNotification({
-          autoHide: 5000,
-          severity: "error",
-          text: "too large image",
-        });
-        return;
-      }
-
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const fileString = reader.result as string;
-
-        if (field === "question") {
-          setQuestion({ ...question, image: fileString });
-        } else {
-          setAnswer({ ...answer, image: fileString });
-        }
-      };
+      setAnswer({ ...answer, ...data });
     }
   };
 
@@ -126,7 +92,12 @@ export const CardControl = ({
         });
       setCardsFromFile(cardsData);
     } catch {
-      alert("Invalid file content");
+      setNotification({
+        severity: "error",
+        autoHide: 5000,
+        translate: true,
+        text: "add.invalid_file_content",
+      });
     }
   };
 
@@ -148,7 +119,6 @@ export const CardControl = ({
             value={question}
             rowsCount={3}
             handleChange={onChangeField}
-            handleAttach={onChangeAttach}
             disabled={!!cardsFromFile.length}
           />
 
@@ -157,7 +127,6 @@ export const CardControl = ({
             value={answer}
             rowsCount={6}
             handleChange={onChangeField}
-            handleAttach={onChangeAttach}
             disabled={!!cardsFromFile.length}
           />
 
@@ -179,9 +148,9 @@ export const CardControl = ({
           {cardsFromFile.map((card, i) => (
             <div className={styles.card} key={i}>
               <Typography classes={{ root: styles.card__question }}>
-                {card.question}
+                {card.question.text}
               </Typography>
-              <Typography>{card.answer}</Typography>
+              <Typography>{card.answer.text}</Typography>
             </div>
           ))}
         </div>
