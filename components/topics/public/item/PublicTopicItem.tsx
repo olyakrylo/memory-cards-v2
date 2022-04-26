@@ -11,6 +11,7 @@ import SkeletonLoader from "../../../skeletonLoader";
 import { request } from "../../../../utils/request";
 import { Card, CardField, TopicExt } from "../../../../utils/types";
 import styles from "./PublicTopicItem.module.css";
+import AppImage from "../../../image";
 
 type PublicTopicItemProps = {
   topic: TopicExt;
@@ -126,10 +127,11 @@ const PublicTopicCardField = ({ card, field }: PublicTopicsCardFieldProps) => {
       )}
 
       {card[field].image && (
-        <img
-          src={card[field].image}
-          className={styles.card__image}
+        <AppImage
+          src={card[field].image as string}
           alt={t(`ui.${field}_image`)}
+          maxHeight={"180px"}
+          rounded={true}
         />
       )}
     </>

@@ -21,11 +21,3 @@
 .attachmentLabel[aria-disabled="true"] {
   cursor: default;
 }
-
-.image {
-  display: block;
-  margin: auto;
-  max-width: 100%;
-  max-height: 250px;
-  border-radius: 8px;
-}

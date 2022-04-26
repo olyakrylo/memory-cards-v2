@@ -8,23 +8,16 @@ import {
 import { useTranslation } from "react-i18next";
 import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
-import { Divider, IconButton, Tooltip, Typography } from "@mui/material";
-import {
-  DeleteTwoTone,
-  Share,
-  ZoomOutMapRounded,
-  ZoomInMapRounded,
-} from "@mui/icons-material";
+import { Divider, IconButton, Tooltip } from "@mui/material";
+import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
-import Image from "next/image";
 
-import { Card, CardFieldContent } from "../../../utils/types";
+import { Card } from "../../../utils/types";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
-import Field from "../control/field";
-
-const MAX_TEXT_LENGTH = 300;
+import CardMainContent from "./mainContent";
+import CardDialogContent from "./dialogContent";
 
 type CardItemProps = {
   index: number;
@@ -87,11 +80,6 @@ export const CardItem = ({
     setFlipped(!flipped);
   };
 
-  const cropText = (text: string): string => {
-    if (text.length < MAX_TEXT_LENGTH) return text;
-    return `${text.slice(0, MAX_TEXT_LENGTH)}...`;
-  };
-
   return (
     <SplideSlide>
       <ReactCardFlip
@@ -103,17 +91,11 @@ export const CardItem = ({
         cardZIndex={"100"}
       >
         <div className={styles.card} onClick={toggleCard}>
-          {card.question.image && (
-            <Image
-              src={card.question.image}
-              layout={"fill"}
-              objectFit={"contain"}
-            />
-          )}
-
-          <Typography className={styles.card__text}>
-            {cropText(card.question.text)}
-          </Typography>
+          <CardMainContent
+            card={card}
+            field={"question"}
+            openDialog={openDialog}
+          />
 
           {card._id && canEditTopic && (
             <IconButton
@@ -145,39 +127,17 @@ export const CardItem = ({
               </IconButton>
             </Tooltip>
           )}
-
-          <IconButton
-            className={styles.card__flip}
-            size={"small"}
-            onClick={openDialog}
-          >
-            <ZoomOutMapRounded />
-          </IconButton>
         </div>
 
         <div
           className={`${styles.card} ${showArrows && styles.card_arrows}`}
           onClick={toggleCard}
         >
-          {card.answer.image && (
-            <Image
-              src={card.answer.image}
-              layout={"fill"}
-              objectFit={"contain"}
-            />
-          )}
-
-          <Typography className={styles.card__text}>
-            {cropText(card.answer.text)}
-          </Typography>
-
-          <IconButton
-            className={styles.card__flip}
-            size={"small"}
-            onClick={openDialog}
-          >
-            <ZoomOutMapRounded />
-          </IconButton>
+          <CardMainContent
+            card={card}
+            field={"answer"}
+            openDialog={openDialog}
+          />
         </div>
       </ReactCardFlip>
 
@@ -200,30 +160,5 @@ export const CardItem = ({
         }
       />
     </SplideSlide>
-  );
-};
-
-type CardDialogContentProps = {
-  field: "question" | "answer";
-  card: Card;
-};
-
-const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
-  const { t } = useTranslation();
-
-  return (
-    <>
-      <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
-        {t(`ui.${field}`)}
-      </Typography>
-      <Typography>{card[field].text}</Typography>
-      {card[field].image && (
-        <img
-          src={card[field].image}
-          alt={t(`ui.${field}_image`)}
-          className={styles.dialog__image}
-        />
-      )}
-    </>
   );
 };

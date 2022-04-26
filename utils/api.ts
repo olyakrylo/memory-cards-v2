@@ -4,6 +4,7 @@ export type Paths = {
   users: UsersAPI;
   topics: TopicsAPI;
   cards: CardsAPI;
+  files: FilesAPI;
   config: ConfigAPI;
 };
 
@@ -145,6 +146,15 @@ export type CardsAPI = {
     post: {
       params: { topic_id: string };
       result: Card[];
+    };
+  };
+};
+
+export type FilesAPI = {
+  upload: {
+    post: {
+      params: FormData;
+      result: { filename: string };
     };
   };
 };
