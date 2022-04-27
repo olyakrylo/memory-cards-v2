@@ -1,8 +1,9 @@
-import { BaseSyntheticEvent, useRef, useState } from "react";
+import { BaseSyntheticEvent, useRef } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
 import { compressAccurately } from "image-conversion";
+import heic2any from "heic2any";
 
 import styles from "./CardControlField.module.css";
 import {
@@ -46,7 +47,14 @@ export const CardControlField = ({
     if (!file) return;
 
     if (file.type.startsWith("image")) {
-      compressAccurately(file, 500).then((blob) => {
+      let conversionFile: File | Blob = file;
+      if (file.type === "image/heic") {
+        conversionFile = (await heic2any({
+          blob: file,
+          toType: "image/jpg",
+        })) as Blob;
+      }
+      compressAccurately(conversionFile, 500).then((blob) => {
         const fileFromBlob = new File([blob], file.name, { type: file.type });
         handleImage(fileFromBlob);
       });
@@ -93,7 +101,7 @@ export const CardControlField = ({
                 type={"file"}
                 onChange={onChangeAttach}
                 disabled={disabled}
-                accept="text/*, image/*"
+                accept="text/*, image/*, image/heic"
               />
               <Tooltip
                 title={disabled ? "" : t("add.attach_image_or_text") ?? ""}
