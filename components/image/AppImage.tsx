@@ -4,9 +4,8 @@ import styles from "./AppImage.module.css";
 import { getImageSrc } from "../../utils/images";
 
 type CardImageProps = {
-  src: string;
+  src: string | File;
   alt: string;
-  simpleSrc?: boolean;
   classes?: string;
   rounded?: boolean;
   maxHeight?: string;
@@ -17,11 +16,17 @@ export const AppImage = ({
   src,
   classes,
   alt,
-  simpleSrc,
   maxHeight,
   rounded,
   absolute,
 }: CardImageProps) => {
+  const imageSrc = () => {
+    if (typeof src === "string") {
+      return getImageSrc(src);
+    }
+    return URL.createObjectURL(src);
+  };
+
   return (
     <div
       className={`${styles.container} ${classes ?? ""}`}
@@ -32,7 +37,7 @@ export const AppImage = ({
       <CircularProgress size={30} className={styles.loader} />
       <img
         className={styles.image}
-        src={simpleSrc ? src : getImageSrc(src)}
+        src={imageSrc()}
         alt={alt}
         style={{
           maxHeight: maxHeight ?? "100%",

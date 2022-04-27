@@ -2,7 +2,7 @@
   "name": "memory-cards-v2",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 4000",
+    "dev": "next dev",
     "build": "next build",
     "start": "node server.js",
     "lint": "next lint"

@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { connect } from "../../../utils/connection";
+import { connect, redis } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
 import { CardsAPI } from "../../../utils/api";
+import { RedisKey } from "ioredis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -20,13 +21,43 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       res.json(await Card.create(cards, { checkKeys: true }).catch(catcher));
     },
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
+      const body = req.body as CardsAPI[""]["put"]["params"];
       const { _id: id } = req.body as CardsAPI[""]["put"]["params"];
       const { Card } = await connect();
+
+      const exCard = await Card.findById(id);
+      const delKeys = [] as RedisKey[];
+      if (
+        exCard.question.image &&
+        exCard.question.image !== body.question.image
+      ) {
+        delKeys.push(exCard.question.image);
+      }
+      if (exCard.answer.image && exCard.answer.image !== body.answer.image) {
+        delKeys.push(exCard.answer.image);
+      }
+      if (delKeys.length) {
+        await redis.del(delKeys);
+      }
+
       res.json(await Card.findByIdAndUpdate(id, req.body, { new: true }));
     },
     DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
       const { id } = req.body as CardsAPI[""]["delete"]["params"];
       const { Card } = await connect();
+
+      const card = await Card.findById(id);
+      const delKeys = [] as RedisKey[];
+      if (card.question.image) {
+        delKeys.push(card.question.image);
+      }
+      if (card.question.answer) {
+        delKeys.push(card.question.answer);
+      }
+      if (delKeys.length) {
+        await redis.del(delKeys);
+      }
+
       res.json(await Card.findByIdAndDelete(id, { new: true }));
     },
   };

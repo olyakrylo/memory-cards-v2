@@ -1,7 +1,7 @@
 import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { TextField, Tooltip } from "@mui/material";
-import { AttachFileRounded } from "@mui/icons-material";
+import { IconButton, TextField, Tooltip } from "@mui/material";
+import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
 import { compressAccurately } from "image-conversion";
 
 import styles from "./CardControlField.module.css";
@@ -11,13 +11,14 @@ import {
   CardFieldContent,
 } from "../../../../utils/types";
 import AppImage from "../../../image";
+import { ControlCardFieldContent } from "../CardControl";
 
 type CardControlFieldProps = {
   field: CardField;
-  value: CardFieldContent;
+  value: ControlCardFieldContent;
   rowsCount: number;
   handleChange: (data: Partial<CardFieldContent>) => void;
-  handleImage: (f: File) => void;
+  handleImage: (f?: File) => void;
   disabled: boolean;
   setNotification: (n: AppNotification) => void;
 };
@@ -33,15 +34,11 @@ export const CardControlField = ({
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
 
-  const [image, setImage] = useState<string | undefined>(value.image);
-  const [uploaded, setUploaded] = useState<boolean>(false);
-
   const inputRef = useRef<HTMLTextAreaElement | null>();
   const inputId = `${field}-file-input`;
 
   const onChangeInput = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target;
-    handleChange({ text: value });
+    handleChange({ text: event.target.value });
   };
 
   const onChangeAttach = async (event: BaseSyntheticEvent): Promise<void> => {
@@ -51,8 +48,6 @@ export const CardControlField = ({
     if (file.type.startsWith("image")) {
       compressAccurately(file, 500).then((blob) => {
         const fileFromBlob = new File([blob], file.name, { type: file.type });
-        setImage(URL.createObjectURL(fileFromBlob));
-        setUploaded(true);
         handleImage(fileFromBlob);
       });
     } else if (file.type.startsWith("text")) {
@@ -74,6 +69,10 @@ export const CardControlField = ({
     }
   };
 
+  const removeAttach = () => {
+    handleImage();
+  };
+
   return (
     <div className={styles.container}>
       <TextField
@@ -82,7 +81,7 @@ export const CardControlField = ({
         inputRef={inputRef}
         rows={rowsCount}
         label={t(`ui.${field}`)}
-        defaultValue={value.text}
+        value={value.text}
         onChange={onChangeInput}
         disabled={disabled}
         InputProps={{
@@ -112,14 +111,24 @@ export const CardControlField = ({
         }}
       />
 
-      {image && (
-        <AppImage
-          src={image}
-          maxHeight={"250px"}
-          simpleSrc={uploaded}
-          alt={t(`ui.${field}_image`)}
-          rounded={true}
-        />
+      {value.image && (
+        <div className={styles.file}>
+          <AppImage
+            src={value.image}
+            maxHeight={"250px"}
+            alt={t(`ui.${field}_image`)}
+            rounded={true}
+          />
+
+          <IconButton
+            size={"small"}
+            className={styles.file__del}
+            color={"secondary"}
+            onClick={removeAttach}
+          >
+            <HighlightOffRounded />
+          </IconButton>
+        </div>
       )}
     </div>
   );

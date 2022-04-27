@@ -14,15 +14,20 @@ import styles from "./CardControl.module.css";
 import AppDialog from "../../dialog";
 import CardControlField from "./field";
 
+export type ControlCardFieldContent = {
+  text: string;
+  image?: string | File;
+};
+
 type CardControlProps = {
   currentTopic?: Topic;
   open: boolean;
   onClose: (
-    newCards: ShortCard[] | null,
-    images?: {
-      question?: File;
-      answer?: File;
+    data?: {
+      question: ControlCardFieldContent;
+      answer: ControlCardFieldContent;
     },
+    cardsFromFile?: ShortCard[],
     card?: Card
   ) => void;
   card?: Card;
@@ -36,10 +41,10 @@ export const CardControl = ({
   card,
   setNotification,
 }: CardControlProps) => {
-  const [question, setQuestion] = useState<CardFieldContent>({ text: "" });
-  const [answer, setAnswer] = useState<CardFieldContent>({ text: "" });
-  const [questionImage, setQuestionImage] = useState<File | undefined>();
-  const [answerImage, setAnswerImage] = useState<File | undefined>();
+  const [question, setQuestion] = useState<ControlCardFieldContent>({
+    text: "",
+  });
+  const [answer, setAnswer] = useState<ControlCardFieldContent>({ text: "" });
 
   const [cardsFromFile, setCardsFromFile] = useState<ShortCard[]>([]);
 
@@ -60,23 +65,12 @@ export const CardControl = ({
 
   const onSave = (e: any) => {
     e.stopPropagation();
-    let newCards = [{ question, answer }];
-    if (cardsFromFile.length) {
-      newCards = cardsFromFile;
-    }
-    onClose(
-      newCards,
-      {
-        question: questionImage,
-        answer: answerImage,
-      },
-      card
-    );
+    onClose({ question, answer }, cardsFromFile, card);
   };
 
   const onCloseDialog = (e: any) => {
     e.stopPropagation();
-    onClose(null);
+    onClose();
   };
 
   const onChangeField = (field: CardField, data: Partial<CardFieldContent>) => {
@@ -119,12 +113,16 @@ export const CardControl = ({
     }
   };
 
-  const onChangeImage = (field: CardField, file: File) => {
+  const onChangeImage = (field: CardField, file?: File) => {
     if (field === "question") {
-      setQuestionImage(file);
+      setQuestion({ ...question, image: file });
     } else {
-      setAnswerImage(file);
+      setAnswer({ ...answer, image: file });
     }
+  };
+
+  const noData = (): boolean => {
+    return !(question.text || question.image || answer.text || answer.image);
   };
 
   return (
@@ -193,7 +191,7 @@ export const CardControl = ({
           <Button onClick={onCloseDialog} color="secondary">
             {t("ui.cancel")}
           </Button>
-          <Button variant="contained" onClick={onSave}>
+          <Button variant="contained" onClick={onSave} disabled={noData()}>
             {t("ui.save")}
           </Button>
         </>

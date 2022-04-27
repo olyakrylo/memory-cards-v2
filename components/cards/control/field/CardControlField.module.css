@@ -21,3 +21,19 @@
 .attachmentLabel[aria-disabled="true"] {
   cursor: default;
 }
+
+.file {
+  position: relative;
+}
+
+.file__del {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-17px);
+  right: 12px;
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.file__del:hover {
+  background-color: rgba(255, 255, 255, 0.5);
+}
