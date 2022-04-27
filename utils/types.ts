@@ -1,5 +1,8 @@
 import { AlertColor } from "@mui/material";
-import { string } from "prop-types";
+import { NextApiRequest } from "next";
+import Redis from "ioredis";
+
+export type RedisRequest = NextApiRequest & { redis: Redis };
 
 export type AppNotification = {
   severity: AlertColor;

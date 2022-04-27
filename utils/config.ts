@@ -9,6 +9,10 @@ const getBoolValue = (name: string): boolean => {
 export const config = {
   db_uri: getStringValue("MONGODB_URI"),
   secret: getStringValue("SECRET"),
+  redis: {
+    url: getStringValue("REDIS_URL"),
+    password: getStringValue("REDIS_PASS"),
+  },
   no_connection: getBoolValue("NO_CONNECTION"),
   mail: {
     service: getStringValue("MAIL_SERVICE"),
