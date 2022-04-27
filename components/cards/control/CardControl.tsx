@@ -17,7 +17,14 @@ import CardControlField from "./field";
 type CardControlProps = {
   currentTopic?: Topic;
   open: boolean;
-  onClose: (newCards: ShortCard[] | null, card?: Card) => void;
+  onClose: (
+    newCards: ShortCard[] | null,
+    images?: {
+      question?: File;
+      answer?: File;
+    },
+    card?: Card
+  ) => void;
   card?: Card;
   setNotification: (n: AppNotification) => void;
 };
@@ -31,6 +38,8 @@ export const CardControl = ({
 }: CardControlProps) => {
   const [question, setQuestion] = useState<CardFieldContent>({ text: "" });
   const [answer, setAnswer] = useState<CardFieldContent>({ text: "" });
+  const [questionImage, setQuestionImage] = useState<File | undefined>();
+  const [answerImage, setAnswerImage] = useState<File | undefined>();
 
   const [cardsFromFile, setCardsFromFile] = useState<ShortCard[]>([]);
 
@@ -55,7 +64,14 @@ export const CardControl = ({
     if (cardsFromFile.length) {
       newCards = cardsFromFile;
     }
-    onClose(newCards, card);
+    onClose(
+      newCards,
+      {
+        question: questionImage,
+        answer: answerImage,
+      },
+      card
+    );
   };
 
   const onCloseDialog = (e: any) => {
@@ -71,7 +87,9 @@ export const CardControl = ({
     }
   };
 
-  const handleFile = async (event: BaseSyntheticEvent): Promise<void> => {
+  const onCardsFileChange = async (
+    event: BaseSyntheticEvent
+  ): Promise<void> => {
     const file = event.target.files[0] as File;
     const text = await file.text();
     const separator: Record<string, string> = {
@@ -101,6 +119,14 @@ export const CardControl = ({
     }
   };
 
+  const onChangeImage = (field: CardField, file: File) => {
+    if (field === "question") {
+      setQuestionImage(file);
+    } else {
+      setAnswerImage(file);
+    }
+  };
+
   return (
     <AppDialog
       open={open}
@@ -118,7 +144,8 @@ export const CardControl = ({
             field="question"
             value={question}
             rowsCount={3}
-            handleChange={onChangeField}
+            handleChange={(data) => onChangeField("question", data)}
+            handleImage={(data) => onChangeImage("question", data)}
             disabled={!!cardsFromFile.length}
           />
 
@@ -126,7 +153,8 @@ export const CardControl = ({
             field="answer"
             value={answer}
             rowsCount={6}
-            handleChange={onChangeField}
+            handleChange={(data) => onChangeField("answer", data)}
+            handleImage={(data) => onChangeImage("answer", data)}
             disabled={!!cardsFromFile.length}
           />
 
@@ -140,7 +168,12 @@ export const CardControl = ({
                 className={styles.fileInput}
               >
                 {t("ui.upload_from_file")}
-                <input type="file" hidden onChange={handleFile} accept=".txt" />
+                <input
+                  type="file"
+                  hidden
+                  onChange={onCardsFileChange}
+                  accept=".txt"
+                />
               </Button>
             </Tooltip>
           )}

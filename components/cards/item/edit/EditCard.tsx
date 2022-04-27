@@ -6,6 +6,7 @@ import { Card, ShortCard } from "../../../../utils/types";
 import { request } from "../../../../utils/request";
 import styles from "../CardItem.module.css";
 import CardControl from "../../control";
+import { uploadImage } from "../../../../utils/images";
 
 type EditCardProps = {
   card: Card;
@@ -23,12 +24,23 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
 
   const onCloseEditCardDialog = async (
     newCards: ShortCard[] | null,
+    images?: { question?: File; answer?: File },
     card?: Card
   ) => {
     setEditCardOpen(false);
     if (!card || !newCards) return;
 
     setLoading(true);
+
+    if (images) {
+      const [questionImgFilename, answerImgFilename] = await Promise.all([
+        await uploadImage(images.question),
+        await uploadImage(images.answer),
+      ]);
+      newCards[0].question.image = questionImgFilename;
+      newCards[0].answer.image = answerImgFilename;
+    }
+
     const updatedCard = await request("cards", "", "put", {
       ...card,
       question: newCards[0].question,

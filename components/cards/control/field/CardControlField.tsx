@@ -1,7 +1,8 @@
-import { BaseSyntheticEvent, useRef } from "react";
+import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded } from "@mui/icons-material";
+import { compressAccurately } from "image-conversion";
 
 import styles from "./CardControlField.module.css";
 import {
@@ -9,12 +10,14 @@ import {
   CardField,
   CardFieldContent,
 } from "../../../../utils/types";
+import AppImage from "../../../image";
 
 type CardControlFieldProps = {
   field: CardField;
   value: CardFieldContent;
   rowsCount: number;
-  handleChange: (f: CardField, data: Partial<CardFieldContent>) => void;
+  handleChange: (data: Partial<CardFieldContent>) => void;
+  handleImage: (f: File) => void;
   disabled: boolean;
   setNotification: (n: AppNotification) => void;
 };
@@ -24,43 +27,34 @@ export const CardControlField = ({
   value,
   rowsCount,
   handleChange,
+  handleImage,
   disabled,
   setNotification,
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
 
+  const [image, setImage] = useState<string | undefined>(value.image);
+  const [uploaded, setUploaded] = useState<boolean>(false);
+
   const inputRef = useRef<HTMLTextAreaElement | null>();
+  const inputId = `${field}-file-input`;
 
   const onChangeInput = (event: BaseSyntheticEvent): void => {
     const { value } = event.target;
-    handleChange(field, { text: value });
+    handleChange({ text: value });
   };
 
   const onChangeAttach = async (event: BaseSyntheticEvent): Promise<void> => {
-    const reader = new FileReader();
-
     const file = event.target.files[0] as File;
     if (!file) return;
 
     if (file.type.startsWith("image")) {
-      if (file.size > 900000) {
-        setNotification({
-          autoHide: 5000,
-          severity: "error",
-          text: "add.too_large_image",
-          translate: true,
-        });
-        return;
-      }
-
-      reader.readAsDataURL(file);
-      reader.onloadend = () => {
-        const fileString = reader.result as string;
-
-        handleChange(field, {
-          image: fileString,
-        });
-      };
+      compressAccurately(file, 500).then((blob) => {
+        const fileFromBlob = new File([blob], file.name, { type: file.type });
+        setImage(URL.createObjectURL(fileFromBlob));
+        setUploaded(true);
+        handleImage(fileFromBlob);
+      });
     } else if (file.type.startsWith("text")) {
       const text = await file.text();
       if (!text) {
@@ -71,7 +65,7 @@ export const CardControlField = ({
           translate: true,
         });
       } else {
-        handleChange(field, { text });
+        handleChange({ text });
 
         if (inputRef.current) {
           inputRef.current.focus();
@@ -95,7 +89,7 @@ export const CardControlField = ({
           endAdornment: (
             <>
               <input
-                id={`${field}-file-input`}
+                id={inputId}
                 className={styles.attachment}
                 type={"file"}
                 onChange={onChangeAttach}
@@ -106,7 +100,7 @@ export const CardControlField = ({
                 title={disabled ? "" : t("add.attach_image_or_text") ?? ""}
               >
                 <label
-                  htmlFor={`${field}-file-input`}
+                  htmlFor={inputId}
                   className={styles.attachmentLabel}
                   aria-disabled={disabled}
                 >
@@ -118,11 +112,13 @@ export const CardControlField = ({
         }}
       />
 
-      {value.image && (
-        <img
-          src={value.image}
+      {image && (
+        <AppImage
+          src={image}
+          maxHeight={"250px"}
+          simpleSrc={uploaded}
           alt={t(`ui.${field}_image`)}
-          className={styles.image}
+          rounded={true}
         />
       )}
     </div>

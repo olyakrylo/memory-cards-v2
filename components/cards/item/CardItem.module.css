@@ -20,6 +20,7 @@
   grid-template-columns: minmax(34px, max-content) 1fr minmax(34px, max-content);
   grid-template-rows: minmax(34px, max-content) 1fr minmax(34px, max-content);
   padding: 8px;
+  position: relative;
 }
 
 .card__text {
@@ -58,15 +59,14 @@
 .card__share:hover,
 .card__flip:hover {
   background: var(--white);
+  z-index: 10;
 }
 
 .dialog__divider {
   margin: 16px 0 8px;
 }
 
-.dialog__image {
-  display: block;
-  margin: auto;
-  max-width: 100%;
-  max-height: 700px;
+.dialog__imageContainer {
+  margin: 16px auto;
+  height: max-content;
 }

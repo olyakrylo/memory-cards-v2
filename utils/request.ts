@@ -16,17 +16,22 @@ export async function request<
   path: PathKey,
   query: QueryKey,
   method: MethodKey,
-  body?: RR["params"]
+  body?: RR["params"],
+  stringify = true
 ): Promise<RR["result"]> {
   const request: Record<string, any> = {
     method,
-    headers: {
-      "Content-Type": "application/json",
-    },
   };
-  if (body) {
+
+  request.body = body;
+
+  if (stringify) {
+    request.headers = {
+      "Content-Type": "application/json",
+    };
     request.body = JSON.stringify(body);
   }
+
   const fullPath = [path, query].filter(Boolean).join("/");
   const res = await fetch(`/api/${fullPath}`, request);
   return (await res.json()) as RR["result"];
