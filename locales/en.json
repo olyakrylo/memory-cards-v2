@@ -40,7 +40,7 @@
     "save_topic": "Save topic",
     "file_formats": "TXT, TSV or CSV",
     "attach_image_or_text": "Attach image or text file",
-    "too_large_image": "Too large image (900B max)",
+    "too_large_image": "Too large image (10MB max)",
     "invalid_file_content": "Invalid file content"
   },
   "auth": {

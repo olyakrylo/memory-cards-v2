@@ -3,7 +3,7 @@ import fs from "fs";
 import formidable, { File } from "formidable";
 
 import { RedisRequest, ResponseFuncs } from "../../../utils/types";
-import { redis } from "../../../utils/connection";
+import RedisClient from "../../../utils/redis";
 
 export const config = {
   api: {
@@ -22,13 +22,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         const filename = file.newFilename;
         const data = fs.readFileSync(file.filepath);
 
-        redis.set(filename, data, (_, status) => {
-          if (status === "OK") {
-            res.json({ filename });
-            return;
-          }
-          res.json({});
-        });
+        const { uploaded } = await RedisClient.uploadImage(filename, data);
+        res.json(uploaded ? { filename } : {});
       });
     },
   };

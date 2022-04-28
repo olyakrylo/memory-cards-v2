@@ -1,7 +1,8 @@
-import { CircularProgress } from "@mui/material";
+import { useState } from "react";
 
 import styles from "./AppImage.module.css";
 import { getImageSrc } from "../../utils/images";
+import SkeletonLoader from "../skeletonLoader";
 
 type CardImageProps = {
   src: string | File;
@@ -9,7 +10,6 @@ type CardImageProps = {
   classes?: string;
   rounded?: boolean;
   maxHeight?: string;
-  absolute?: boolean;
 };
 
 export const AppImage = ({
@@ -18,8 +18,13 @@ export const AppImage = ({
   alt,
   maxHeight,
   rounded,
-  absolute,
 }: CardImageProps) => {
+  const [loading, setLoading] = useState<boolean>(true);
+
+  const handleLoad = () => {
+    setLoading(false);
+  };
+
   const imageSrc = () => {
     if (typeof src === "string") {
       return getImageSrc(src);
@@ -28,13 +33,8 @@ export const AppImage = ({
   };
 
   return (
-    <div
-      className={`${styles.container} ${classes ?? ""}`}
-      style={{
-        position: absolute ? "absolute" : "relative",
-      }}
-    >
-      <CircularProgress size={30} className={styles.loader} />
+    <div className={`${styles.container} ${classes ?? ""}`}>
+      {loading && <SkeletonLoader height={"100%"} width={"100%"} />}
       <img
         className={styles.image}
         src={imageSrc()}
@@ -44,6 +44,7 @@ export const AppImage = ({
           borderRadius: rounded ? "8px" : "none",
         }}
         loading={"lazy"}
+        onLoad={handleLoad}
       />
     </div>
   );

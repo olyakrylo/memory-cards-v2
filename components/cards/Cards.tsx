@@ -249,7 +249,6 @@ export const Cards = ({
       {loading && (
         <SkeletonLoader
           height={350}
-          count={1}
           classes={`${styles.skeleton} ${
             hideArrows ? "" : styles.skeleton_arrows
           }`}

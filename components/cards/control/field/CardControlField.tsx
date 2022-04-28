@@ -1,4 +1,4 @@
-import { BaseSyntheticEvent, useRef } from "react";
+import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
@@ -13,6 +13,9 @@ import {
 } from "../../../../utils/types";
 import AppImage from "../../../image";
 import { ControlCardFieldContent } from "../CardControl";
+import SkeletonLoader from "../../../skeletonLoader";
+
+const IMAGE_HEIGHT = 250;
 
 type CardControlFieldProps = {
   field: CardField;
@@ -35,6 +38,8 @@ export const CardControlField = ({
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   const inputRef = useRef<HTMLTextAreaElement | null>();
   const inputId = `${field}-file-input`;
 
@@ -47,6 +52,17 @@ export const CardControlField = ({
     if (!file) return;
 
     if (file.type.startsWith("image")) {
+      if (file.size > 10 * 1024 * 1024) {
+        setNotification({
+          severity: "error",
+          autoHide: 5000,
+          text: "add.too_large_image",
+          translate: true,
+        });
+        return;
+      }
+
+      setLoading(true);
       let conversionFile: File | Blob = file;
       if (file.type === "image/heic") {
         conversionFile = (await heic2any({
@@ -54,10 +70,10 @@ export const CardControlField = ({
           toType: "image/jpg",
         })) as Blob;
       }
-      compressAccurately(conversionFile, 500).then((blob) => {
-        const fileFromBlob = new File([blob], file.name, { type: file.type });
-        handleImage(fileFromBlob);
-      });
+      const blob = await compressAccurately(conversionFile, 500);
+      const fileFromBlob = new File([blob], file.name, { type: file.type });
+      handleImage(fileFromBlob);
+      setLoading(false);
     } else if (file.type.startsWith("text")) {
       const text = await file.text();
       if (!text) {
@@ -119,11 +135,13 @@ export const CardControlField = ({
         }}
       />
 
-      {value.image && (
-        <div className={styles.file}>
+      {loading && <SkeletonLoader height={IMAGE_HEIGHT} />}
+
+      {!loading && value.image && (
+        <div className={styles.file} style={{ height: IMAGE_HEIGHT }}>
           <AppImage
             src={value.image}
-            maxHeight={"250px"}
+            maxHeight={`${IMAGE_HEIGHT}px`}
             alt={t(`ui.${field}_image`)}
             rounded={true}
           />

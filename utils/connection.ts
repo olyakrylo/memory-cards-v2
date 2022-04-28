@@ -1,11 +1,6 @@
 import * as mongoose from "mongoose";
-import Redis from "ioredis";
 
 import { config } from "./config";
-
-export const redis = new Redis(config.redis.url, {
-  password: config.redis.password,
-});
 
 export const connect = async () => {
   const conn = await mongoose

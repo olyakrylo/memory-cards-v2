@@ -16,7 +16,7 @@
 
   display: grid;
   align-items: center;
-  grid-template-areas: "edit a del" "b text c" "share d flip";
+  grid-template-areas: "edit a del" "b content c" "share d flip";
   grid-template-columns: minmax(34px, max-content) 1fr minmax(34px, max-content);
   grid-template-rows: minmax(34px, max-content) 1fr minmax(34px, max-content);
   padding: 8px;
@@ -24,7 +24,7 @@
 }
 
 .card__text {
-  grid-area: text;
+  grid-area: content;
 
   max-height: 100%;
   overflow: hidden;
@@ -32,6 +32,10 @@
   letter-spacing: 0.25px;
   color: var(--black);
   text-align: center;
+}
+
+.card__image {
+  grid-area: content;
 }
 
 .card__del {

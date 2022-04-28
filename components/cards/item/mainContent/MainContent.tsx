@@ -33,7 +33,7 @@ export const CardMainContent = ({
         <AppImage
           src={card[field].image as string}
           alt={t(`ui.${field}_image`)}
-          absolute={true}
+          classes={styles.card__image}
         />
       )}
 

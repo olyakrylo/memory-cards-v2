@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { RedisRequest, ResponseFuncs } from "../../../utils/types";
-import { redis } from "../../../utils/connection";
+import RedisClient from "../../../utils/redis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
@@ -10,9 +10,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     GET: async (req: RedisRequest, res: NextApiResponse) => {
       const { id: filename } = req.query as { id: string };
 
-      redis.getBuffer(filename, (_, buffer) => {
-        res.send(buffer);
-      });
+      const image = await RedisClient.getImage(filename);
+      res.send(image);
     },
   };
 

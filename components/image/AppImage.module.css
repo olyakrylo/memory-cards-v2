@@ -5,6 +5,7 @@
   min-height: 30px;
   top: 0;
   left: 0;
+  overflow: hidden;
 }
 
 .loader {

@@ -31,9 +31,10 @@
   top: 50%;
   transform: translateY(-17px);
   right: 12px;
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: #fff;
+  z-index: 5;
 }
 
 .file__del:hover {
-  background-color: rgba(255, 255, 255, 0.5);
+  background-color: #fff;
 }
