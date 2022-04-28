@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Cookies from "cookies";
 
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
@@ -10,8 +9,6 @@ import { config } from "../../../utils/config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
-  const cookies = new Cookies(req, res);
-  const { secret } = config;
 
   const catcher = (error: Error) => res.status(400).json({ error });
 
@@ -32,7 +29,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const user = await User.create(userData).catch(catcher);
       if (user) {
-        setCookie(cookies, "id_token", secret, user._id);
+        setCookie(req, res, "id_token", user._id);
       }
 
       res.json({
