@@ -9,7 +9,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const handleCase: ResponseFuncs = {
     GET: (req: NextApiRequest, res: NextApiResponse) => {
       const cookies = new Cookies(req, res);
-      cookies.set("id_token", undefined, {
+      cookies.set("id_token", "", {
         overwrite: true,
       });
       res.json({ updated: true });
