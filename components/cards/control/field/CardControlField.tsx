@@ -143,7 +143,6 @@ export const CardControlField = ({
             src={value.image}
             maxHeight={`${IMAGE_HEIGHT}px`}
             alt={t(`ui.${field}_image`)}
-            rounded={true}
           />
 
           <IconButton

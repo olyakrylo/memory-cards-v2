@@ -131,7 +131,6 @@ const PublicTopicCardField = ({ card, field }: PublicTopicsCardFieldProps) => {
           src={card[field].image as string}
           alt={t(`ui.${field}_image`)}
           maxHeight={"180px"}
-          rounded={true}
         />
       )}
     </>

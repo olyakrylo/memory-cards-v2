@@ -25,8 +25,6 @@ export const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
           src={card[field].image as string}
           alt={t(`ui.${field}_image`)}
           classes={styles.dialog__imageContainer}
-          rounded
-          maxHeight={"700px"}
         />
       )}
     </>

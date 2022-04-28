@@ -8,17 +8,10 @@ type CardImageProps = {
   src: string | File;
   alt: string;
   classes?: string;
-  rounded?: boolean;
   maxHeight?: string;
 };
 
-export const AppImage = ({
-  src,
-  classes,
-  alt,
-  maxHeight,
-  rounded,
-}: CardImageProps) => {
+export const AppImage = ({ src, classes, alt, maxHeight }: CardImageProps) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleLoad = () => {
@@ -39,10 +32,7 @@ export const AppImage = ({
         className={styles.image}
         src={imageSrc()}
         alt={alt}
-        style={{
-          maxHeight: maxHeight ?? "100%",
-          borderRadius: rounded ? "8px" : "none",
-        }}
+        style={{ maxHeight: maxHeight ?? "100%" }}
         loading={"lazy"}
         onLoad={handleLoad}
       />
