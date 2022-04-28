@@ -11,7 +11,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const { id: filename } = req.query as { id: string };
 
       const image = await RedisClient.getImage(filename);
-      res.send(image);
+      res.end(image);
     },
   };
 
