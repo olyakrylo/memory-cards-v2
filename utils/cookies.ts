@@ -11,10 +11,10 @@ export const setCookie = (
   value?: string
 ): void => {
   const { secret } = config;
-  const cookies = new Cookies(req, res);
+  const cookies = new Cookies(req, res, { secure: true });
 
   const data = value ? encryptString(value.toString(), secret) : undefined;
-  const age = 7 * 24 * 60 * 60 * 1000;
+  const age = 7 * 24 * 60 * 60 * 1000; // week
   cookies.set(name, data, { maxAge: age, expires: new Date(Date.now() + age) });
 };
 
@@ -24,7 +24,7 @@ export const getCookie = (
   name: string
 ): string | undefined => {
   const { secret } = config;
-  const cookies = new Cookies(req, res);
+  const cookies = new Cookies(req, res, { secure: true });
 
   const value = cookies.get(name);
   return value ? decryptString(value, secret) : undefined;

@@ -66,6 +66,10 @@
   z-index: 10;
 }
 
+.dialog__header {
+  font-family: var(--brand-font-family);
+}
+
 .dialog__divider {
   margin: 16px 0 8px;
 }

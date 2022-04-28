@@ -15,7 +15,11 @@ export const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
 
   return (
     <>
-      <Typography fontWeight={500} variant={"subtitle1"} color={"primary"}>
+      <Typography
+        variant={"subtitle1"}
+        color={"primary"}
+        className={styles.dialog__header}
+      >
         {t(`ui.${field}`)}
       </Typography>
       <Typography>{card[field].text}</Typography>
