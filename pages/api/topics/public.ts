@@ -1,17 +1,13 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Cookies from "cookies";
 
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs, Topic } from "../../../utils/types";
 import { getCookie } from "../../../utils/cookies";
 import { TopicsAPI } from "../../../utils/api";
-import { config } from "../../../utils/config";
 import { getUserId } from "../../../utils/get-user-id";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
-  const cookies = new Cookies(req, res);
-  const { secret } = config;
 
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
@@ -35,7 +31,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic } = await connect();
-      const userId = getCookie(cookies, "id_token", secret);
+      const userId = getCookie(req, res, "id_token");
       const { topics_id } = req.body as TopicsAPI["public"]["put"]["params"];
 
       const updatedTopics = await Promise.all(

@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import Cookies from "cookies";
 
 import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../utils/types";
@@ -9,12 +8,11 @@ import { config } from "../../../utils/config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
-  const cookies = new Cookies(req, res);
   const { secret } = config;
 
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
-      const id = getCookie(cookies, "id_token", secret);
+      const id = getCookie(req, res, "id_token");
       if (!id) {
         res.json({ user: null });
         return;
@@ -44,7 +42,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         decryptString(password, secret);
 
       if (checked) {
-        setCookie(cookies, "id_token", secret, user._id);
+        setCookie(req, res, "id_token", user._id);
         res.json({
           user: user
             ? { _id: user._id, login: user.login, email: user.email }

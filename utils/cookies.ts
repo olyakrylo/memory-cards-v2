@@ -1,21 +1,31 @@
 import Cookies from "cookies";
 import * as crypto from "crypto";
+import { NextApiRequest, NextApiResponse } from "next";
+
+import { config } from "./config";
 
 export const setCookie = (
-  cookies: Cookies,
+  req: NextApiRequest,
+  res: NextApiResponse,
   name: string,
-  secret: string,
   value?: string
 ): void => {
+  const { secret } = config;
+  const cookies = new Cookies(req, res);
+
   const data = value ? encryptString(value.toString(), secret) : undefined;
-  cookies.set(name, data, { maxAge: 7 * 24 * 60 * 60 * 1000 });
+  const age = 7 * 24 * 60 * 60 * 1000;
+  cookies.set(name, data, { maxAge: age, expires: new Date(Date.now() + age) });
 };
 
 export const getCookie = (
-  cookies: Cookies,
-  name: string,
-  secret: string
+  req: NextApiRequest,
+  res: NextApiResponse,
+  name: string
 ): string | undefined => {
+  const { secret } = config;
+  const cookies = new Cookies(req, res);
+
   const value = cookies.get(name);
   return value ? decryptString(value, secret) : undefined;
 };
