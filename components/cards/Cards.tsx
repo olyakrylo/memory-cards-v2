@@ -186,10 +186,6 @@ export const Cards = ({
     });
   };
 
-  // if (loading) {
-  //   return <CircularProgress className={styles.loader} />;
-  // }
-
   const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
   const startIndexFromStorage = parseInt(
     sessionStorage.getItem(currentTopic?._id.toString() ?? "") ?? ""
@@ -197,7 +193,7 @@ export const Cards = ({
   const startIndex = startIndexFromUrl || startIndexFromStorage || 0;
 
   return (
-    <div>
+    <div className={styles.container}>
       {currentTopic && (
         <Fragment>
           <div className={styles.control}>

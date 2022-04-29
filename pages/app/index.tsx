@@ -46,17 +46,13 @@ const App = ({ user, setUser }: AppProps) => {
     <div className={`${styles.container}`}>
       <Header />
 
-      {loading && <CircularProgress className={styles.loader} size={50} />}
+      <Topics />
 
-      {!loading && (
-        <Fragment>
-          <Topics />
+      <div className={styles.content}>
+        {loading && <CircularProgress className={styles.loader} size={40} />}
 
-          <div className={styles.content}>
-            <Cards />
-          </div>
-        </Fragment>
-      )}
+        {!loading && <Cards />}
+      </div>
     </div>
   );
 };
