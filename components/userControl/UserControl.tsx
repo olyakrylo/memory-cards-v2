@@ -2,25 +2,29 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { Settings } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 import { User } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
 import { LanguagesList } from "../../locales/languages";
+import SsrUser from "../../utils/ssr-user";
 
 type UserControlProps = {
   user?: User | null;
-  setUser: (user?: User | null) => void;
 };
 
-export const UserControl = ({ user, setUser }: UserControlProps) => {
+export const UserControl = ({ user }: UserControlProps) => {
+  const router = useRouter();
+
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
 
   const { t } = useTranslation();
 
   const handleLogout = async () => {
     await request("users", "logout", "get");
-    setUser(null);
+    SsrUser.removeUser(user?._id ?? "");
+    await router.push("/auth");
   };
 
   const userMenuOpened = Boolean(userMenu);

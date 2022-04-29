@@ -1,49 +1,27 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 import ReactCardFlip from "react-card-flip";
+import { GetServerSideProps } from "next";
 
-import {
-  AppNotification,
-  AuthCredentials,
-  AuthMode,
-  State,
-} from "../../utils/types";
-import { setNotification, setUser } from "../../redux/actions/main";
+import { AppNotification, AuthCredentials, AuthMode } from "../../utils/types";
+import { setNotification } from "../../redux/actions/main";
 import { request } from "../../utils/request";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
-import { User } from "../../utils/types";
 import { encryptString } from "../../utils/cookies";
 import AuthSide from "../../components/authSide";
+import SSRUser from "../../utils/ssr-user";
 
 type AuthProps = {
-  user?: User | null;
-  setUser: (u?: User | null) => void;
   setNotification: (n: AppNotification) => void;
 };
 
-const Auth = ({ user, setUser, setNotification }: AuthProps) => {
+const Auth = ({ setNotification }: AuthProps) => {
   const router = useRouter();
 
   const [mode, setMode] = useState<AuthMode>("signIn");
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (user) {
-      void router.push({ pathname: "/app" });
-      return;
-    }
-    if (user === null) return;
-
-    setLoading(true);
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        setUser(user);
-      }
-    });
-    setLoading(false);
-  }, [user, setUser, router]);
 
   const onAuth = async (data: AuthCredentials): Promise<void> => {
     if (mode === "signIn") {
@@ -80,7 +58,7 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
       return;
     }
     if (user) {
-      setUser(user);
+      await redirectToApp();
     }
   };
 
@@ -102,8 +80,12 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
       return;
     }
     if (user) {
-      setUser(user);
+      await redirectToApp();
     }
+  };
+
+  const redirectToApp = async () => {
+    await router.push("/auth");
   };
 
   const encryptedPassword = (password: string): string => {
@@ -141,15 +123,23 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   );
 };
 
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-  };
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const user = await SSRUser.getUser(context);
+
+  if (user) {
+    return {
+      redirect: {
+        destination: "/app",
+        permanent: true,
+      },
+    };
+  }
+
+  return { props: {} };
 };
 
 const mapDispatchToProps = {
-  setUser,
   setNotification,
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Auth);
+export default connect(undefined, mapDispatchToProps)(Auth);

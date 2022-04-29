@@ -1,6 +1,7 @@
 import * as t from "../types";
 import { AnyAction } from "redux";
 import { State } from "../../utils/types";
+import { HYDRATE } from "next-redux-wrapper";
 
 const main = (
   state: State = {
@@ -10,6 +11,12 @@ const main = (
   action: AnyAction
 ) => {
   switch (action.type) {
+    case HYDRATE:
+      return {
+        ...state,
+        ...action.payload,
+      };
+
     case t.SET_USER:
       return {
         ...state,
