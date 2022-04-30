@@ -4,12 +4,14 @@ import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
 import { StyledEngineProvider } from "@mui/material/styles";
 import "@splidejs/splide/dist/css/splide.min.css";
+import { useTranslation } from "react-i18next";
+import { Helmet } from "react-helmet";
 
 import "../styles/globals.css";
 import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
-import "../locales/i18n";
+import "../utils/i18n";
 import { State } from "../utils/types";
 import { palette } from "../utils/palette";
 import Notification from "../components/notification";
@@ -30,8 +32,14 @@ function MyApp({
     },
   });
 
+  const { i18n } = useTranslation();
+
   return (
     <StyledEngineProvider injectFirst>
+      <Helmet>
+        <html lang={i18n.language} />
+      </Helmet>
+
       <Head>
         <title>Memory cards</title>
         <meta
