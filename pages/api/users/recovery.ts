@@ -14,7 +14,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const handleCase: ResponseFuncs = {
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
-      const { email } = req.body as UsersAPI["recovery"]["post"]["params"];
+      const { email } = req.body as UsersAPI["recovery"]["post"]["body"];
 
       const { User, Recovery } = await connect();
       const user = await User.findOne({ email });

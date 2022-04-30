@@ -43,12 +43,12 @@ export const Topics = ({
       setCurrentTopic(fromUserTopics);
       return;
     }
-    request("topics", "", "post", { id: router.query.topic as string }).then(
-      ({ topic }) => {
-        if (!topic) return;
-        setCurrentTopic(topic);
-      }
-    );
+    request("topics", "", "get", {
+      query: { id: router.query.topic as string },
+    }).then(({ topic }) => {
+      if (!topic) return;
+      setCurrentTopic(topic);
+    });
   }, [router.query.topic]);
 
   useEffect(() => {

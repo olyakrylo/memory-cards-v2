@@ -1,38 +1,50 @@
 import { Paths } from "./api";
 
 interface ReqRes {
-  params: unknown;
+  query: unknown;
+  body: unknown;
   result: unknown;
 }
 
 export async function request<
-  PathKey extends keyof Paths,
-  QueryKey extends keyof Paths[PathKey],
-  MethodKey extends keyof Paths[PathKey][QueryKey],
-  RR extends ReqRes = Paths[PathKey][QueryKey][MethodKey] extends ReqRes
-    ? Paths[PathKey][QueryKey][MethodKey]
+  ModuleKey extends keyof Paths,
+  PathKey extends keyof Paths[ModuleKey],
+  MethodKey extends keyof Paths[ModuleKey][PathKey],
+  RR extends ReqRes = Paths[ModuleKey][PathKey][MethodKey] extends ReqRes
+    ? Paths[ModuleKey][PathKey][MethodKey]
     : never
 >(
+  module: ModuleKey,
   path: PathKey,
-  query: QueryKey,
   method: MethodKey,
-  body?: RR["params"],
-  stringify = true
+  options: {
+    query?: RR["query"];
+    body?: RR["body"];
+    formData?: boolean;
+  } = {}
 ): Promise<RR["result"]> {
   const request: Record<string, any> = {
-    method,
+    method: method.toString().toUpperCase(),
   };
 
-  request.body = body;
+  request.body = options.body;
 
-  if (stringify) {
+  if (!options.formData) {
     request.headers = {
       "Content-Type": "application/json",
     };
-    request.body = JSON.stringify(body);
+    request.body = JSON.stringify(options.body);
   }
 
-  const fullPath = [path, query].filter(Boolean).join("/");
-  const res = await fetch(`/api/${fullPath}`, request);
+  const fullPath = [module, path].filter(Boolean).join("/");
+
+  const strQueryParams = Object.entries(
+    (options.query as Record<string, any>) ?? {}
+  )
+    .map(([key, value]) => `${key}=${encodeURIComponent(value as any)}`)
+    .join(";");
+  const readyQueryParams = strQueryParams ? `?${strQueryParams}` : "";
+
+  const res = await fetch(`/api/${fullPath}${readyQueryParams}`, request);
   return (await res.json()) as RR["result"];
 }

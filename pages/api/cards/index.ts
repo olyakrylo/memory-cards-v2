@@ -12,39 +12,44 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const catcher = (error: Error) => res.status(400).json({ error });
 
   const handleCase: ResponseFuncs = {
+    // get all
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Card } = await connect();
       res.json(await Card.find({}).catch(catcher));
     },
-    POST: async (req: NextApiRequest, res: NextApiResponse) => {
+    // create
+    PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Card } = await connect();
-      const { cards } = req.body as CardsAPI[""]["post"]["params"];
+      const { cards } = req.body as CardsAPI[""]["put"]["body"];
       res.json(await Card.create(cards, { checkKeys: true }).catch(catcher));
     },
-    PUT: async (req: NextApiRequest, res: NextApiResponse) => {
-      const body = req.body as CardsAPI[""]["put"]["params"];
-      const { _id: id } = req.body as CardsAPI[""]["put"]["params"];
+    // update
+    PATCH: async (req: NextApiRequest, res: NextApiResponse) => {
+      const { _id, question, answer } =
+        req.body as CardsAPI[""]["patch"]["body"];
+
       const { Card } = await connect();
 
-      const exCard = await Card.findById(id);
+      const exCard = await Card.findById(_id);
       const delKeys = [] as RedisKey[];
-      if (
-        exCard.question.image &&
-        exCard.question.image !== body.question.image
-      ) {
+      if (exCard.question.image && exCard.question.image !== question.image) {
         delKeys.push(exCard.question.image);
       }
-      if (exCard.answer.image && exCard.answer.image !== body.answer.image) {
+      if (exCard.answer.image && exCard.answer.image !== answer.image) {
         delKeys.push(exCard.answer.image);
       }
       if (delKeys.length) {
         await RedisClient.deleteByKeys(delKeys);
       }
 
-      res.json(await Card.findByIdAndUpdate(id, req.body, { new: true }));
+      const newCard = await Card.findByIdAndUpdate(_id, req.body, {
+        new: true,
+      });
+      res.json(newCard);
     },
+    // delete
     DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
-      const { id } = req.body as CardsAPI[""]["delete"]["params"];
+      const { id } = req.query as CardsAPI[""]["delete"]["query"];
       const { Card } = await connect();
 
       const card = await Card.findById(id);

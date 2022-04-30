@@ -28,7 +28,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { User } = await connect();
-      const { login, password } = req.body as UsersAPI[""]["post"]["params"];
+      const { login, password } = req.body as UsersAPI[""]["post"]["body"];
       const user = await User.findOne({
         $or: [{ login: login.toLowerCase() }, { email: login }],
       });

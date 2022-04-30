@@ -41,8 +41,10 @@ export const TopicItem = ({
   const deleteTopic = async () => {
     if (!user) return;
     const { updated } = await request("topics", "", "delete", {
-      user_id: user?._id,
-      topic_id: topic._id,
+      body: {
+        user_id: user?._id,
+        topic_id: topic._id,
+      },
     });
     if (updated) {
       setTopics(topicsList.filter((t) => t._id !== topic._id));

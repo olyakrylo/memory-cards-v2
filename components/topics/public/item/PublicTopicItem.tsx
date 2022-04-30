@@ -42,8 +42,8 @@ export const PublicTopicItem = ({
   };
 
   const loadCards = async (): Promise<void> => {
-    const cards = await request("cards", "by_topic", "post", {
-      topic_id: topic._id,
+    const cards = await request("cards", "by_topic", "get", {
+      query: { topic_id: topic._id },
     });
     setCards(cards);
   };

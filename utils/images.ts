@@ -14,6 +14,9 @@ export const uploadImage = async (
   const body = new FormData();
   body.append("file", image);
 
-  const { filename } = await request("files", "upload", "post", body, false);
+  const { filename } = await request("files", "upload", "post", {
+    body,
+    formData: true,
+  });
   return filename;
 };

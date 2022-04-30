@@ -8,14 +8,28 @@ export type Paths = {
   config: ConfigAPI;
 };
 
-export type UsersAPI = {
+export type Method = "get" | "post" | "put" | "patch" | "delete";
+
+// export interface API {
+//   [key: string]: {
+//     [key in Method]?: {
+//       query?: Record<string, any>;
+//       body?: Record<string, any>;
+//       result: any;
+//     };
+//   };
+// }
+
+export interface UsersAPI {
   "": {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: { user?: User };
     };
     post: {
-      params: {
+      query: {};
+      body: {
         login: string;
         password: string;
       };
@@ -30,7 +44,8 @@ export type UsersAPI = {
   };
   create: {
     post: {
-      params: {
+      query: {};
+      body: {
         login: string;
         password: string;
         email: string;
@@ -50,7 +65,8 @@ export type UsersAPI = {
   };
   recovery: {
     post: {
-      params: { email: string };
+      query: {};
+      body: { email: string };
       result: {
         no_user?: boolean;
         sent?: boolean;
@@ -58,129 +74,146 @@ export type UsersAPI = {
     };
   };
   recovery_user: {
-    post: {
-      params: { id: string };
+    get: {
+      query: { id: string };
+      body: {};
       result: { user?: User };
     };
     put: {
-      params: {
+      query: {};
+      body: {
         id: string;
         password: string;
       };
       result: UpdatedResult;
     };
   };
-};
+}
 
-export type TopicsAPI = {
+export interface TopicsAPI {
   "": {
     get: {
-      result: Topic[];
-    };
-    post: {
-      params: { id: string };
+      query: { id: string };
+      body: {};
       result: { topic?: Topic };
     };
     put: {
-      params: Omit<Topic, "_id">;
+      query: {};
+      body: Omit<Topic, "_id">;
       result: Topic;
     };
     patch: {
-      params: Topic;
+      query: {};
+      body: Topic;
       result: Topic;
     };
     delete: {
-      params: { user_id: string; topic_id: string };
+      query: {};
+      body: { user_id: string; topic_id: string };
       result: UpdatedResult;
     };
   };
   public_count: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: { count: number };
     };
   };
   public: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: TopicExt[];
     };
     put: {
-      params: { topics_id: string[] };
+      query: {};
+      body: { topics_id: string[] };
       result: Topic[];
     };
   };
   by_user_count: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: TopicsCount;
     };
   };
   by_user: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: Topic[];
     };
   };
-};
+}
 
-export type CardsAPI = {
+export interface CardsAPI {
   "": {
     get: {
       result: Card;
     };
-    post: {
-      params: { cards: Omit<Card, "_id">[] };
+    put: {
+      query: {};
+      body: { cards: Omit<Card, "_id">[] };
       result: Card[];
     };
-    put: {
-      params: Card;
+    patch: {
+      query: {};
+      body: Card;
       result: Card;
     };
     delete: {
-      params: { id: string };
+      query: { id: string };
+      body: {};
       result: Card;
     };
   };
   by_topic: {
-    post: {
-      params: { topic_id: string };
+    get: {
+      query: { topic_id: string };
+      body: {};
       result: Card[];
     };
   };
-};
+}
 
-export type FilesAPI = {
+export interface FilesAPI {
   upload: {
     post: {
-      params: FormData;
+      query: {};
+      body: FormData;
       result: { filename: string };
     };
   };
-};
+}
 
-export type ConfigAPI = {
+export interface ConfigAPI {
   color: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: { dark: boolean };
     };
     put: {
-      params: { dark: boolean };
+      query: {};
+      body: { dark: boolean };
       result: UpdatedResult;
     };
   };
   arrows: {
     get: {
-      params: {};
+      query: {};
+      body: {};
       result: { hide: boolean };
     };
     put: {
-      params: { hide: boolean };
+      query: {};
+      body: { hide: boolean };
       result: UpdatedResult;
     };
   };
-};
+}
 
 export type TopicsCount = {
   self: number;

@@ -28,8 +28,8 @@ const Recovery = () => {
 
   useEffect(() => {
     if (!router.query.id) return;
-    request("users", "recovery_user", "post", {
-      id: router.query.id as string,
+    request("users", "recovery_user", "get", {
+      query: { id: router.query.id as string },
     }).then(({ user }) => {
       setUser(user);
       setLoading(false);
@@ -54,11 +54,13 @@ const Recovery = () => {
 
     setLoading(true);
     const { updated } = await request("users", "recovery_user", "put", {
-      id: user?._id,
-      password: encryptString(
-        firstPass,
-        process.env.NEXT_PUBLIC_SECRET as string
-      ),
+      body: {
+        id: user?._id,
+        password: encryptString(
+          firstPass,
+          process.env.NEXT_PUBLIC_SECRET as string
+        ),
+      },
     });
     if (updated) {
       setSuccess(true);

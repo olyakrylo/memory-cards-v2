@@ -42,7 +42,9 @@ export const PasswordRecovery = ({
 
     setLoading(true);
     const { sent, no_user } = await request("users", "recovery", "post", {
-      email,
+      body: {
+        email,
+      },
     });
     setLoading(false);
 

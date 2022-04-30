@@ -41,8 +41,13 @@ export const AddCard = ({
     let newCards: Card[] = [];
 
     if (cardsFromFile?.length) {
-      newCards = await request("cards", "", "post", {
-        cards: cardsFromFile.map((c) => ({ ...c, topic_id: currentTopic._id })),
+      newCards = await request("cards", "", "put", {
+        body: {
+          cards: cardsFromFile.map((c) => ({
+            ...c,
+            topic_id: currentTopic._id,
+          })),
+        },
       });
     } else if (data) {
       const cardData: ShortCard = {
@@ -63,8 +68,10 @@ export const AddCard = ({
         cardData.answer.image = await uploadImage(data.answer.image as File);
       }
 
-      newCards = await request("cards", "", "post", {
-        cards: [{ ...cardData, topic_id: currentTopic._id }],
+      newCards = await request("cards", "", "put", {
+        body: {
+          cards: [{ ...cardData, topic_id: currentTopic._id }],
+        },
       });
     }
 

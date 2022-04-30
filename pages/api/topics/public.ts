@@ -32,7 +32,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Topic } = await connect();
       const userId = getCookie(req, res, "id_token");
-      const { topics_id } = req.body as TopicsAPI["public"]["put"]["params"];
+      const { topics_id } = req.body as TopicsAPI["public"]["put"]["body"];
 
       const updatedTopics = await Promise.all(
         topics_id.map(async (tid) => {

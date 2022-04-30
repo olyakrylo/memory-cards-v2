@@ -70,7 +70,9 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
 
   const updateTopics = async (): Promise<void> => {
     const updatedTopics = await request("topics", "public", "put", {
-      topics_id: selectedTopics,
+      body: {
+        topics_id: selectedTopics,
+      },
     });
     setTopics([...topics, ...updatedTopics]);
     setDialogOpen(false);

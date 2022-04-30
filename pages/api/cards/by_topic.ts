@@ -9,9 +9,9 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const catcher = (error: Error) => res.status(400).json({ error });
 
   const handleCase: ResponseFuncs = {
-    POST: async (req: NextApiRequest, res: NextApiResponse) => {
+    GET: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Card } = await connect();
-      const { topic_id } = req.body as CardsAPI["by_topic"]["post"]["params"];
+      const { topic_id } = req.query as CardsAPI["by_topic"]["get"]["query"];
       res.json(await Card.find({ topic_id }).catch(catcher));
     },
   };

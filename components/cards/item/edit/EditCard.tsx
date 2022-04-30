@@ -43,10 +43,12 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
       data.answer.image = await uploadImage(data.answer.image as File);
     }
 
-    const updatedCard = await request("cards", "", "put", {
-      ...card,
-      question: data.question as CardFieldContent,
-      answer: data.answer as CardFieldContent,
+    const updatedCard = await request("cards", "", "patch", {
+      body: {
+        ...card,
+        question: data.question as CardFieldContent,
+        answer: data.answer as CardFieldContent,
+      },
     });
     if (updatedCard) {
       updateCard(updatedCard);

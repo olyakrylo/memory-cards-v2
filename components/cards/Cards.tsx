@@ -57,7 +57,7 @@ export const Cards = ({
 
   const sliderRef = useRef<ReactSplide>(null);
 
-  const { i18n, t } = useTranslation();
+  const { t } = useTranslation();
 
   const resetCards = new Subject<void>();
   const flipCard = new Subject<number>();
@@ -83,23 +83,27 @@ export const Cards = ({
   });
 
   useEffect(() => {
+    request("config", "arrows", "get").then(({ hide }) => {
+      setHideArrows(hide);
+    });
+  }, [user]);
+
+  useEffect(() => {
     if (!currentTopic) {
       return;
     }
 
     setLoading(true);
-    request("cards", "by_topic", "post", {
-      topic_id: currentTopic._id,
+    request("cards", "by_topic", "get", {
+      query: {
+        topic_id: currentTopic._id,
+      },
     }).then((cards) => {
       setCards(cards);
       resetCards.next();
       setLoading(false);
     });
-
-    request("config", "arrows", "get").then(({ hide }) => {
-      setHideArrows(hide);
-    });
-  }, [currentTopic, i18n]);
+  }, [currentTopic]);
 
   const canEditTopic = () => {
     return currentTopic?.author_id === user?._id;
@@ -138,7 +142,7 @@ export const Cards = ({
   };
 
   const deleteCard = async (id: string) => {
-    await request("cards", "", "delete", { id });
+    await request("cards", "", "delete", { query: { id } });
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
     if (shuffledCards) {
@@ -157,7 +161,9 @@ export const Cards = ({
 
   const toggleArrows = () => {
     void request("config", "arrows", "put", {
-      hide: !hideArrows,
+      body: {
+        hide: !hideArrows,
+      },
     });
     setHideArrows(!hideArrows);
   };
@@ -169,7 +175,9 @@ export const Cards = ({
   const addCurrentTopic = async (): Promise<void> => {
     if (!currentTopic) return;
     const updatedTopics = await request("topics", "public", "put", {
-      topics_id: [currentTopic._id],
+      body: {
+        topics_id: [currentTopic._id],
+      },
     });
     setTopics([...topics, ...updatedTopics]);
   };

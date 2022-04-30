@@ -53,10 +53,12 @@ export const AddTopic = ({ user, addTopic }: AddTopicProps) => {
     if (!user) return;
 
     const newTopic = await request("topics", "", "put", {
-      users_id: [user._id],
-      author_id: user._id,
-      title,
-      public: isPublic,
+      body: {
+        users_id: [user._id],
+        author_id: user._id,
+        title,
+        public: isPublic,
+      },
     });
     if (newTopic) {
       addTopic(newTopic);

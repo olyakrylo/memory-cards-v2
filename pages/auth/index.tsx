@@ -56,8 +56,10 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   const handleLogin = async (data: AuthCredentials) => {
     setLoading(true);
     const { user, error } = await request("users", "", "post", {
-      login: data.login,
-      password: encryptedPassword(data.password),
+      body: {
+        login: data.login,
+        password: encryptedPassword(data.password),
+      },
     });
     setLoading(false);
 
@@ -87,8 +89,10 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
   const handleSignUp = async (data: AuthCredentials) => {
     setLoading(true);
     const { user, error } = await request("users", "create", "post", {
-      ...data,
-      password: encryptedPassword(data.password),
+      body: {
+        ...data,
+        password: encryptedPassword(data.password),
+      },
     });
     setLoading(false);
 

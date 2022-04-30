@@ -15,7 +15,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const handleCase: ResponseFuncs = {
     POST: async (req: NextApiRequest, res: NextApiResponse) => {
       const { User } = await connect();
-      let userData = req.body as UsersAPI["create"]["post"]["params"];
+      let userData = req.body as UsersAPI["create"]["post"]["body"];
       userData = {
         ...userData,
         login: userData.login.toLowerCase(),
@@ -32,12 +32,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         setCookie(req, res, "id_token", user._id);
       }
 
-      res.json({
-        user: user
-          ? { _id: user._id, login: user.login, email: user.email }
-          : null,
-      });
-
       const mailOptions = {
         from: `Memory cards ${config.mail.address}`,
         to: userData.email,
@@ -47,6 +41,11 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       transporter.sendMail(mailOptions, (err) => {
         console.log(err);
+        res.json({
+          user: user
+            ? { _id: user._id, login: user.login, email: user.email }
+            : null,
+        });
       });
     },
   };

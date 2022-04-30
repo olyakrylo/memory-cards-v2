@@ -122,7 +122,13 @@ export const CardControl = ({
   };
 
   const noData = (): boolean => {
-    return !(question.text || question.image || answer.text || answer.image);
+    return !(
+      question.text ||
+      question.image ||
+      answer.text ||
+      answer.image ||
+      cardsFromFile.length
+    );
   };
 
   return (
