@@ -3,7 +3,6 @@ import { useTranslation } from "react-i18next";
 import { IconButton, TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
 import { compressAccurately } from "image-conversion";
-import heic2any from "heic2any";
 
 import styles from "./CardControlField.module.css";
 import {
@@ -65,6 +64,7 @@ export const CardControlField = ({
       setLoading(true);
       let conversionFile: File | Blob = file;
       if (file.type === "image/heic") {
+        const heic2any = require("heic2any");
         conversionFile = (await heic2any({
           blob: file,
           toType: "image/jpg",

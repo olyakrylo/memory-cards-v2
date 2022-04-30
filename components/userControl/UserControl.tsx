@@ -6,7 +6,7 @@ import { Settings } from "@mui/icons-material";
 import { User } from "../../utils/types";
 import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
-import { LanguagesList } from "../../locales/languages";
+import { languages } from "../../utils/i18n";
 
 type UserControlProps = {
   user?: User | null;
@@ -84,9 +84,9 @@ const LanguageMenu = () => {
           "aria-labelledby": "basic-button",
         }}
       >
-        {LanguagesList.map((lang) => (
-          <MenuItem key={lang.id} onClick={() => setLanguage(lang.id)}>
-            {lang.title}
+        {languages.map((lang) => (
+          <MenuItem key={lang} onClick={() => setLanguage(lang)}>
+            {t(`lang.${lang}`)}
           </MenuItem>
         ))}
       </Menu>
