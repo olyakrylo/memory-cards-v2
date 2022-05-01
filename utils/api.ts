@@ -146,6 +146,20 @@ export interface TopicsAPI {
       result: Topic[];
     };
   };
+  by_author_count: {
+    get: {
+      query: { id: string };
+      body: {};
+      result: { count: number };
+    };
+  };
+  by_author: {
+    get: {
+      query: { id: string };
+      body: {};
+      result: { topics: Topic[] };
+    };
+  };
 }
 
 export interface CardsAPI {
@@ -164,9 +178,16 @@ export interface CardsAPI {
       result: Card;
     };
     delete: {
-      query: { id: string };
+      query: { ids: string[] };
       body: {};
-      result: Card;
+      result: UpdatedResult;
+    };
+  };
+  by_topic_count: {
+    get: {
+      query: { topic_id: string };
+      body: {};
+      result: { count: number };
     };
   };
   by_topic: {

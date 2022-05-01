@@ -142,7 +142,7 @@ export const Cards = ({
   };
 
   const deleteCard = async (id: string) => {
-    await request("cards", "", "delete", { query: { id } });
+    await request("cards", "", "delete", { query: { ids: [id] } });
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
     if (shuffledCards) {

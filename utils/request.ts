@@ -42,7 +42,7 @@ export async function request<
     (options.query as Record<string, any>) ?? {}
   )
     .map(([key, value]) => `${key}=${encodeURIComponent(value as any)}`)
-    .join(";");
+    .join("&");
   const readyQueryParams = strQueryParams ? `?${strQueryParams}` : "";
 
   const res = await fetch(`/api/${fullPath}${readyQueryParams}`, request);

@@ -22,7 +22,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.json({
         user: user
-          ? { _id: user._id, login: user.login, email: user.email }
+          ? {
+              _id: user._id,
+              login: user.login,
+              email: user.email,
+              admin: !!user._doc.admin,
+            }
           : null,
       });
     },
@@ -45,7 +50,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         setCookie(req, res, "id_token", user._id);
         res.json({
           user: user
-            ? { _id: user._id, login: user.login, email: user.email }
+            ? {
+                _id: user._id,
+                login: user.login,
+                email: user.email,
+                admin: !!user.admin,
+              }
             : null,
         });
         return;

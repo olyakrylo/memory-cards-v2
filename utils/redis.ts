@@ -23,6 +23,10 @@ class RedisClient {
     return this.instance.getBuffer(key);
   }
 
+  getKeys(): Promise<string[]> {
+    return this.instance.keys("*");
+  }
+
   async deleteByKeys(keys: RedisKey[]): Promise<{ deleted: boolean }> {
     const res = await this.instance.del(keys);
     return { deleted: keys.length === res };

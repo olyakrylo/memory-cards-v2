@@ -12,6 +12,7 @@
     "@emotion/react": "^11.6.0",
     "@emotion/styled": "^11.6.0",
     "@mui/icons-material": "^5.2.0",
+    "@mui/lab": "^5.0.0-alpha.79",
     "@mui/material": "^5.2.0",
     "@splidejs/react-splide": "0.7.5",
     "@splidejs/splide": "4.0.1",

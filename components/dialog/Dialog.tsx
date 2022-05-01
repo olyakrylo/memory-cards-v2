@@ -15,9 +15,9 @@ type DialogProps = {
   size: Breakpoint;
   responsive?: boolean;
   onClose?: () => void;
-  title?: any;
-  content: any;
-  actions: any;
+  title?: JSX.Element;
+  content: JSX.Element;
+  actions: JSX.Element;
 };
 
 export const AppDialog = ({

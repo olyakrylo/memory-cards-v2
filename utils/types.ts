@@ -4,6 +4,8 @@ import Redis from "ioredis";
 
 export type RedisRequest = NextApiRequest & { redis: Redis };
 
+export const ADMIN_DATA_LIMIT = 12;
+
 export type AppNotification = {
   severity: AlertColor;
   text: string;
@@ -39,6 +41,7 @@ export interface User {
   _id: string;
   login: string;
   email: string;
+  admin: boolean;
 }
 
 export interface Topic {
