@@ -2,15 +2,13 @@ import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
-import dynamic from "next/dynamic";
 
 import styles from "./CardControlField.module.css";
 import { ControlCardFieldContent } from "../CardControl";
 import { CardField, CardFieldContent } from "../../../../shared/models";
 import { AppNotification } from "../../../../shared/notification";
-
-const AppImage = dynamic(() => import("../../../image"));
-const SkeletonLoader = dynamic(() => import("../../../skeletonLoader"));
+import AppImage from "../../../image";
+import SkeletonLoader from "../../../skeletonLoader";
 
 const IMAGE_HEIGHT = 250;
 

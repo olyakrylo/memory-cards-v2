@@ -17,7 +17,6 @@ import {
   ArrowCircleDownRounded,
 } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
-import dynamic from "next/dynamic";
 
 import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
@@ -25,9 +24,8 @@ import styles from "./Cards.module.css";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
 import { AppNotification } from "../../shared/notification";
 import CardItem from "./item";
-
-const AddCard = dynamic(() => import("./add"));
-const SkeletonLoader = dynamic(() => import("../skeletonLoader"));
+import AddCard from "./add";
+import SkeletonLoader from "../skeletonLoader";
 
 type CardProps = {
   user?: User | null;

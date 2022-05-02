@@ -1,16 +1,14 @@
 import { IconButton, Pagination, Typography } from "@mui/material";
 import { DeleteOutlined } from "@mui/icons-material";
+import { Masonry } from "@mui/lab";
+
 import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useState } from "react";
-import dynamic from "next/dynamic";
 
 import styles from "./AdminData.module.css";
 import { ADMIN_DATA_LIMIT } from "../../shared/admin";
 import { UpdatedResult } from "../../shared/api";
 import AdminItemCard from "./item";
-
-const Masonry = dynamic(() => import("@mui/lab/Masonry"));
-
 type AdminDataProps = {
   count: number;
   deleteFunc?: (selected: string[]) => Promise<UpdatedResult>;

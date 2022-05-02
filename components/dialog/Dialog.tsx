@@ -7,11 +7,9 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import dynamic from "next/dynamic";
 
 import styles from "./Dialog.module.css";
-
-const DialogTransition = dynamic(() => import("./transition"));
+import DialogTransition from "./transition";
 
 type DialogProps = {
   open: boolean;

@@ -5,9 +5,7 @@ import { ZoomOutMapRounded } from "@mui/icons-material";
 
 import { Card, CardField } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
-import dynamic from "next/dynamic";
-
-const AppImage = dynamic(() => import("../../../image"));
+import AppImage from "../../../image";
 
 const MAX_TEXT_LENGTH = 300;
 

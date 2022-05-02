@@ -1,10 +1,6 @@
 import {
   Button,
   Checkbox,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   FormControlLabel,
   FormGroup,
   TextField,
