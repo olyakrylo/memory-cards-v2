@@ -24,9 +24,9 @@ import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
 import { AppNotification } from "../../shared/notification";
+import CardItem from "./item";
 
 const AddCard = dynamic(() => import("./add"));
-const CardItem = dynamic(() => import("./item"));
 const SkeletonLoader = dynamic(() => import("../skeletonLoader"));
 
 type CardProps = {

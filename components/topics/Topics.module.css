@@ -15,6 +15,7 @@
   border-bottom-right-radius: 8px;
   box-shadow: var(--shadow);
   transition: transform 0.3s ease-in-out;
+  min-width: 330px;
 }
 
 .content[aria-hidden="true"] {
