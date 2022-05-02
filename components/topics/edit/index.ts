@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { State } from "../../../shared/redux";
 import { User } from "../../../shared/models";
 
-import { AddTopic } from "./AddTopic";
+import { EditTopic } from "./EditTopic";
 
 const mapStateToProps = (state: { main: State }) => {
   return {
@@ -11,4 +11,4 @@ const mapStateToProps = (state: { main: State }) => {
   };
 };
 
-export default connect(mapStateToProps)(AddTopic);
+export default connect(mapStateToProps)(EditTopic);

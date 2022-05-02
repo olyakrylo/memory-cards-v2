@@ -27,7 +27,9 @@
     "send": "Send",
     "redirect-in-seconds_one": "Redirect in {{count}} second",
     "redirect-in-seconds_other": "Redirect in {{count}} seconds",
-    "non_working_link": "Non-working link"
+    "non_working_link": "Non-working link",
+    "create_copy": "Create a copy",
+    "edit": "Edit"
   },
   "add": {
     "topic_title": "Title",

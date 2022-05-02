@@ -104,7 +104,7 @@ export interface TopicsAPI {
     };
     patch: {
       query: {};
-      body: Topic;
+      body: Pick<Topic, "_id" | "title" | "public">;
       result: Topic;
     };
     delete: {
@@ -155,6 +155,13 @@ export interface TopicsAPI {
   };
   by_author: {
     get: {
+      query: { id: string };
+      body: {};
+      result: { topics: Topic[] };
+    };
+  };
+  copy: {
+    put: {
       query: { id: string };
       body: {};
       result: { topics: Topic[] };

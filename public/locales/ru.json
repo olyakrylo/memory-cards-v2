@@ -28,7 +28,9 @@
     "redirect-in-seconds_one": "Редирект через {{count}} секунду",
     "redirect-in-seconds_few": "Редирект через {{count}} секунды",
     "redirect-in-seconds_many": "Редирект через {{count}} секунд",
-    "non_working_link": "Нерабочая ссылка"
+    "non_working_link": "Нерабочая ссылка",
+    "create_copy": "Создать копию",
+    "edit": "Редактировать"
   },
   "add": {
     "topic_title": "Название",

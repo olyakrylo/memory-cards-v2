@@ -1,6 +1,12 @@
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { useRouter } from "next/router";
-import { DeleteTwoTone, MoreVert, Share } from "@mui/icons-material";
+import {
+  DeleteTwoTone,
+  MoreVert,
+  Share,
+  CopyAllRounded,
+  EditRounded,
+} from "@mui/icons-material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
@@ -8,22 +14,25 @@ import { Topic, User } from "../../../shared/models";
 import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
 import { AppNotification } from "../../../shared/notification";
+import { EditTopic } from "../edit/EditTopic";
 
 type TopicItemProps = {
   topic: Topic;
   topics: Topic[];
   user?: User | null;
   currentTopic?: Topic;
+  setCurrentTopic: (t: Topic) => void;
   setTopics: (t: Topic[]) => void;
   setNotification: (n: AppNotification) => void;
 };
 
 export const TopicItem = ({
+  user,
   topic,
   topics: topicsList,
-  user,
-  currentTopic,
   setTopics,
+  currentTopic,
+  setCurrentTopic,
   setNotification,
 }: TopicItemProps) => {
   const router = useRouter();
@@ -31,6 +40,7 @@ export const TopicItem = ({
   const { t } = useTranslation();
 
   const [menu, setMenu] = useState<null | HTMLElement>(null);
+  const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
   const selectTopic = async () => {
     await router.push({
@@ -48,7 +58,9 @@ export const TopicItem = ({
       },
     });
     if (updated) {
-      setTopics(topicsList.filter((t) => t._id !== topic._id));
+      const newTopics = topicsList.filter((t) => t._id !== topic._id);
+      setTopics(newTopics);
+      setCurrentTopic(newTopics[0]);
       setNotification({
         severity: "warning",
         text: "ui.topic_deleted",
@@ -56,6 +68,13 @@ export const TopicItem = ({
         autoHide: 5000,
       });
     }
+  };
+
+  const copyTopic = async () => {
+    const { topics } = await request("topics", "copy", "put", {
+      query: { id: topic._id },
+    });
+    setTopics(topics);
   };
 
   const shareTopic = async () => {
@@ -67,6 +86,38 @@ export const TopicItem = ({
       translate: true,
       autoHide: 5000,
     });
+  };
+
+  const openEditDialog = () => {
+    setEditDialogOpen(true);
+  };
+
+  const closeEditDialog = () => {
+    setEditDialogOpen(false);
+  };
+
+  const editTopic = async (title: string, isPublic: boolean): Promise<void> => {
+    if (topic.public === isPublic && topic.title === title) return;
+
+    closeEditDialog();
+
+    const updatedTopic = await request("topics", "", "patch", {
+      body: {
+        _id: topic._id,
+        title,
+        public: isPublic,
+      },
+    });
+
+    const updatedTopicsList = topicsList.map((item) => {
+      if (item._id !== topic._id) return item;
+      return updatedTopic;
+    });
+    setTopics(updatedTopicsList);
+  };
+
+  const isSelfTopic = (): boolean => {
+    return topic.author_id === user?._id;
   };
 
   const menuOpened = Boolean(menu);
@@ -111,6 +162,30 @@ export const TopicItem = ({
           {t("ui.delete")}
           <DeleteTwoTone color="secondary" />
         </MenuItem>
+
+        {!isSelfTopic() && (
+          <MenuItem className={styles.menuItem} onClick={copyTopic}>
+            {t("ui.create_copy")}
+            <CopyAllRounded color={"info"} />
+          </MenuItem>
+        )}
+
+        {isSelfTopic() && (
+          <>
+            <MenuItem className={styles.menuItem} onClick={openEditDialog}>
+              {t("ui.edit")}
+              <EditRounded color={"info"} />
+            </MenuItem>
+
+            <EditTopic
+              open={editDialogOpen}
+              onClose={closeEditDialog}
+              topic={topic}
+              onConfirm={editTopic}
+            />
+          </>
+        )}
+
         <MenuItem className={styles.menuItem} onClick={shareTopic}>
           {t("ui.share")}
           <Share color="primary" />

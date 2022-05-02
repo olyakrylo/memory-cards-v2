@@ -34,13 +34,21 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
       const { user_id, topic_id } = req.body as TopicsAPI[""]["delete"]["body"];
 
       const topic = (await Topic.findById(topic_id)) as Topic;
-      const users_id = topic.users_id.filter((u) => u !== user_id);
-      const result = (await Topic.findByIdAndUpdate(
-        topic_id,
-        { users_id },
-        { new: true }
-      )) as Topic;
-      res.json({ updated: !result.users_id.includes(user_id) });
+
+      let updated: boolean;
+      if (topic.users_id.length > 1 || topic.public) {
+        const users_id = topic.users_id.filter((u) => u !== user_id);
+        const updatedTopic = await Topic.findByIdAndUpdate(
+          topic_id,
+          { users_id },
+          { new: true }
+        );
+        updated = !updatedTopic.users_id.includes(user_id);
+      } else {
+        Topic.findByIdAndDelete(topic_id, { new: true });
+        updated = true;
+      }
+      res.json({ updated });
     },
   };
 
