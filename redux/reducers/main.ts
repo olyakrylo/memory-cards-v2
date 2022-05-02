@@ -1,6 +1,6 @@
-import * as t from "../types";
+import * as t from "../../shared/redux";
 import { AnyAction } from "redux";
-import { State } from "../../utils/types";
+import { State } from "../../shared/redux";
 
 const main = (
   state: State = {

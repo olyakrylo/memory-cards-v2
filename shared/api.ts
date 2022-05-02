@@ -1,4 +1,4 @@
-import { Card, Topic, TopicExt, UpdatedResult, User } from "./types";
+import { Card, Topic, TopicExt, User } from "./models";
 
 export type Paths = {
   users: UsersAPI;
@@ -8,17 +8,17 @@ export type Paths = {
   config: ConfigAPI;
 };
 
-export type Method = "get" | "post" | "put" | "patch" | "delete";
+export type Method = "get" | "post" | "put" | "delete" | "patch";
 
-// export interface API {
-//   [key: string]: {
-//     [key in Method]?: {
-//       query?: Record<string, any>;
-//       body?: Record<string, any>;
-//       result: any;
-//     };
-//   };
-// }
+export interface ResponseFuncs {
+  GET?: Function;
+  POST?: Function;
+  PUT?: Function;
+  DELETE?: Function;
+  PATCH?: Function;
+}
+
+export type UpdatedResult = { updated: boolean };
 
 export interface UsersAPI {
   "": {
@@ -146,6 +146,20 @@ export interface TopicsAPI {
       result: Topic[];
     };
   };
+  by_author_count: {
+    get: {
+      query: { id: string };
+      body: {};
+      result: { count: number };
+    };
+  };
+  by_author: {
+    get: {
+      query: { id: string };
+      body: {};
+      result: { topics: Topic[] };
+    };
+  };
 }
 
 export interface CardsAPI {
@@ -164,9 +178,16 @@ export interface CardsAPI {
       result: Card;
     };
     delete: {
-      query: { id: string };
+      query: { ids: string[] };
       body: {};
-      result: Card;
+      result: UpdatedResult;
+    };
+  };
+  by_topic_count: {
+    get: {
+      query: { topic_id: string };
+      body: {};
+      result: { count: number };
     };
   };
   by_topic: {

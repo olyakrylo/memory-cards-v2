@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import { Typography } from "@mui/material";
 
-import { Card } from "../../../../utils/types";
+import { Card } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
 import AppImage from "../../../image";
 

@@ -1,11 +1,5 @@
 import { useRouter } from "next/router";
-import React, {
-  BaseSyntheticEvent,
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
@@ -22,15 +16,15 @@ import {
   AddRounded,
   ArrowCircleDownRounded,
 } from "@mui/icons-material";
-import arrayShuffle from "array-shuffle";
 import { isBrowser } from "react-device-detect";
 
-import { AppNotification, Card, Topic, User } from "../../utils/types";
+import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import AddCard from "./add";
-import CardItem from "./item";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
+import { AppNotification } from "../../shared/notification";
+import CardItem from "./item";
+import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
 
 type CardProps = {
@@ -142,7 +136,7 @@ export const Cards = ({
   };
 
   const deleteCard = async (id: string) => {
-    await request("cards", "", "delete", { query: { id } });
+    await request("cards", "", "delete", { query: { ids: [id] } });
     const updatedCards = cards.filter((c) => c._id !== id);
     setCards(updatedCards);
     if (shuffledCards) {
@@ -150,11 +144,12 @@ export const Cards = ({
     }
   };
 
-  const toggleShuffle = (event: BaseSyntheticEvent) => {
+  const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
     if (shuffledCards) {
       setShuffledCards(null);
     } else {
-      setShuffledCards(arrayShuffle(cards));
+      const { default: shuffle } = await import("array-shuffle");
+      setShuffledCards(shuffle(cards));
     }
     event.target.blur();
   };
@@ -203,7 +198,7 @@ export const Cards = ({
   return (
     <div className={styles.container}>
       {currentTopic && (
-        <Fragment>
+        <>
           <div className={styles.control}>
             <IconButton
               onClick={toggleShuffle}
@@ -240,7 +235,7 @@ export const Cards = ({
               <ArrowCircleDownRounded className={styles.tip__icon_add} />
             </div>
           )}
-        </Fragment>
+        </>
       )}
 
       {!currentTopic && (
@@ -260,7 +255,7 @@ export const Cards = ({
       )}
 
       {!loading && !!cards.length && (
-        <Fragment>
+        <>
           {getCardsMatrix(shuffledCards ?? cards).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
@@ -306,7 +301,7 @@ export const Cards = ({
               label={<Typography>{t("ui.show_arrows")}</Typography>}
             />
           </FormGroup>
-        </Fragment>
+        </>
       )}
     </div>
   );

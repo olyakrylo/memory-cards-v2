@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { ResponseFuncs } from "../../../utils/types";
-import { UsersAPI } from "../../../utils/api";
+import { ResponseFuncs } from "../../../shared/api";
+import { UsersAPI } from "../../../shared/api";
 import { connect } from "../../../utils/connection";
 import { config } from "../../../utils/config";
 import { decryptString } from "../../../utils/cookies";
@@ -33,37 +33,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       res.json({
         user: user
-          ? { _id: user._id, login: user.login, email: user.email }
+          ? {
+              _id: user._id,
+              login: user.login,
+              email: user.email,
+              admin: !!user.admin,
+            }
           : null,
       });
     },
-    // POST: async (req: NextApiRequest, res: NextApiResponse) => {
-    //   const { id } = req.body as UsersAPI["recovery_user"]["post"]["body"];
-    //
-    //   const decryptedId = decryptString(id, secret);
-    //   const { id: userId, count } = JSON.parse(decryptedId);
-    //   if (!userId || !count) {
-    //     res.json({});
-    //     return;
-    //   }
-    //
-    //   const { User, Recovery } = await connect();
-    //
-    //   const recovery = await Recovery.findOne({ user_id: userId, count });
-    //   if (!recovery) {
-    //     res.json({});
-    //     return;
-    //   }
-    //
-    //   const user = await User.findById(userId);
-    //
-    //   res.json({
-    //     user: user
-    //       ? { _id: user._id, login: user.login, email: user.email }
-    //       : null,
-    //   });
-    //   return;
-    // },
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { id, password } =
         req.body as UsersAPI["recovery_user"]["put"]["body"];

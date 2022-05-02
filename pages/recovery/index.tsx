@@ -1,15 +1,20 @@
 import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { Button, CircularProgress, Typography } from "@mui/material";
-import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import dynamic from "next/dynamic";
 
-import { User } from "../../utils/types";
+import { User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Recovery.module.css";
-import { validateInput } from "../../utils/validate-auth-input";
-import { encryptString } from "../../utils/cookies";
-import AuthInput from "../../components/authInput";
+
+const AuthInput = dynamic(() => import("../../components/authInput"));
+
+const Link = dynamic(() => import("next/link"));
+const CircularProgress = dynamic(
+  () => import("@mui/material/CircularProgress")
+);
+const Typography = dynamic(() => import("@mui/material/Typography"));
+const Button = dynamic(() => import("@mui/material/Button"));
 
 const REDIRECT_TIME = 5; // seconds
 
@@ -20,8 +25,10 @@ const Recovery = () => {
 
   const [user, setUser] = useState<User | undefined>();
   const [loading, setLoading] = useState<boolean>(true);
-  const [firstPass, setFirstPass] = useState<string>("");
-  const [secondPass, setSecondPass] = useState<string>("");
+  const [password, setPassword] = useState<{ first: string; second: string }>({
+    first: "",
+    second: "",
+  });
   const [error, setError] = useState<string>("");
   const [success, setSuccess] = useState<boolean>(false);
   const [remainedSeconds, setRemainedSeconds] = useState<number>(REDIRECT_TIME);
@@ -36,15 +43,21 @@ const Recovery = () => {
     });
   }, [router.query.id]);
 
-  const handlePassword = (event: BaseSyntheticEvent, repeat?: boolean) => {
+  const handlePassword = async (
+    event: BaseSyntheticEvent,
+    repeat?: boolean
+  ): Promise<void> => {
     const { value } = event.target;
     setError("");
+
+    const { validateInput } = await import("../../utils/validate-auth-input");
+
     if (!validateInput(value)) return;
 
     if (repeat) {
-      setSecondPass(value);
+      setPassword({ ...password, second: value });
     } else {
-      setFirstPass(value);
+      setPassword({ ...password, first: value });
     }
   };
 
@@ -52,14 +65,13 @@ const Recovery = () => {
     if (!user) return;
     if (!validateInputs()) return;
 
+    const { encryptPassword } = await import("../../utils/encrypt-password");
+
     setLoading(true);
     const { updated } = await request("users", "recovery_user", "put", {
       body: {
         id: user?._id,
-        password: encryptString(
-          firstPass,
-          process.env.NEXT_PUBLIC_SECRET as string
-        ),
+        password: await encryptPassword(password.first),
       },
     });
     if (updated) {
@@ -79,11 +91,11 @@ const Recovery = () => {
   };
 
   const validateInputs = (): boolean => {
-    if (firstPass.length < 8) {
+    if (password.first.length < 8) {
       setError("auth.error.short_password");
       return false;
     }
-    if (secondPass !== firstPass) {
+    if (password.first !== password.second) {
       setError("auth.error.not_same_pass");
       return false;
     }
@@ -142,13 +154,13 @@ const Recovery = () => {
 
         <AuthInput
           label={t("auth.placeholder.password")}
-          value={firstPass}
+          value={password.first}
           changeHandler={handlePassword}
           type="password"
         />
         <AuthInput
           label={t("auth.placeholder.repeat")}
-          value={secondPass}
+          value={password.second}
           changeHandler={(e) => handlePassword(e, true)}
           type="password"
         />

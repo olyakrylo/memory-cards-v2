@@ -2,7 +2,7 @@ import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { EditRounded } from "@mui/icons-material";
 
-import { Card, CardFieldContent, ShortCard } from "../../../../utils/types";
+import { Card, CardFieldContent, ShortCard } from "../../../../shared/models";
 import { request } from "../../../../utils/request";
 import styles from "../CardItem.module.css";
 import CardControl from "../../control";

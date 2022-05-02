@@ -1,16 +1,24 @@
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
+import dynamic from "next/dynamic";
 
 import { setUser } from "../../redux/actions/main";
-import { State } from "../../utils/types";
-import { User } from "../../utils/types";
+import { State } from "../../shared/redux";
+import { User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./App.module.css";
-import Topics from "../../components/topics";
-import Header from "../../components/header";
-import Cards from "../../components/cards";
+
+const CardsLoaderComponent = (
+  <CircularProgress className={styles.loader} size={40} />
+);
+
+const Header = dynamic(() => import("../../components/header"));
+const Topics = dynamic(() => import("../../components/topics"));
+const Cards = dynamic(() => import("../../components/cards"), {
+  loading: () => CardsLoaderComponent,
+});
 
 type AppProps = {
   user?: User | null;
@@ -49,7 +57,7 @@ const App = ({ user, setUser }: AppProps) => {
       <Topics />
 
       <div className={styles.content}>
-        {loading && <CircularProgress className={styles.loader} size={40} />}
+        {loading && CardsLoaderComponent}
 
         {!loading && <Cards />}
       </div>

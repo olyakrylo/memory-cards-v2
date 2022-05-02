@@ -2,17 +2,17 @@ import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Button, Tooltip, Typography } from "@mui/material";
 
+import styles from "./CardControl.module.css";
+import AppDialog from "../../dialog";
+import CardControlField from "./field";
 import {
-  AppNotification,
   Card,
   CardField,
   CardFieldContent,
   ShortCard,
   Topic,
-} from "../../../utils/types";
-import styles from "./CardControl.module.css";
-import AppDialog from "../../dialog";
-import CardControlField from "./field";
+} from "../../../shared/models";
+import { AppNotification } from "../../../shared/notification";
 
 export type ControlCardFieldContent = {
   text: string;

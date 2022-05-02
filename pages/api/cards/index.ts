@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { RedisKey } from "ioredis";
 
 import { connect } from "../../../utils/connection";
-import { ResponseFuncs } from "../../../utils/types";
-import { CardsAPI } from "../../../utils/api";
+import { ResponseFuncs } from "../../../shared/api";
+import { CardsAPI } from "../../../shared/api";
 import RedisClient from "../../../utils/redis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -49,22 +49,31 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
     },
     // delete
     DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
-      const { id } = req.query as CardsAPI[""]["delete"]["query"];
+      const { ids } = req.query as { ids: string };
+      const parsedIds = ids.split(",");
+
       const { Card } = await connect();
 
-      const card = await Card.findById(id);
+      const filter = { _id: { $in: parsedIds } };
+      const cards = await Card.find(filter);
+
       const delKeys = [] as RedisKey[];
-      if (card.question.image) {
-        delKeys.push(card.question.image);
-      }
-      if (card.answer.image) {
-        delKeys.push(card.answer.image);
-      }
+      cards.forEach((card) => {
+        if (card.question.image) {
+          delKeys.push(card.question.image);
+        }
+        if (card.answer.image) {
+          delKeys.push(card.answer.image);
+        }
+      });
+
       if (delKeys.length) {
         await RedisClient.deleteByKeys(delKeys);
       }
 
-      res.json(await Card.findByIdAndDelete(id, { new: true }));
+      const { deletedCount } = await Card.deleteMany(filter);
+
+      res.json({ updated: deletedCount === parsedIds.length });
     },
   };
 

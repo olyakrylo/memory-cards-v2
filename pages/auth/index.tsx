@@ -1,21 +1,20 @@
 import { connect } from "react-redux";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import ReactCardFlip from "react-card-flip";
+import dynamic from "next/dynamic";
+import { AlertColor } from "@mui/material";
 
-import {
-  AppNotification,
-  AuthCredentials,
-  AuthMode,
-  State,
-} from "../../utils/types";
 import { setNotification, setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
 import styles from "./Auth.module.css";
-import Header from "../../components/header";
-import { User } from "../../utils/types";
-import { encryptString } from "../../utils/cookies";
-import AuthSide from "../../components/authSide";
+import { User } from "../../shared/models";
+import { AppNotification } from "../../shared/notification";
+import { AuthCredentials, AuthMode } from "../../shared/auth";
+import { State } from "../../shared/redux";
+
+const Header = dynamic(() => import("../../components/header"));
+const AuthSide = dynamic(() => import("../../components/authSide"));
+const CardFlip = dynamic(() => import("react-card-flip"));
 
 type AuthProps = {
   user?: User | null;
@@ -55,30 +54,21 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   const handleLogin = async (data: AuthCredentials) => {
     setLoading(true);
+    const { encryptPassword } = await import("../../utils/encrypt-password");
     const { user, error } = await request("users", "", "post", {
       body: {
         login: data.login,
-        password: encryptedPassword(data.password),
+        password: await encryptPassword(data.password),
       },
     });
     setLoading(false);
 
     if (error?.no_user) {
-      setNotification({
-        severity: "error",
-        text: "auth.error.user_not_found",
-        translate: true,
-        autoHide: 5000,
-      });
+      setError("auth.error.user_not_found");
       return;
     }
     if (error?.wrong_password) {
-      setNotification({
-        severity: "error",
-        text: "auth.error.wrong_password",
-        translate: true,
-        autoHide: 5000,
-      });
+      setError("auth.error.wrong_password");
       return;
     }
     if (user) {
@@ -88,21 +78,17 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   const handleSignUp = async (data: AuthCredentials) => {
     setLoading(true);
+    const { encryptPassword } = await import("../../utils/encrypt-password");
     const { user, error } = await request("users", "create", "post", {
       body: {
         ...data,
-        password: encryptedPassword(data.password),
+        password: await encryptPassword(data.password),
       },
     });
     setLoading(false);
 
     if (error?.user_exists) {
-      setNotification({
-        severity: "warning",
-        text: "auth.error.user_exists",
-        translate: true,
-        autoHide: 5000,
-      });
+      setError("auth.error.user_exists", "warning");
       return;
     }
     if (user) {
@@ -110,9 +96,13 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
     }
   };
 
-  const encryptedPassword = (password: string): string => {
-    const secretKey = process.env.NEXT_PUBLIC_SECRET as string;
-    return encryptString(password, secretKey);
+  const setError = (text: string, severity: AlertColor = "error"): void => {
+    setNotification({
+      severity,
+      text,
+      translate: true,
+      autoHide: 5000,
+    });
   };
 
   const changeMode = (type: AuthMode) => {
@@ -123,7 +113,7 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
     <div className={styles.container}>
       <Header />
 
-      <ReactCardFlip
+      <CardFlip
         isFlipped={mode === "signUp"}
         flipDirection="vertical"
         containerClassName={styles.flipContainer}
@@ -140,7 +130,7 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
           changeMode={() => changeMode("signIn")}
           loading={mode === "signUp" && loading}
         />
-      </ReactCardFlip>
+      </CardFlip>
     </div>
   );
 };

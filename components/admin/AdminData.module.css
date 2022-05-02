@@ -1,0 +1,22 @@
+.selected {
+  margin: 0 -40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 40px;
+  background-color: var(--seagreen);
+  color: var(--bg-color);
+}
+
+.delete {
+  color: var(--bg-color);
+}
+
+.content {
+  margin: auto;
+}
+
+.pagination {
+  width: max-content;
+  margin: 24px auto;
+}

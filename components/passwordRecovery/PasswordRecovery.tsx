@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, Fragment, useState } from "react";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 
-import { AppNotification } from "../../utils/types";
+import { AppNotification } from "../../shared/notification";
 import { request } from "../../utils/request";
 import styles from "./PasswordRecovery.module.css";
 import AppDialog from "../dialog";

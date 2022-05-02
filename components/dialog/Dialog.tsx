@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
 
+import styles from "./Dialog.module.css";
 import DialogTransition from "./transition";
 
 type DialogProps = {
@@ -15,9 +16,9 @@ type DialogProps = {
   size: Breakpoint;
   responsive?: boolean;
   onClose?: () => void;
-  title?: any;
-  content: any;
-  actions: any;
+  title?: JSX.Element;
+  content: JSX.Element;
+  actions: JSX.Element;
 };
 
 export const AppDialog = ({
@@ -41,11 +42,13 @@ export const AppDialog = ({
       TransitionComponent={DialogTransition}
       onClose={onClose}
     >
-      {title && <DialogTitle>{title}</DialogTitle>}
+      {title && <DialogTitle className={styles.title}>{title}</DialogTitle>}
 
-      <DialogContent dividers={true}>{content}</DialogContent>
+      <DialogContent dividers={true} className={styles.content}>
+        {content}
+      </DialogContent>
 
-      <DialogActions>{actions}</DialogActions>
+      <DialogActions className={styles.actions}>{actions}</DialogActions>
     </Dialog>
   );
 };

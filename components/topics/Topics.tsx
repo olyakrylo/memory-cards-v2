@@ -3,16 +3,15 @@ import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Divider, IconButton, Typography } from "@mui/material";
 import { MenuRounded } from "@mui/icons-material";
-
-import { Topic, User } from "../../utils/types";
+import { Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Topics.module.css";
+import { TopicsCount } from "../../shared/api";
+import SkeletonLoader from "../skeletonLoader";
 import TopicItem from "./item";
 import AddTopic from "./add";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
-import { TopicsCount } from "../../utils/api";
-import SkeletonLoader from "../skeletonLoader";
 
 type TopicsProps = {
   user?: User | null;
@@ -115,10 +114,12 @@ export const Topics = ({
           </div>
         </div>
 
-        <div>
-          <AddTopic addTopic={addTopic} />
-          <PublicTopics />
-        </div>
+        {!loading && (
+          <div className={styles.addContainer}>
+            <AddTopic addTopic={addTopic} />
+            <PublicTopics />
+          </div>
+        )}
       </div>
 
       <div className={styles.control}>
@@ -129,7 +130,7 @@ export const Topics = ({
           <MenuRounded />
         </IconButton>
 
-        <UserControl />
+        {user && <UserControl />}
       </div>
     </div>
   );

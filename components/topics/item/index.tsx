@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 
-import { State } from "../../../utils/types";
+import { State } from "../../../shared/redux";
 import { setNotification, setTopics } from "../../../redux/actions/main";
 
 import { TopicItem } from "./TopicItem";

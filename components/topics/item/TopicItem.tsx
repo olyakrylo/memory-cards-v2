@@ -4,9 +4,10 @@ import { DeleteTwoTone, MoreVert, Share } from "@mui/icons-material";
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { AppNotification, Topic, User } from "../../../utils/types";
+import { Topic, User } from "../../../shared/models";
 import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
+import { AppNotification } from "../../../shared/notification";
 
 type TopicItemProps = {
   topic: Topic;

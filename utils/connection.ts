@@ -12,6 +12,7 @@ export const connect = async () => {
     login: String,
     password: String,
     email: String,
+    admin: Boolean,
   });
 
   const TopicSchema = new mongoose.Schema({

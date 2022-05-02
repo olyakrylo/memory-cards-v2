@@ -1,0 +1,12 @@
+.card {
+  height: max-content;
+}
+
+.card__actions {
+  display: flex;
+  justify-content: space-between;
+}
+
+.card__collapse {
+  padding: 8px 16px 16px;
+}

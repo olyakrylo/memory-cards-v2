@@ -2,16 +2,12 @@ import { BaseSyntheticEvent, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { IconButton, TextField, Tooltip } from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
-import { compressAccurately } from "image-conversion";
 
 import styles from "./CardControlField.module.css";
-import {
-  AppNotification,
-  CardField,
-  CardFieldContent,
-} from "../../../../utils/types";
-import AppImage from "../../../image";
 import { ControlCardFieldContent } from "../CardControl";
+import { CardField, CardFieldContent } from "../../../../shared/models";
+import { AppNotification } from "../../../../shared/notification";
+import AppImage from "../../../image";
 import SkeletonLoader from "../../../skeletonLoader";
 
 const IMAGE_HEIGHT = 250;
@@ -64,13 +60,16 @@ export const CardControlField = ({
       setLoading(true);
       let conversionFile: File | Blob = file;
       if (file.type === "image/heic") {
-        const heic2any = require("heic2any");
-        conversionFile = (await heic2any({
+        const { default: converter } = await import("heic2any");
+        conversionFile = (await converter({
           blob: file,
           toType: "image/jpg",
         })) as Blob;
       }
+
+      const { compressAccurately } = await import("image-conversion");
       const blob = await compressAccurately(conversionFile, 500);
+
       const fileFromBlob = new File([blob], file.name, { type: file.type });
       handleImage(fileFromBlob);
       setLoading(false);

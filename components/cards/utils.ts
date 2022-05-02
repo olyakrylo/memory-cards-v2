@@ -1,4 +1,4 @@
-import { Card } from "../../utils/types";
+import { Card } from "../../shared/models";
 import { isBrowser } from "react-device-detect";
 
 export const CARDS_BY_SLIDER = 20;

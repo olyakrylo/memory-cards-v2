@@ -1,0 +1,15 @@
+.cardsList {
+  display: grid;
+  grid-gap: 8px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.card {
+  display: grid;
+  grid-gap: 8px;
+  padding: 8px;
+  min-height: 50px;
+  background-color: var(--bg-color);
+  border-radius: 8px;
+}

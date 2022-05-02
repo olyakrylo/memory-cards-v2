@@ -1,6 +1,7 @@
 import { connect } from "react-redux";
 
-import { State, User } from "../../../utils/types";
+import { State } from "../../../shared/redux";
+import { User } from "../../../shared/models";
 
 import { AddTopic } from "./AddTopic";
 

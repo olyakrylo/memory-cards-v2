@@ -10,13 +10,13 @@ import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
 import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
-import ReactCardFlip from "react-card-flip";
 
-import { Card } from "../../../utils/types";
+import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
+import ReactCardFlip from "react-card-flip";
+import CardMainContent from "./mainContent";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
-import CardMainContent from "./mainContent";
 import CardDialogContent from "./dialogContent";
 
 type CardItemProps = {
@@ -88,7 +88,6 @@ export const CardItem = ({
         containerClassName={`${styles.cardContainer} ${
           showArrows && styles.cardContainer_arrows
         }`}
-        cardZIndex={"100"}
       >
         <div className={styles.card} onClick={toggleCard}>
           <CardMainContent

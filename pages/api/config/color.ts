@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Cookies from "cookies";
-import { ResponseFuncs } from "../../../utils/types";
+import { ResponseFuncs } from "../../../shared/api";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
