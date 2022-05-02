@@ -1,5 +1,6 @@
 import { connect } from "react-redux";
 import Head from "next/head";
+import "@splidejs/splide/dist/css/splide.min.css";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
 import { StyledEngineProvider } from "@mui/material/styles";
@@ -7,7 +8,6 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import dynamic from "next/dynamic";
 
-import "@splidejs/splide/dist/css/splide.min.css";
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
