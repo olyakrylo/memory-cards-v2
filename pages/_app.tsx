@@ -3,18 +3,19 @@ import Head from "next/head";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
 import { StyledEngineProvider } from "@mui/material/styles";
-import "@splidejs/splide/dist/css/splide.min.css";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
+import dynamic from "next/dynamic";
 
+import "@splidejs/splide/dist/css/splide.min.css";
 import "../styles/globals.css";
-import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../utils/i18n";
 import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
-import Notification from "../components/notification";
+
+const Notification = dynamic(() => import("../components/notification"));
 
 function MyApp({
   Component,

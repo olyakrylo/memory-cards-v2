@@ -10,14 +10,16 @@ import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
 import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
-import ReactCardFlip from "react-card-flip";
+import dynamic from "next/dynamic";
 
 import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
-import EditCard from "./edit";
-import AppDialog from "../../dialog";
-import CardMainContent from "./mainContent";
-import CardDialogContent from "./dialogContent";
+
+const ReactCardFlip = dynamic(() => import("react-card-flip"));
+const EditCard = dynamic(() => import("./edit"));
+const AppDialog = dynamic(() => import("../../dialog"));
+const CardMainContent = dynamic(() => import("./mainContent"));
+const CardDialogContent = dynamic(() => import("./dialogContent"));
 
 type CardItemProps = {
   index: number;

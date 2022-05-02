@@ -77,6 +77,11 @@
   color: var(--medium-gray);
 }
 
+.addContainer {
+  display: grid;
+  grid-gap: 4px;
+}
+
 .addButton {
   display: flex;
   align-items: flex-start;

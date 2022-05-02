@@ -1,28 +1,41 @@
-import { CircularProgress, Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 import { useRouter } from "next/router";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
-import { Error } from "@mui/icons-material";
-
-import { request } from "../../utils/request";
 import { GetServerSideProps } from "next";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 
-import AdminTopics from "../../components/admin/topics";
-import AllUsers from "../../components/admin/users";
-import AdminCards from "../../components/admin/cards";
-import AdminImages from "../../components/admin/images";
 import { ADMIN_DATA_LIMIT, AdminCard, AdminTabData } from "../../shared/admin";
 import { Topic, User } from "../../shared/models";
+
+const DynamicTopics = dynamic(() => import("../../components/admin/topics"), {
+  ssr: false,
+});
+const DynamicUsers = dynamic(() => import("../../components/admin/users"), {
+  ssr: false,
+});
+const DynamicCards = dynamic(() => import("../../components/admin/cards"), {
+  ssr: false,
+});
+const DynamicImages = dynamic(() => import("../../components/admin/images"), {
+  ssr: false,
+});
+
+const CircularProgress = dynamic(
+  () => import("@mui/material/CircularProgress")
+);
 
 const TABS = ["users", "topics", "cards", "images"];
 
 type AllDataProps = {
-  users: AdminTabData<User>;
-  topics: AdminTabData<Topic>;
-  cards: AdminTabData<AdminCard>;
-  images: AdminTabData<string>;
+  SSRData: {
+    users: AdminTabData<User>;
+    topics: AdminTabData<Topic>;
+    cards: AdminTabData<AdminCard>;
+    images: AdminTabData<string>;
+  };
 };
 
-const AdminPanel = ({ users, topics, cards, images }: AllDataProps) => {
+const AdminPanel = ({ SSRData }: AllDataProps) => {
   const router = useRouter();
 
   const [checking, setChecking] = useState(true);
@@ -38,17 +51,17 @@ const AdminPanel = ({ users, topics, cards, images }: AllDataProps) => {
       });
     }
 
-    console.log(users);
-
     if (!checking) return;
 
-    request("users", "", "get").then(({ user }) => {
-      if (!user?.admin) {
-        void router.push("/app");
-        return;
-      }
+    import("../../utils/request").then(({ request }) => {
+      request("users", "", "get").then(({ user }) => {
+        if (!user?.admin) {
+          void router.push("/app");
+          return;
+        }
 
-      setChecking(false);
+        setChecking(false);
+      });
     });
   }, [router]);
 
@@ -66,19 +79,16 @@ const AdminPanel = ({ users, topics, cards, images }: AllDataProps) => {
   const renderTabData = () => {
     switch (tabsValue) {
       case "topics":
-        return <AdminTopics {...topics} />;
+        return <DynamicTopics {...SSRData.topics} />;
 
       case "users":
-        return <AllUsers {...users} />;
+        return <DynamicUsers {...SSRData.users} />;
 
       case "cards":
-        return <AdminCards {...cards} />;
+        return <DynamicCards {...SSRData.cards} />;
 
       case "images":
-        return <AdminImages {...images} />;
-
-      default:
-        return <Error />;
+        return <DynamicImages {...SSRData.images} />;
     }
   };
 
@@ -96,6 +106,24 @@ const AdminPanel = ({ users, topics, cards, images }: AllDataProps) => {
 };
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const emptyData: AdminTabData<any> = {
+    data: [],
+    count: 0,
+  };
+
+  if (!query.tab) {
+    return {
+      props: {
+        SSRData: {
+          users: emptyData,
+          topics: emptyData,
+          cards: emptyData,
+          images: emptyData,
+        },
+      },
+    };
+  }
+
   if (process.env.NODE_ENV !== "production") {
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
   }
@@ -103,20 +131,16 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const skip = query.skip ?? 0;
   const limit = query.limit ?? ADMIN_DATA_LIMIT;
 
-  const loadData = async (path: string, withSkip?: boolean): Promise<any> => {
-    let dataUrl = `${process.env.DATA_URL}/${path}`;
-    if (withSkip) {
-      dataUrl = dataUrl.concat(`?skip=${skip}&limit=${limit}`);
-    }
-
-    const response = await fetch(dataUrl);
+  const loadData = async (path: string): Promise<any> => {
+    const url = `${process.env.DATA_URL}/${path}?skip=${skip}&limit=${limit}`;
+    const response = await fetch(url);
     return await response.json();
   };
 
   const [users, topics, cards, images] = await Promise.all(
     TABS.map((tab) => {
       if (tab === query.tab) {
-        return loadData(tab, query.tab === tab);
+        return loadData(tab);
       }
       return {
         count: 0,
@@ -126,7 +150,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   );
 
   return {
-    props: { users, topics, cards, images },
+    props: { SSRData: { users, topics, cards, images } },
   };
 };
 

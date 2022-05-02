@@ -7,8 +7,11 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import dynamic from "next/dynamic";
 
-import DialogTransition from "./transition";
+import styles from "./Dialog.module.css";
+
+const DialogTransition = dynamic(() => import("./transition"));
 
 type DialogProps = {
   open: boolean;
@@ -41,11 +44,13 @@ export const AppDialog = ({
       TransitionComponent={DialogTransition}
       onClose={onClose}
     >
-      {title && <DialogTitle>{title}</DialogTitle>}
+      {title && <DialogTitle className={styles.title}>{title}</DialogTitle>}
 
-      <DialogContent dividers={true}>{content}</DialogContent>
+      <DialogContent dividers={true} className={styles.content}>
+        {content}
+      </DialogContent>
 
-      <DialogActions>{actions}</DialogActions>
+      <DialogActions className={styles.actions}>{actions}</DialogActions>
     </Dialog>
   );
 };

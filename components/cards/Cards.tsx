@@ -1,11 +1,5 @@
 import { useRouter } from "next/router";
-import React, {
-  BaseSyntheticEvent,
-  Fragment,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
+import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
 import { Splide as ReactSplide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
@@ -22,17 +16,18 @@ import {
   AddRounded,
   ArrowCircleDownRounded,
 } from "@mui/icons-material";
-import arrayShuffle from "array-shuffle";
 import { isBrowser } from "react-device-detect";
+import dynamic from "next/dynamic";
 
 import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import AddCard from "./add";
-import CardItem from "./item";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
-import SkeletonLoader from "../skeletonLoader";
 import { AppNotification } from "../../shared/notification";
+
+const AddCard = dynamic(() => import("./add"));
+const CardItem = dynamic(() => import("./item"));
+const SkeletonLoader = dynamic(() => import("../skeletonLoader"));
 
 type CardProps = {
   user?: User | null;
@@ -151,11 +146,12 @@ export const Cards = ({
     }
   };
 
-  const toggleShuffle = (event: BaseSyntheticEvent) => {
+  const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
     if (shuffledCards) {
       setShuffledCards(null);
     } else {
-      setShuffledCards(arrayShuffle(cards));
+      const { default: shuffle } = await import("array-shuffle");
+      setShuffledCards(shuffle(cards));
     }
     event.target.blur();
   };
@@ -204,7 +200,7 @@ export const Cards = ({
   return (
     <div className={styles.container}>
       {currentTopic && (
-        <Fragment>
+        <>
           <div className={styles.control}>
             <IconButton
               onClick={toggleShuffle}
@@ -241,7 +237,7 @@ export const Cards = ({
               <ArrowCircleDownRounded className={styles.tip__icon_add} />
             </div>
           )}
-        </Fragment>
+        </>
       )}
 
       {!currentTopic && (
@@ -261,7 +257,7 @@ export const Cards = ({
       )}
 
       {!loading && !!cards.length && (
-        <Fragment>
+        <>
           {getCardsMatrix(shuffledCards ?? cards).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
@@ -307,7 +303,7 @@ export const Cards = ({
               label={<Typography>{t("ui.show_arrows")}</Typography>}
             />
           </FormGroup>
-        </Fragment>
+        </>
       )}
     </div>
   );
