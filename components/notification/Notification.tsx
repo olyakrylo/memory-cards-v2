@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { BaseSyntheticEvent } from "react";
 
-import { AppNotification } from "../../utils/types";
+import { AppNotification } from "../../shared/notification";
 
 type NotificationProps = {
   notification: AppNotification;

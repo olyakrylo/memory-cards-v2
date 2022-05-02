@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 
 import { request } from "../../../utils/request";
 import styles from "../Cards.module.css";
-import { Card, ShortCard, Topic } from "../../../utils/types";
+import { Card, ShortCard, Topic } from "../../../shared/models";
 import CardControl from "../control";
 import { uploadImage } from "../../../utils/images";
 import { ControlCardFieldContent } from "../control/CardControl";

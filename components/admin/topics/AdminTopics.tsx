@@ -1,19 +1,17 @@
 import { useState } from "react";
 import { Divider, Typography } from "@mui/material";
 
-import { Card as CardType, Topic } from "../../../utils/types";
+import { Card as CardType, Topic } from "../../../shared/models";
+import { AdminTabData } from "../../../shared/admin";
 import { request } from "../../../utils/request";
 import SkeletonLoader from "../../skeletonLoader";
 import { AdminData } from "../AdminData";
 import styles from "./AdminTopics.module.css";
 import AppImage from "../../image";
 
-type AdminTopicsProps = {
-  topics: Topic[];
-  count: number;
-};
+type AdminTopicsProps = AdminTabData<Topic>;
 
-export const AdminTopics = ({ topics, count }: AdminTopicsProps) => {
+export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
   const [cards, setCards] = useState<
     Record<string, { count: number; data?: CardType[] }>
   >({});
@@ -87,7 +85,7 @@ export const AdminTopics = ({ topics, count }: AdminTopicsProps) => {
   return (
     <AdminData
       count={count}
-      data={topics}
+      data={data}
       itemTitle={topicTitle}
       itemContent={topicContent}
       itemCollapse={topicCollapse}

@@ -4,7 +4,7 @@ import { Button, CircularProgress, Typography } from "@mui/material";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-import { User } from "../../utils/types";
+import { User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Recovery.module.css";
 import { validateInput } from "../../utils/validate-auth-input";

@@ -1,4 +1,4 @@
-import { Paths } from "./api";
+import { Paths } from "../shared/api";
 
 interface ReqRes {
   query: unknown;

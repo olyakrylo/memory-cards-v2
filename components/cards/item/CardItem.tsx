@@ -12,7 +12,7 @@ import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
 import ReactCardFlip from "react-card-flip";
 
-import { Card } from "../../../utils/types";
+import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";

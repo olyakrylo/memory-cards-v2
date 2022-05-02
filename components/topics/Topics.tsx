@@ -4,14 +4,14 @@ import { useRouter } from "next/router";
 import { Divider, IconButton, Typography } from "@mui/material";
 import { MenuRounded } from "@mui/icons-material";
 
-import { Topic, User } from "../../utils/types";
+import { Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Topics.module.css";
 import TopicItem from "./item";
 import AddTopic from "./add";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
-import { TopicsCount } from "../../utils/api";
+import { TopicsCount } from "../../shared/api";
 import SkeletonLoader from "../skeletonLoader";
 
 type TopicsProps = {

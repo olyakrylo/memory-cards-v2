@@ -2,26 +2,24 @@ import { Divider, Typography } from "@mui/material";
 
 import { request } from "../../../utils/request";
 import AppImage from "../../image";
-import { Card, UpdatedResult } from "../../../utils/types";
+import { AdminCard, AdminTabData } from "../../../shared/admin";
+import { UpdatedResult } from "../../../shared/api";
 import { AdminData } from "../AdminData";
 
-type AdminCardsProps = {
-  count: number;
-  cards: (Card & { topic_title: string })[];
-};
+type AdminCardsProps = AdminTabData<AdminCard>;
 
-export const AdminCards = ({ cards, count }: AdminCardsProps) => {
+export const AdminCards = ({ data, count }: AdminCardsProps) => {
   const deleteCards = (selectedIds: string[]): Promise<UpdatedResult> => {
     return request("cards", "", "delete", {
       query: { ids: selectedIds },
     });
   };
 
-  const cardTitle = (card: Card & { topic_title: string }): string => {
+  const cardTitle = (card: AdminCard): string => {
     return card.topic_title;
   };
 
-  const cardContent = (card: Card): JSX.Element => {
+  const cardContent = (card: AdminCard): JSX.Element => {
     return (
       <>
         <code>Topic: {card.topic_id}</code>
@@ -31,7 +29,7 @@ export const AdminCards = ({ cards, count }: AdminCardsProps) => {
     );
   };
 
-  const cardCollapse = (card: Card): JSX.Element => {
+  const cardCollapse = (card: AdminCard): JSX.Element => {
     return (
       <>
         <Typography fontWeight={500} color={"primary"} gutterBottom>
@@ -59,7 +57,7 @@ export const AdminCards = ({ cards, count }: AdminCardsProps) => {
     <AdminData
       count={count}
       deleteFunc={deleteCards}
-      data={cards}
+      data={data}
       itemTitle={cardTitle}
       itemContent={cardContent}
       itemCollapse={cardCollapse}

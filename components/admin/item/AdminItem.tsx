@@ -10,7 +10,7 @@ import {
   IconButton,
 } from "@mui/material";
 
-import styles from "./AdminCard.module.css";
+import styles from "./AdminItem.module.css";
 
 type AdminCardProps = {
   title: string;
@@ -22,7 +22,7 @@ type AdminCardProps = {
   onToggleSelection?: (checked: boolean) => void;
 };
 
-export const AdminCard = ({
+export const AdminItem = ({
   title,
   content,
   actions,

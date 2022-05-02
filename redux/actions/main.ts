@@ -1,5 +1,6 @@
-import * as t from "../types";
-import { AppNotification, Topic, User } from "../../utils/types";
+import * as t from "../../shared/redux";
+import { Topic, User } from "../../shared/models";
+import { AppNotification } from "../../shared/notification";
 
 export const setUser = (user?: User | null) => (dispatch: Function) => {
   dispatch({

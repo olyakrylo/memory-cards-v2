@@ -1,6 +1,6 @@
 import { connect } from "react-redux";
 
-import { State } from "../../utils/types";
+import { State } from "../../shared/redux";
 import { setCurrentTopic, setTopics } from "../../redux/actions/main";
 
 import { Topics } from "./Topics";

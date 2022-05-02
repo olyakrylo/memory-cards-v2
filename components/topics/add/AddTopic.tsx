@@ -15,7 +15,7 @@ import { AddBoxRounded } from "@mui/icons-material";
 import { BaseSyntheticEvent, useState } from "react";
 
 import styles from "../Topics.module.css";
-import { Topic, User } from "../../../utils/types";
+import { Topic, User } from "../../../shared/models";
 import { request } from "../../../utils/request";
 import AppDialog from "../../dialog";
 

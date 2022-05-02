@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import Mail from "nodemailer/lib/mailer";
 
-import { ResponseFuncs } from "../../../utils/types";
-import { UsersAPI } from "../../../utils/api";
+import { ResponseFuncs } from "../../../shared/api";
+import { UsersAPI } from "../../../shared/api";
 import { connect } from "../../../utils/connection";
 import { transporter } from "../../../utils/transporter";
 import { config } from "../../../utils/config";

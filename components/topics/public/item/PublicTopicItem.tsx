@@ -9,7 +9,7 @@ import {
 
 import SkeletonLoader from "../../../skeletonLoader";
 import { request } from "../../../../utils/request";
-import { Card, CardField, TopicExt } from "../../../../utils/types";
+import { Card, CardField, TopicExt } from "../../../../shared/models";
 import styles from "./PublicTopicItem.module.css";
 import AppImage from "../../../image";
 

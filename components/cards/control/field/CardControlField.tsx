@@ -5,14 +5,11 @@ import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
 import { compressAccurately } from "image-conversion";
 
 import styles from "./CardControlField.module.css";
-import {
-  AppNotification,
-  CardField,
-  CardFieldContent,
-} from "../../../../utils/types";
 import AppImage from "../../../image";
 import { ControlCardFieldContent } from "../CardControl";
 import SkeletonLoader from "../../../skeletonLoader";
+import { CardField, CardFieldContent } from "../../../../shared/models";
+import { AppNotification } from "../../../../shared/notification";
 
 const IMAGE_HEIGHT = 250;
 

@@ -1,3 +1,3 @@
-import { AdminCard } from "./AdminCard";
+import { AdminItem } from "./AdminItem";
 
-export default AdminCard;
+export default AdminItem;

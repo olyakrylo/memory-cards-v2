@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { connect } from "../../../utils/connection";
-import { ResponseFuncs } from "../../../utils/types";
+
+import { ResponseFuncs } from "../../../shared/api";
 import RedisClient from "../../../utils/redis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
@@ -8,8 +8,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
+      const skip = parseInt(req.query.skip as string, 10) || 0;
+      const limit = parseInt(req.query.limit as string, 10) || 0;
+
       const keys = await RedisClient.getKeys();
-      res.json({ keys });
+
+      res.json({ data: keys.slice(skip, skip + limit), count: keys.length });
     },
   };
 

@@ -2,8 +2,8 @@ import { NextApiRequest, NextApiResponse } from "next";
 import { RedisKey } from "ioredis";
 
 import { connect } from "../../../utils/connection";
-import { ResponseFuncs } from "../../../utils/types";
-import { CardsAPI } from "../../../utils/api";
+import { ResponseFuncs } from "../../../shared/api";
+import { CardsAPI } from "../../../shared/api";
 import RedisClient from "../../../utils/redis";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

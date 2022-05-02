@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Typography } from "@mui/material";
 import { ZoomOutMapRounded } from "@mui/icons-material";
 
-import { Card, CardField } from "../../../../utils/types";
+import { Card, CardField } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
 import AppImage from "../../../image";
 

@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { connect } from "../../../utils/connection";
-import { ResponseFuncs, Topic } from "../../../utils/types";
+import { ResponseFuncs } from "../../../shared/api";
+import { Topic } from "../../../shared/models";
 import { getCookie } from "../../../utils/cookies";
-import { TopicsAPI } from "../../../utils/api";
+import { TopicsAPI } from "../../../shared/api";
 import { getUserId } from "../../../utils/get-user-id";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

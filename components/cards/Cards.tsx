@@ -25,13 +25,14 @@ import {
 import arrayShuffle from "array-shuffle";
 import { isBrowser } from "react-device-detect";
 
-import { AppNotification, Card, Topic, User } from "../../utils/types";
+import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import AddCard from "./add";
 import CardItem from "./item";
 import { getCardsMatrix, utils, getCardIndex } from "./utils";
 import SkeletonLoader from "../skeletonLoader";
+import { AppNotification } from "../../shared/notification";
 
 type CardProps = {
   user?: User | null;

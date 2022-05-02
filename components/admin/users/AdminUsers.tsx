@@ -1,18 +1,16 @@
 import { Typography } from "@mui/material";
 import { useState } from "react";
 
-import { Topic, User } from "../../../utils/types";
+import { Topic, User } from "../../../shared/models";
 import styles from "./AdminUsers.module.css";
 import { request } from "../../../utils/request";
 import SkeletonLoader from "../../skeletonLoader";
 import { AdminData } from "../AdminData";
+import { AdminTabData } from "../../../shared/admin";
 
-type AdminUsersProps = {
-  users: User[];
-  count: number;
-};
+type AdminUsersProps = AdminTabData<User>;
 
-export const AdminUsers = ({ users, count }: AdminUsersProps) => {
+export const AdminUsers = ({ data, count }: AdminUsersProps) => {
   const [topics, setTopics] = useState<
     Record<
       string,
@@ -81,7 +79,7 @@ export const AdminUsers = ({ users, count }: AdminUsersProps) => {
   return (
     <AdminData
       count={count}
-      data={users}
+      data={data}
       itemTitle={userTitle}
       itemContent={userContent}
       itemCollapse={userCollapse}

@@ -3,19 +3,16 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import ReactCardFlip from "react-card-flip";
 
-import {
-  AppNotification,
-  AuthCredentials,
-  AuthMode,
-  State,
-} from "../../utils/types";
 import { setNotification, setUser } from "../../redux/actions/main";
 import { request } from "../../utils/request";
 import styles from "./Auth.module.css";
 import Header from "../../components/header";
-import { User } from "../../utils/types";
 import { encryptString } from "../../utils/cookies";
 import AuthSide from "../../components/authSide";
+import { User } from "../../shared/models";
+import { AppNotification } from "../../shared/notification";
+import { AuthCredentials, AuthMode } from "../../shared/auth";
+import { State } from "../../shared/redux";
 
 type AuthProps = {
   user?: User | null;

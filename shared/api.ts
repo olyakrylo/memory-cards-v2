@@ -1,4 +1,4 @@
-import { Card, Topic, TopicExt, UpdatedResult, User } from "./types";
+import { Card, Topic, TopicExt, User } from "./models";
 
 export type Paths = {
   users: UsersAPI;
@@ -8,17 +8,17 @@ export type Paths = {
   config: ConfigAPI;
 };
 
-export type Method = "get" | "post" | "put" | "patch" | "delete";
+export type Method = "get" | "post" | "put" | "delete" | "patch";
 
-// export interface API {
-//   [key: string]: {
-//     [key in Method]?: {
-//       query?: Record<string, any>;
-//       body?: Record<string, any>;
-//       result: any;
-//     };
-//   };
-// }
+export interface ResponseFuncs {
+  GET?: Function;
+  POST?: Function;
+  PUT?: Function;
+  DELETE?: Function;
+  PATCH?: Function;
+}
+
+export type UpdatedResult = { updated: boolean };
 
 export interface UsersAPI {
   "": {

@@ -5,7 +5,8 @@ import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useState } from "react";
 
 import styles from "./AdminData.module.css";
-import { ADMIN_DATA_LIMIT, UpdatedResult } from "../../utils/types";
+import { ADMIN_DATA_LIMIT } from "../../shared/admin";
+import { UpdatedResult } from "../../shared/api";
 import AdminItemCard from "./item";
 
 type AdminDataProps = {

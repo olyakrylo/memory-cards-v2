@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
-import { ResponseFuncs } from "../../../utils/types";
-import { UsersAPI } from "../../../utils/api";
+import { ResponseFuncs } from "../../../shared/api";
+import { UsersAPI } from "../../../shared/api";
 import { connect } from "../../../utils/connection";
 import { config } from "../../../utils/config";
 import { decryptString } from "../../../utils/cookies";

@@ -1,11 +1,11 @@
 import { connect } from "react-redux";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 
 import { setUser } from "../../redux/actions/main";
-import { State } from "../../utils/types";
-import { User } from "../../utils/types";
+import { State } from "../../shared/redux";
+import { User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./App.module.css";
 import Topics from "../../components/topics";

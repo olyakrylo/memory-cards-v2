@@ -6,7 +6,7 @@ import { Button, debounce, TextField, Typography } from "@mui/material";
 import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
 import { request } from "../../../utils/request";
-import { Topic, TopicExt } from "../../../utils/types";
+import { Topic, TopicExt } from "../../../shared/models";
 import AppDialog from "../../dialog";
 import SkeletonLoader from "../../skeletonLoader";
 import PublicTopicItem from "./item";

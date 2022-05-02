@@ -5,7 +5,7 @@ import { Button, CircularProgress } from "@mui/material";
 import { validateInput } from "../../utils/validate-auth-input";
 import styles from "./AuthSide.module.css";
 import AuthInput from "../authInput";
-import { AuthCredentials, AuthMode } from "../../utils/types";
+import { AuthCredentials, AuthMode } from "../../shared/auth";
 import PasswordRecovery from "../passwordRecovery";
 
 type AuthSideProps = {

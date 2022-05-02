@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
-import { User } from "../../utils/types";
+import { User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
 import { languages } from "../../utils/i18n";

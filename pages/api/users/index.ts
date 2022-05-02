@@ -1,9 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 
 import { connect } from "../../../utils/connection";
-import { ResponseFuncs } from "../../../utils/types";
+import { ResponseFuncs } from "../../../shared/api";
 import { decryptString, getCookie, setCookie } from "../../../utils/cookies";
-import { UsersAPI } from "../../../utils/api";
+import { UsersAPI } from "../../../shared/api";
 import { config } from "../../../utils/config";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {

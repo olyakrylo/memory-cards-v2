@@ -12,7 +12,7 @@ import "../styles/overrides.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../utils/i18n";
-import { State } from "../utils/types";
+import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
 import Notification from "../components/notification";
 
