@@ -163,7 +163,7 @@ export interface TopicsAPI {
   copy: {
     put: {
       query: { id: string };
-      body: {};
+      body: { title: string };
       result: { topics: Topic[] };
     };
   };

@@ -14,7 +14,7 @@ import { Topic, User } from "../../../shared/models";
 import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
 import { AppNotification } from "../../../shared/notification";
-import { EditTopic } from "../edit/EditTopic";
+import EditTopic from "./edit";
 
 type TopicItemProps = {
   topic: Topic;
@@ -73,6 +73,7 @@ export const TopicItem = ({
   const copyTopic = async () => {
     const { topics } = await request("topics", "copy", "put", {
       query: { id: topic._id },
+      body: { title: topic.title },
     });
     setTopics(topics);
   };
@@ -93,27 +94,8 @@ export const TopicItem = ({
   };
 
   const closeEditDialog = () => {
+    closeMenu();
     setEditDialogOpen(false);
-  };
-
-  const editTopic = async (title: string, isPublic: boolean): Promise<void> => {
-    if (topic.public === isPublic && topic.title === title) return;
-
-    closeEditDialog();
-
-    const updatedTopic = await request("topics", "", "patch", {
-      body: {
-        _id: topic._id,
-        title,
-        public: isPublic,
-      },
-    });
-
-    const updatedTopicsList = topicsList.map((item) => {
-      if (item._id !== topic._id) return item;
-      return updatedTopic;
-    });
-    setTopics(updatedTopicsList);
   };
 
   const isSelfTopic = (): boolean => {
@@ -176,12 +158,10 @@ export const TopicItem = ({
               {t("ui.edit")}
               <EditRounded color={"info"} />
             </MenuItem>
-
             <EditTopic
-              open={editDialogOpen}
-              onClose={closeEditDialog}
               topic={topic}
-              onConfirm={editTopic}
+              dialogOpen={editDialogOpen}
+              closeDialog={closeEditDialog}
             />
           </>
         )}

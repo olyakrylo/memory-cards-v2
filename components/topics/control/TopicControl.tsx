@@ -1,6 +1,7 @@
 import {
   Button,
   Checkbox,
+  CircularProgress,
   FormControlLabel,
   FormGroup,
   TextField,
@@ -8,25 +9,26 @@ import {
 import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, useState } from "react";
 
-import styles from "../Topics.module.css";
+import styles from "./TopicControl.module.css";
 import { Topic } from "../../../shared/models";
 import AppDialog from "../../dialog";
 
-type EditTopicProps = {
+type TopicControlProps = {
   open: boolean;
   onClose: () => void;
   topic?: Topic;
-  onConfirm: (title: string, isPublic: boolean) => void;
+  onConfirm: (title: string, isPublic: boolean) => Promise<void>;
 };
 
-export const EditTopic = ({
+export const TopicControl = ({
   open,
   onClose,
   topic,
   onConfirm,
-}: EditTopicProps) => {
+}: TopicControlProps) => {
   const [title, setTitle] = useState<string>(topic?.title ?? "");
   const [isPublic, setIsPublic] = useState<boolean>(topic?.public ?? false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const { t } = useTranslation();
 
@@ -49,7 +51,9 @@ export const EditTopic = ({
   };
 
   const confirm = async (): Promise<void> => {
-    onConfirm(title, isPublic);
+    setLoading(true);
+    await onConfirm(title, isPublic);
+    setLoading(false);
     clear();
   };
 
@@ -57,9 +61,9 @@ export const EditTopic = ({
     <AppDialog
       open={open}
       size={"xs"}
-      title={t("add.new_topic")}
+      title={t(`add.${topic ? "edit_topic" : "new_topic"}`)}
       content={
-        <FormGroup className={styles.add__form}>
+        <FormGroup className={styles.form}>
           <TextField
             onChange={onTitleChange}
             required
@@ -74,6 +78,7 @@ export const EditTopic = ({
       }
       actions={
         <>
+          {loading && <CircularProgress size={24} className={styles.loader} />}
           <Button onClick={closeDialog} color="secondary">
             {t("ui.cancel")}
           </Button>

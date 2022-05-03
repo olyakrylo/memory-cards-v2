@@ -10,6 +10,8 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const handleCase: ResponseFuncs = {
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { id } = req.query as TopicsAPI["copy"]["put"]["query"];
+      const { title } = req.body as TopicsAPI["copy"]["put"]["body"];
+
       const userId = getUserId(req, res);
       if (!userId) {
         res.json({});
@@ -18,16 +20,15 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const { Topic, Card } = await connect();
 
-      const [copiedTopic, copiedCards] = await Promise.all([
+      const [copiedTopic, newTopic, copiedCards] = await Promise.all([
         Topic.findById(id),
+        Topic.create({
+          title: title,
+          users_id: [userId],
+          author_id: userId,
+        }),
         Card.find({ topic_id: id }),
       ]);
-
-      const newTopic = await Topic.create({
-        title: copiedTopic.title,
-        users_id: [userId],
-        author_id: userId,
-      });
 
       await Promise.all([
         Card.insertMany(

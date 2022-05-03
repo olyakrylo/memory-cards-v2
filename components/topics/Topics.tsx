@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
-import { Button, Divider, IconButton, Typography } from "@mui/material";
-import { AddBoxRounded, MenuRounded } from "@mui/icons-material";
+import { Divider, IconButton, Typography } from "@mui/material";
+import { MenuRounded } from "@mui/icons-material";
 
 import { Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
@@ -10,9 +10,9 @@ import styles from "./Topics.module.css";
 import { TopicsCount } from "../../shared/api";
 import SkeletonLoader from "../skeletonLoader";
 import TopicItem from "./item";
-import EditTopic from "./edit";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
+import AddTopic from "./add";
 
 type TopicsProps = {
   user?: User | null;
@@ -32,7 +32,6 @@ export const Topics = ({
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);
   const [count, setCount] = useState<TopicsCount>({ self: 1, public: 0 });
-  const [addDialogOpen, setAddDialogOpen] = useState<boolean>(false);
 
   const router = useRouter();
 
@@ -69,36 +68,6 @@ export const Topics = ({
   const toggleMenu = (event: BaseSyntheticEvent): void => {
     event.target.blur();
     setHidden(!hidden);
-  };
-
-  const addTopic = async (title: string, isPublic: boolean): Promise<void> => {
-    if (!user) return;
-
-    const newTopic = await request("topics", "", "put", {
-      body: {
-        users_id: [user._id],
-        author_id: user._id,
-        title,
-        public: isPublic,
-      },
-    });
-
-    if (newTopic) {
-      setTopics([...topics, newTopic]);
-      closeAddDialog();
-      await router.push({
-        pathname: "/app",
-        query: { topic: newTopic._id },
-      });
-    }
-  };
-
-  const openAddDialog = () => {
-    setAddDialogOpen(true);
-  };
-
-  const closeAddDialog = () => {
-    setAddDialogOpen(false);
   };
 
   const selfTopics = (): Topic[] => {
@@ -140,26 +109,7 @@ export const Topics = ({
 
         {!loading && (
           <div className={styles.addContainer}>
-            <Button
-              classes={{ root: styles.addButton }}
-              color="primary"
-              onClick={openAddDialog}
-            >
-              <AddBoxRounded />
-              <Typography
-                className={styles.addButton__title}
-                variant={"subtitle2"}
-              >
-                {t("add.create_topic")}
-              </Typography>
-            </Button>
-
-            <EditTopic
-              open={addDialogOpen}
-              onConfirm={addTopic}
-              onClose={closeAddDialog}
-            />
-
+            <AddTopic />
             <PublicTopics />
           </div>
         )}
@@ -173,7 +123,7 @@ export const Topics = ({
           <MenuRounded />
         </IconButton>
 
-        {user && <UserControl />}
+        <UserControl />
       </div>
     </div>
   );

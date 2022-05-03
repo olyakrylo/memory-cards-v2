@@ -97,11 +97,6 @@
   line-height: 20px;
 }
 
-.add__form {
-  display: grid;
-  gap: 8px;
-}
-
 .menuItem {
   display: flex;
   justify-content: space-between;
