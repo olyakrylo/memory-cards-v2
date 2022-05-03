@@ -11,11 +11,10 @@ import { ControlCardFieldContent } from "../../control/CardControl";
 
 type EditCardProps = {
   card: Card;
-  setLoading: (v: boolean) => void;
-  updateCard: (card: Card) => void;
+  onUpdate: () => void;
 };
 
-export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
+export const EditCard = ({ card, onUpdate }: EditCardProps) => {
   const [editCardOpen, setEditCardOpen] = useState<boolean>(false);
 
   const openEditCardDialog = (e: any) => {
@@ -34,8 +33,6 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
     setEditCardOpen(false);
     if (!card || !data || isSame(data)) return;
 
-    setLoading(true);
-
     if (data.question.image && typeof data.question.image !== "string") {
       data.question.image = await uploadImage(data.question.image as File);
     }
@@ -50,10 +47,10 @@ export const EditCard = ({ card, setLoading, updateCard }: EditCardProps) => {
         answer: data.answer as CardFieldContent,
       },
     });
+
     if (updatedCard) {
-      updateCard(updatedCard);
+      onUpdate();
     }
-    setLoading(false);
   };
 
   const isSame = (newData: {

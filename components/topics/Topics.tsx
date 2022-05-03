@@ -27,24 +27,25 @@ export const Topics = ({
   topics,
   setTopics,
 }: TopicsProps) => {
-  const { t } = useTranslation();
-
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);
   const [count, setCount] = useState<TopicsCount>({ self: 1, public: 0 });
 
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const { topic: queryTopic } = router.query;
+    const { topic: queryTopic } = router.query as { topic?: string };
     if (!queryTopic) return;
+
     const fromUserTopics = topics.find((t) => t._id === queryTopic);
     if (fromUserTopics) {
       setCurrentTopic(fromUserTopics);
       return;
     }
+
     request("topics", "", "get", {
-      query: { id: router.query.topic as string },
+      query: { id: queryTopic },
     }).then(({ topic }) => {
       if (!topic) return;
       setCurrentTopic(topic);

@@ -6,9 +6,10 @@ import dynamic from "next/dynamic";
 
 import { setUser } from "../../redux/actions/main";
 import { State } from "../../shared/redux";
-import { User } from "../../shared/models";
+import { Card, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./App.module.css";
+import { GetServerSideProps } from "next";
 
 const CardsLoaderComponent = (
   <CircularProgress className={styles.loader} size={40} />
@@ -23,9 +24,10 @@ const Cards = dynamic(() => import("../../components/cards"), {
 type AppProps = {
   user?: User | null;
   setUser: (user?: User | null) => void;
+  preloadedCards: Card[];
 };
 
-const App = ({ user, setUser }: AppProps) => {
+const App = ({ user, setUser, preloadedCards }: AppProps) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(true);
@@ -59,10 +61,28 @@ const App = ({ user, setUser }: AppProps) => {
       <div className={styles.content}>
         {loading && CardsLoaderComponent}
 
-        {!loading && <Cards />}
+        {!loading && <Cards cards={preloadedCards} />}
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  if (!query.topic) {
+    return { props: { preloadedCards: [] } };
+  }
+
+  if (process.env.NODE_ENV !== "production") {
+    process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
+  }
+
+  const url = `https://${req.headers.host}/api/cards/by_topic?topic_id=${query.topic}`;
+  const response = await fetch(url);
+  const cards = await response.json();
+  return { props: { preloadedCards: cards } };
 };
 
 const mapStateToProps = (state: { main: State }) => {

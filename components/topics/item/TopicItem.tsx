@@ -153,17 +153,16 @@ export const TopicItem = ({
         )}
 
         {isSelfTopic() && (
-          <>
-            <MenuItem className={styles.menuItem} onClick={openEditDialog}>
-              {t("ui.edit")}
-              <EditRounded color={"info"} />
-            </MenuItem>
+          <MenuItem className={styles.menuItem} onClick={openEditDialog}>
+            {t("ui.edit")}
+            <EditRounded color={"info"} />
+
             <EditTopic
               topic={topic}
               dialogOpen={editDialogOpen}
               closeDialog={closeEditDialog}
             />
-          </>
+          </MenuItem>
         )}
 
         <MenuItem className={styles.menuItem} onClick={shareTopic}>
