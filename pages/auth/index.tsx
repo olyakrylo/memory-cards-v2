@@ -1,18 +1,15 @@
 import { connect } from "react-redux";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/router";
+import { useState } from "react";
 import dynamic from "next/dynamic";
 import { AlertColor } from "@mui/material";
 
 import { setNotification, setUser } from "../../redux/actions/main";
-import { request } from "../../utils/request";
 import styles from "./Auth.module.css";
 import { User } from "../../shared/models";
 import { AppNotification } from "../../shared/notification";
 import { AuthCredentials, AuthMode } from "../../shared/auth";
 import { State } from "../../shared/redux";
 
-const Header = dynamic(() => import("../../components/header"));
 const AuthSide = dynamic(() => import("../../components/authSide"));
 const CardFlip = dynamic(() => import("react-card-flip"));
 
@@ -22,27 +19,9 @@ type AuthProps = {
   setNotification: (n: AppNotification) => void;
 };
 
-const Auth = ({ user, setUser, setNotification }: AuthProps) => {
-  const router = useRouter();
-
+const Auth = ({ setUser, setNotification }: AuthProps) => {
   const [mode, setMode] = useState<AuthMode>("signIn");
   const [loading, setLoading] = useState<boolean>(false);
-
-  useEffect(() => {
-    if (user) {
-      void router.push({ pathname: "/app" });
-      return;
-    }
-    if (user === null) return;
-
-    setLoading(true);
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        setUser(user);
-      }
-    });
-    setLoading(false);
-  }, [user, setUser, router]);
 
   const onAuth = async (data: AuthCredentials): Promise<void> => {
     if (mode === "signIn") {
@@ -54,7 +33,9 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   const handleLogin = async (data: AuthCredentials) => {
     setLoading(true);
+
     const { encryptPassword } = await import("../../utils/encrypt-password");
+    const { request } = await import("../../utils/request");
     const { user, error } = await request("users", "", "post", {
       body: {
         login: data.login,
@@ -78,7 +59,9 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   const handleSignUp = async (data: AuthCredentials) => {
     setLoading(true);
+
     const { encryptPassword } = await import("../../utils/encrypt-password");
+    const { request } = await import("../../utils/request");
     const { user, error } = await request("users", "create", "post", {
       body: {
         ...data,
@@ -111,8 +94,6 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   return (
     <div className={styles.container}>
-      <Header />
-
       <CardFlip
         isFlipped={mode === "signUp"}
         flipDirection="vertical"

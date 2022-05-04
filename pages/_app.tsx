@@ -4,6 +4,7 @@ import "@splidejs/splide/dist/css/splide.min.css";
 import { createTheme } from "@mui/material/styles";
 import { ThemeProvider } from "@mui/system";
 import { StyledEngineProvider } from "@mui/material/styles";
+import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import dynamic from "next/dynamic";
@@ -14,14 +15,27 @@ import { wrapper } from "../redux/store";
 import "../utils/i18n";
 import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
+import { User } from "../shared/models";
+import { request } from "../utils/request";
+import { useRouter } from "next/router";
+import { setUser } from "../redux/actions/main";
 
 const Notification = dynamic(() => import("../components/notification"));
+const Header = dynamic(() => import("../components/header"));
+
+type MyAppProps = {
+  darkMode?: boolean;
+  user?: User | null;
+  setUser: (u: User | null) => void;
+};
 
 function MyApp({
   Component,
   pageProps,
   darkMode,
-}: AppProps & { darkMode?: boolean }) {
+  user,
+  setUser,
+}: AppProps & MyAppProps) {
   const theme = createTheme({
     palette: palette(darkMode ? "dark" : "light"),
     typography: {
@@ -34,6 +48,37 @@ function MyApp({
   });
 
   const { i18n } = useTranslation();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.pathname.startsWith("/recovery")) {
+      return;
+    }
+
+    const redirectIfNotApp = () => {
+      if (!router.pathname.startsWith("/app")) {
+        void router.push("/app");
+      }
+    };
+
+    if (user) {
+      redirectIfNotApp();
+      return;
+    }
+
+    if (user === null) {
+      void router.push("/auth");
+      return;
+    }
+
+    request("users", "", "get").then(({ user }) => {
+      if (user) {
+        setUser(user);
+      } else {
+        setUser(null);
+      }
+    });
+  }, [user, setUser]);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -49,6 +94,8 @@ function MyApp({
         />
       </Head>
       <ThemeProvider theme={theme}>
+        <Header />
+
         <Component {...pageProps} />
 
         <Notification />
@@ -60,7 +107,14 @@ function MyApp({
 const mapStateToProps = (state: { main: State }) => {
   return {
     darkMode: state.main.darkMode,
+    user: state.main.user,
   };
 };
 
-export default wrapper.withRedux(connect(mapStateToProps)(MyApp));
+const mapDispatchToProps = {
+  setUser,
+};
+
+export default wrapper.withRedux(
+  connect(mapStateToProps, mapDispatchToProps)(MyApp)
+);

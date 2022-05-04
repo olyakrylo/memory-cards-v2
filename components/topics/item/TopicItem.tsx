@@ -43,10 +43,7 @@ export const TopicItem = ({
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
   const selectTopic = async () => {
-    await router.push({
-      pathname: "/app",
-      query: { topic: topic._id },
-    });
+    await router.push(`/app/${topic._id}`);
   };
 
   const deleteTopic = async () => {

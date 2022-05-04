@@ -24,13 +24,13 @@ const Recovery = () => {
   const { t } = useTranslation();
 
   const [user, setUser] = useState<User | undefined>();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [loading, setLoading] = useState<boolean>(false);
   const [password, setPassword] = useState<{ first: string; second: string }>({
     first: "",
     second: "",
   });
   const [error, setError] = useState<string>("");
-  const [success, setSuccess] = useState<boolean>(false);
+  const [success, setSuccess] = useState<boolean>(true);
   const [remainedSeconds, setRemainedSeconds] = useState<number>(REDIRECT_TIME);
 
   useEffect(() => {
