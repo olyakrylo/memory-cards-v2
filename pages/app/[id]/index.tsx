@@ -32,7 +32,7 @@ export const getServerSideProps: GetServerSideProps = async ({
     process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = "0";
   }
 
-  const url = `https://${req.headers.host}/api/cards/by_topic?topic_id=${query.id}`;
+  const url = `${process.env.DATA_URL}/cards/by_topic?topic_id=${query.id}`;
   const response = await fetch(url);
   const cards = await response.json();
   return { props: { cards } };

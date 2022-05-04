@@ -135,7 +135,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const limit = query.limit ?? ADMIN_DATA_LIMIT;
 
   const loadData = async (path: string): Promise<any> => {
-    const url = `https://${req.headers.host}/api/all/${path}?skip=${skip}&limit=${limit}`;
+    const url = `${process.env.DATA_URL}/all/${path}?skip=${skip}&limit=${limit}`;
     const response = await fetch(url);
     return await response.json();
   };
