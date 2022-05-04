@@ -9,7 +9,7 @@ export const setUser = (user?: User | null) => (dispatch: Function) => {
   });
 };
 
-export const setCurrentTopic = (topic: Topic) => (dispatch: Function) => {
+export const setCurrentTopic = (topic?: Topic) => (dispatch: Function) => {
   dispatch({
     type: t.SET_CURRENT_TOPIC,
     payload: topic,

@@ -3,6 +3,7 @@ import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Divider, IconButton, Typography } from "@mui/material";
 import { MenuRounded } from "@mui/icons-material";
+import classNames from "classnames";
 
 import { Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
@@ -16,13 +17,15 @@ import AddTopic from "./add";
 
 type TopicsProps = {
   user?: User | null;
-  setCurrentTopic: (topic: Topic) => void;
+  currentTopic?: Topic;
+  setCurrentTopic: (topic?: Topic) => void;
   topics: Topic[];
   setTopics: (topics: Topic[]) => void;
 };
 
 export const Topics = ({
   user,
+  currentTopic,
   setCurrentTopic,
   topics,
   setTopics,
@@ -37,7 +40,11 @@ export const Topics = ({
 
   useEffect(() => {
     const { topic: queryTopic } = router.query;
-    if (!queryTopic) return;
+    if (!queryTopic) {
+      setCurrentTopic(undefined);
+      return;
+    }
+
     const fromUserTopics = topics.find((t) => t._id === queryTopic);
     if (fromUserTopics) {
       setCurrentTopic(fromUserTopics);
@@ -80,7 +87,12 @@ export const Topics = ({
 
   return (
     <div className={styles.container}>
-      <div className={styles.content} aria-hidden={hidden}>
+      <div
+        className={classNames(styles.content, {
+          [styles.content_centered]: !currentTopic,
+        })}
+        aria-hidden={hidden}
+      >
         <div>
           <Divider className={styles.topicsDivider} textAlign="left">
             <Typography variant={"subtitle2"}>{t("ui.created")}</Typography>
@@ -92,6 +104,8 @@ export const Topics = ({
             {selfTopics().map((topic) => (
               <TopicItem key={topic._id} topic={topic} />
             ))}
+
+            {!loading && !selfTopics().length && <Typography>—</Typography>}
           </div>
 
           <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
@@ -104,6 +118,8 @@ export const Topics = ({
             {publicTopics().map((topic) => (
               <TopicItem key={topic._id} topic={topic} />
             ))}
+
+            {!loading && !publicTopics().length && <Typography>—</Typography>}
           </div>
         </div>
 

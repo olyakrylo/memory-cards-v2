@@ -1,7 +1,5 @@
 .container {
-  display: grid;
-  grid-template-rows: max-content 1fr;
-  height: calc(100vh - 2 * var(--body-padding-vertical));
+  display: flex;
 }
 
 .flipContainer {

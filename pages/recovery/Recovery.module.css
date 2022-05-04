@@ -1,6 +1,5 @@
 .container {
   display: flex;
-  height: calc(100vh - 2 * var(--body-padding-vertical));
 }
 
 .content {

@@ -14,7 +14,6 @@ const CardsLoaderComponent = (
   <CircularProgress className={styles.loader} size={40} />
 );
 
-const Header = dynamic(() => import("../../components/header"));
 const Topics = dynamic(() => import("../../components/topics"));
 const Cards = dynamic(() => import("../../components/cards"), {
   loading: () => CardsLoaderComponent,
@@ -52,8 +51,6 @@ const App = ({ user, setUser }: AppProps) => {
 
   return (
     <div className={`${styles.container}`}>
-      <Header />
-
       <Topics />
 
       <div className={styles.content}>

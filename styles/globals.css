@@ -40,9 +40,21 @@ body {
 body {
   padding: var(--body-padding-vertical) var(--body-padding-horizontal);
   background: var(--bg-color);
+  position: relative;
+}
+
+#__next {
+  display: grid;
+  grid-gap: 24px;
+  grid-template-rows: max-content auto;
+  min-height: calc(100vh - var(--body-padding-vertical));
 }
 
 @media (max-width: 500px) {
+  :root {
+    --body-padding-horizontal: 20px;
+  }
+
   body {
     padding: 60px 20px;
   }

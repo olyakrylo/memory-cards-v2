@@ -12,7 +12,6 @@ import { AppNotification } from "../../shared/notification";
 import { AuthCredentials, AuthMode } from "../../shared/auth";
 import { State } from "../../shared/redux";
 
-const Header = dynamic(() => import("../../components/header"));
 const AuthSide = dynamic(() => import("../../components/authSide"));
 const CardFlip = dynamic(() => import("react-card-flip"));
 
@@ -111,8 +110,6 @@ const Auth = ({ user, setUser, setNotification }: AuthProps) => {
 
   return (
     <div className={styles.container}>
-      <Header />
-
       <CardFlip
         isFlipped={mode === "signUp"}
         flipDirection="vertical"

@@ -9,6 +9,7 @@ const mapStateToProps = (state: { main: State }) => {
   return {
     user: state.main.user,
     topics: state.main.topics,
+    currentTopic: state.main.currentTopic,
   };
 };
 

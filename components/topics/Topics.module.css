@@ -1,25 +1,30 @@
 .container {
-  position: relative;
   z-index: 100;
+  position: relative;
 }
 
 .content {
   position: absolute;
   top: 0;
   left: -50px;
-  padding: 40px 60px 30px 50px;
+  padding: 40px 50px 30px;
   display: grid;
   grid-gap: 16px;
   background-color: var(--white);
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
+  border-radius: 8px;
   box-shadow: var(--shadow);
   transition: transform 0.3s ease-in-out;
   min-width: 330px;
 }
 
+.content_centered {
+  left: 0;
+  transform: translateX(calc(50vw - 50% - var(--body-padding-horizontal)))
+    translateY(80px);
+}
+
 .content[aria-hidden="true"] {
-  transform: translateX(-110%);
+  transform: translateX(-100vw);
 }
 
 .loader {

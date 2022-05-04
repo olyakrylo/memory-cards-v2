@@ -21,7 +21,7 @@ type TopicItemProps = {
   topics: Topic[];
   user?: User | null;
   currentTopic?: Topic;
-  setCurrentTopic: (t: Topic) => void;
+  setCurrentTopic: (t?: Topic) => void;
   setTopics: (t: Topic[]) => void;
   setNotification: (n: AppNotification) => void;
 };

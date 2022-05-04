@@ -16,6 +16,7 @@ import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
 
 const Notification = dynamic(() => import("../components/notification"));
+const Header = dynamic(() => import("../components/header"));
 
 function MyApp({
   Component,
@@ -49,6 +50,8 @@ function MyApp({
         />
       </Head>
       <ThemeProvider theme={theme}>
+        <Header />
+
         <Component {...pageProps} />
 
         <Notification />

@@ -14,7 +14,7 @@ import {
 import {
   ShuffleRounded,
   AddRounded,
-  ArrowCircleDownRounded,
+  AddCircleRounded,
 } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
 
@@ -26,6 +26,7 @@ import { AppNotification } from "../../shared/notification";
 import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
+import classNames from "classnames";
 
 type CardProps = {
   user?: User | null;
@@ -84,6 +85,8 @@ export const Cards = ({
 
   useEffect(() => {
     if (!currentTopic) {
+      setCards([]);
+      setShuffledCards(null);
       return;
     }
 
@@ -229,20 +232,23 @@ export const Cards = ({
             )}
           </div>
 
-          {!loading && !cards.length && canEditTopic() && (
-            <div className={styles.tip}>
-              {t("ui.add_first_card")}{" "}
-              <ArrowCircleDownRounded className={styles.tip__icon_add} />
-            </div>
+          {!loading && !cards.length && (
+            <>
+              <Typography
+                className={classNames(styles.tip, styles.tip_nowrap)}
+                color={"secondary"}
+              >
+                {t("ui.no_cards_yet")} :(
+              </Typography>
+              {canEditTopic() && (
+                <Typography className={styles.tip} color={"primary"}>
+                  {t("ui.add_first_card")}
+                  <AddCircleRounded />
+                </Typography>
+              )}
+            </>
           )}
         </>
-      )}
-
-      {!currentTopic && (
-        <div className={styles.tip}>
-          <ArrowCircleDownRounded className={styles.tip__icon_topics} />
-          {t("ui.choose_topic")}
-        </div>
       )}
 
       {loading && (
