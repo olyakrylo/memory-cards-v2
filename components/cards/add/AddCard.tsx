@@ -4,22 +4,17 @@ import { IconButton } from "@mui/material";
 
 import { request } from "../../../utils/request";
 import styles from "../Cards.module.css";
-import { Card, ShortCard, Topic } from "../../../shared/models";
+import { ShortCard, Topic } from "../../../shared/models";
 import CardControl from "../control";
 import { uploadImage } from "../../../utils/images";
 import { ControlCardFieldContent } from "../control/CardControl";
 
 type AddCardProps = {
   currentTopic: Topic;
-  setLoading: (v: boolean) => void;
-  addCards: (cards: Card[]) => void;
+  onCardsAdd: () => void;
 };
 
-export const AddCard = ({
-  currentTopic,
-  setLoading,
-  addCards,
-}: AddCardProps) => {
+export const AddCard = ({ currentTopic, onCardsAdd }: AddCardProps) => {
   const [newCardOpen, setNewCardOpen] = useState<boolean>(false);
 
   const openNewCardDialog = (e: any) => {
@@ -36,12 +31,9 @@ export const AddCard = ({
   ) => {
     setNewCardOpen(false);
     if (!data && !cardsFromFile?.length) return;
-    setLoading(true);
-
-    let newCards: Card[] = [];
 
     if (cardsFromFile?.length) {
-      newCards = await request("cards", "", "put", {
+      await request("cards", "", "put", {
         body: {
           cards: cardsFromFile.map((c) => ({
             ...c,
@@ -68,16 +60,14 @@ export const AddCard = ({
         cardData.answer.image = await uploadImage(data.answer.image as File);
       }
 
-      newCards = await request("cards", "", "put", {
+      await request("cards", "", "put", {
         body: {
           cards: [{ ...cardData, topic_id: currentTopic._id }],
         },
       });
     }
 
-    addCards(newCards);
-    setLoading(false);
-    return;
+    onCardsAdd();
   };
 
   return (

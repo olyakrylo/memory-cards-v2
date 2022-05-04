@@ -1,6 +1,6 @@
 .container {
   display: flex;
-  height: calc(100vh - 2 * var(--body-padding-vertical));
+  height: 50vh;
 }
 
 .content {
@@ -9,7 +9,7 @@
   grid-gap: 16px;
   width: 350px;
   max-width: 100%;
-  background: #fff;
+  background: var(--white);
   padding: 16px;
   border-radius: 8px;
   box-shadow: var(--shadow);

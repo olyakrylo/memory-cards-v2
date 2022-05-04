@@ -21,37 +21,31 @@ import { isBrowser } from "react-device-detect";
 import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import { getCardsMatrix, utils, getCardIndex } from "./utils";
-import { AppNotification } from "../../shared/notification";
+import { getCardsMatrix, getCardIndex, getUpdatedShuffledCards } from "./utils";
 import CardItem from "./item";
 import AddCard from "./add";
-import SkeletonLoader from "../skeletonLoader";
 
 type CardProps = {
   user?: User | null;
+  cards: Card[];
   currentTopic?: Topic;
   topics: Topic[];
   setTopics: (t: Topic[]) => void;
-  setNotification: (n: AppNotification) => void;
 };
 
 export const Cards = ({
   currentTopic,
   user,
+  cards,
   topics,
   setTopics,
-  setNotification,
 }: CardProps) => {
-  const router = useRouter();
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [cards, setCards] = useState<Card[]>([]);
   const [hideArrows, setHideArrows] = useState<boolean>(false);
   const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
 
-  const sliderRef = useRef<ReactSplide>(null);
-
+  const router = useRouter();
   const { t } = useTranslation();
+  const sliderRef = useRef<ReactSplide>(null);
 
   const resetCards = new Subject<void>();
   const flipCard = new Subject<number>();
@@ -83,65 +77,27 @@ export const Cards = ({
   }, [user]);
 
   useEffect(() => {
-    if (!currentTopic) {
-      return;
-    }
+    resetCards.next();
 
-    setLoading(true);
-    request("cards", "by_topic", "get", {
-      query: {
-        topic_id: currentTopic._id,
-      },
-    }).then((cards) => {
-      setCards(cards);
-      resetCards.next();
-      setLoading(false);
-    });
-  }, [currentTopic]);
+    if (!shuffledCards) return;
+
+    const updatedCards = getUpdatedShuffledCards(shuffledCards, cards);
+    setShuffledCards(updatedCards);
+  }, [cards]);
 
   const canEditTopic = () => {
     return currentTopic?.author_id === user?._id;
   };
 
-  const handleMoved = (splideIndex: number, cardIndex: number): void => {
-    if (!currentTopic) return;
+  const handleMoved = (): void => {
     resetCards.next();
-
-    const index = getCardIndex(splideIndex, cardIndex);
-    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
   };
 
-  const addCards = (newCards: Card[]): void => {
-    setCards([...cards, ...newCards]);
-    if (shuffledCards) {
-      setShuffledCards([...shuffledCards, ...newCards]);
-    }
-  };
-
-  const updateCard = (updatedCard: Card): void => {
-    setCards(
-      cards.map((c) => {
-        if (c._id === updatedCard._id) return updatedCard;
-        return c;
-      })
-    );
-    if (shuffledCards) {
-      setShuffledCards(
-        shuffledCards.map((c) => {
-          if (c._id === updatedCard._id) return updatedCard;
-          return c;
-        })
-      );
-    }
-  };
-
-  const deleteCard = async (id: string) => {
-    await request("cards", "", "delete", { query: { ids: [id] } });
-    const updatedCards = cards.filter((c) => c._id !== id);
-    setCards(updatedCards);
-    if (shuffledCards) {
-      setShuffledCards(shuffledCards.filter((c) => c._id !== id));
-    }
+  const updateCards = async () => {
+    await router.push({
+      pathname: router.pathname,
+      query: router.query,
+    });
   };
 
   const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
@@ -177,24 +133,6 @@ export const Cards = ({
     setTopics([...topics, ...updatedTopics]);
   };
 
-  const shareCard = async (index: number): Promise<void> => {
-    const { href } = window.location;
-    const link = `${href}&card=${index}`;
-    await navigator.clipboard.writeText(link);
-    setNotification({
-      severity: "success",
-      text: "ui.link_copied",
-      translate: true,
-      autoHide: 5000,
-    });
-  };
-
-  const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
-  const startIndexFromStorage = parseInt(
-    sessionStorage.getItem(currentTopic?._id.toString() ?? "") ?? ""
-  );
-  const startIndex = startIndexFromUrl || startIndexFromStorage || 0;
-
   return (
     <div className={styles.container}>
       {currentTopic && (
@@ -220,16 +158,10 @@ export const Cards = ({
               )}
             </div>
 
-            {canEditTopic() && (
-              <AddCard
-                currentTopic={currentTopic}
-                setLoading={setLoading}
-                addCards={addCards}
-              />
-            )}
+            {canEditTopic() && <AddCard onCardsAdd={updateCards} />}
           </div>
 
-          {!loading && !cards.length && canEditTopic() && (
+          {!cards.length && canEditTopic() && (
             <div className={styles.tip}>
               {t("ui.add_first_card")}{" "}
               <ArrowCircleDownRounded className={styles.tip__icon_add} />
@@ -245,23 +177,14 @@ export const Cards = ({
         </div>
       )}
 
-      {loading && (
-        <SkeletonLoader
-          height={350}
-          classes={`${styles.skeleton} ${
-            hideArrows ? "" : styles.skeleton_arrows
-          }`}
-        />
-      )}
-
-      {!loading && !!cards.length && (
+      {!!cards.length && (
         <>
           {getCardsMatrix(shuffledCards ?? cards).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
                 key={splideIndex}
                 ref={sliderRef}
-                onMoved={(_, index) => handleMoved(splideIndex, index)}
+                onMoved={handleMoved}
                 className={styles.slider}
                 options={{
                   keyboard: isBrowser ? "global" : false,
@@ -273,7 +196,6 @@ export const Cards = ({
                     next: `splide__arrow--next ${styles.arrow_next}`,
                     pagination: `splide__pagination ${styles.pagination}`,
                   },
-                  start: utils(splideIndex, startIndex),
                 }}
               >
                 {cardsSlice.map((card, i) => (
@@ -283,10 +205,7 @@ export const Cards = ({
                     card={card}
                     showArrows={!hideArrows}
                     canEditTopic={canEditTopic()}
-                    setLoading={setLoading}
-                    deleteCard={() => deleteCard(card._id)}
-                    updateCard={updateCard}
-                    shareCard={() => shareCard(getCardIndex(splideIndex, i))}
+                    onUpdate={updateCards}
                     resetCards={resetCards}
                     flipCard={flipCard}
                   />

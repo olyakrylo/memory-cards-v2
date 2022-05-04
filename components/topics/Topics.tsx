@@ -19,6 +19,7 @@ type TopicsProps = {
   setCurrentTopic: (topic: Topic) => void;
   topics: Topic[];
   setTopics: (topics: Topic[]) => void;
+  centered?: boolean;
 };
 
 export const Topics = ({
@@ -26,33 +27,39 @@ export const Topics = ({
   setCurrentTopic,
   topics,
   setTopics,
+  centered,
 }: TopicsProps) => {
-  const { t } = useTranslation();
-
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);
   const [count, setCount] = useState<TopicsCount>({ self: 1, public: 0 });
 
   const router = useRouter();
+  const { t } = useTranslation();
 
   useEffect(() => {
-    const { topic: queryTopic } = router.query;
+    const { id: queryTopic } = router.query as { id?: string };
     if (!queryTopic) return;
+
     const fromUserTopics = topics.find((t) => t._id === queryTopic);
     if (fromUserTopics) {
       setCurrentTopic(fromUserTopics);
       return;
     }
+
     request("topics", "", "get", {
-      query: { id: router.query.topic as string },
+      query: { id: queryTopic },
     }).then(({ topic }) => {
       if (!topic) return;
       setCurrentTopic(topic);
     });
-  }, [router.query.topic]);
+  }, [router.query.id]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || topics.length) {
+      setLoading(false);
+      return;
+    }
+
     setLoading(true);
     request("topics", "by_user_count", "get")
       .then((count) => {
@@ -79,7 +86,11 @@ export const Topics = ({
   };
 
   return (
-    <div className={styles.container}>
+    <div
+      className={`${styles.container} ${
+        centered ? styles.container_centered : ""
+      }`}
+    >
       <div className={styles.content} aria-hidden={hidden}>
         <div>
           <Divider className={styles.topicsDivider} textAlign="left">

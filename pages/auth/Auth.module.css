@@ -1,6 +1,5 @@
 .container {
-  display: grid;
-  grid-template-rows: max-content 1fr;
+  display: flex;
   height: calc(100vh - 2 * var(--body-padding-vertical));
 }
 

@@ -38,7 +38,7 @@ module.exports = withPWA({
     return [
       {
         source: "/",
-        destination: "/app",
+        destination: "/auth",
         permanent: true,
       },
     ];

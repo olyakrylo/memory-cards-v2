@@ -1,10 +1,4 @@
-import {
-  BaseSyntheticEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Subject } from "rxjs";
 import { SplideSlide } from "@splidejs/react-splide";
@@ -18,18 +12,18 @@ import CardMainContent from "./mainContent";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
 import CardDialogContent from "./dialogContent";
+import { AppNotification } from "../../../shared/notification";
+import { request } from "../../../utils/request";
 
 type CardItemProps = {
   index: number;
   card: Card;
   showArrows: boolean;
   canEditTopic: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  deleteCard: () => void;
-  updateCard: (c: Card) => void;
-  shareCard: () => void;
   resetCards: Subject<void>;
   flipCard: Subject<number>;
+  setNotification: (n: AppNotification) => void;
+  onUpdate: () => void;
 };
 
 export const CardItem = ({
@@ -37,12 +31,10 @@ export const CardItem = ({
   card,
   showArrows,
   canEditTopic,
-  setLoading,
-  updateCard,
-  shareCard,
-  deleteCard,
   resetCards,
   flipCard,
+  setNotification,
+  onUpdate,
 }: CardItemProps) => {
   const { t } = useTranslation();
 
@@ -66,14 +58,24 @@ export const CardItem = ({
     setDialogOpen(false);
   };
 
-  const handleDelete = (event: BaseSyntheticEvent): void => {
+  const handleDelete = async (event: BaseSyntheticEvent): Promise<void> => {
     event.stopPropagation();
-    deleteCard();
+    await request("cards", "", "delete", { query: { ids: [card._id] } });
+    onUpdate();
   };
 
-  const handleShare = (event: BaseSyntheticEvent): void => {
+  const handleShare = async (event: BaseSyntheticEvent): Promise<void> => {
     event.stopPropagation();
-    shareCard();
+    const { href } = window.location;
+    const link = `${href}&card=${index}`;
+    await navigator.clipboard.writeText(link);
+
+    setNotification({
+      severity: "success",
+      text: "ui.link_copied",
+      translate: true,
+      autoHide: 5000,
+    });
   };
 
   const toggleCard = () => {
@@ -108,11 +110,7 @@ export const CardItem = ({
           )}
 
           {card._id && canEditTopic && (
-            <EditCard
-              card={card}
-              setLoading={setLoading}
-              updateCard={updateCard}
-            />
+            <EditCard card={card} onUpdate={onUpdate} />
           )}
 
           {card._id && (
