@@ -60,6 +60,7 @@ export const Topics = ({
 
   useEffect(() => {
     if (!user) return;
+    setTopics([]);
     setLoading(true);
     request("topics", "by_user_count", "get")
       .then((count) => {
@@ -105,7 +106,11 @@ export const Topics = ({
               <TopicItem key={topic._id} topic={topic} />
             ))}
 
-            {!loading && !selfTopics().length && <Typography>—</Typography>}
+            {!loading && !selfTopics().length && (
+              <Typography className={styles.noTopics} variant={"subtitle2"}>
+                {t("ui.no_created_topics")}
+              </Typography>
+            )}
           </div>
 
           <Divider classes={{ root: styles.topicsDivider }} textAlign="left">
@@ -119,7 +124,11 @@ export const Topics = ({
               <TopicItem key={topic._id} topic={topic} />
             ))}
 
-            {!loading && !publicTopics().length && <Typography>—</Typography>}
+            {!loading && !publicTopics().length && (
+              <Typography className={styles.noTopics} variant={"subtitle2"}>
+                {t("ui.no_added_topics")}
+              </Typography>
+            )}
           </div>
         </div>
 

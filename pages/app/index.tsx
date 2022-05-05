@@ -1,13 +1,9 @@
 import { connect } from "react-redux";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
 import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import { setUser } from "../../redux/actions/main";
 import { State } from "../../shared/redux";
 import { User } from "../../shared/models";
-import { request } from "../../utils/request";
 import styles from "./App.module.css";
 
 const CardsLoaderComponent = (
@@ -21,43 +17,18 @@ const Cards = dynamic(() => import("../../components/cards"), {
 
 type AppProps = {
   user?: User | null;
-  setUser: (user?: User | null) => void;
 };
 
-const App = ({ user, setUser }: AppProps) => {
-  const router = useRouter();
-
-  const [loading, setLoading] = useState<boolean>(true);
-
-  useEffect(() => {
-    if (user === null) {
-      void router.push("/auth");
-      return;
-    }
-    if (user) {
-      setLoading(false);
-      return;
-    }
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        setUser(user);
-      } else {
-        void router.push("/auth");
-        return;
-      }
-      setLoading(false);
-    });
-  }, [user, setUser, router, setLoading]);
-
+const App = ({ user }: AppProps) => {
   return (
     <div className={`${styles.container}`}>
       <Topics />
 
-      <div className={styles.content}>
-        {loading && CardsLoaderComponent}
-
-        {!loading && <Cards />}
-      </div>
+      {user && (
+        <div className={styles.content}>
+          <Cards />
+        </div>
+      )}
     </div>
   );
 };
@@ -68,8 +39,4 @@ const mapStateToProps = (state: { main: State }) => {
   };
 };
 
-const mapDispatchToProps = {
-  setUser,
-};
-
-export default connect(mapStateToProps, mapDispatchToProps)(App);
+export default connect(mapStateToProps)(App);

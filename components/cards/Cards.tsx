@@ -84,7 +84,7 @@ export const Cards = ({
   }, [user]);
 
   useEffect(() => {
-    if (!currentTopic) {
+    if (!router.query.topic) {
       setCards([]);
       setShuffledCards(null);
       return;
@@ -93,14 +93,14 @@ export const Cards = ({
     setLoading(true);
     request("cards", "by_topic", "get", {
       query: {
-        topic_id: currentTopic._id,
+        topic_id: router.query.topic as string,
       },
     }).then((cards) => {
       setCards(cards);
       resetCards.next();
       setLoading(false);
     });
-  }, [currentTopic]);
+  }, [router.query.topic]);
 
   const canEditTopic = () => {
     return currentTopic?.author_id === user?._id;

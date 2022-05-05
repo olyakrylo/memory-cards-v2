@@ -30,7 +30,9 @@
     "redirect-in-seconds_other": "Redirect in {{count}} seconds",
     "non_working_link": "Non-working link",
     "create_copy": "Create a copy",
-    "edit": "Edit"
+    "edit": "Edit",
+    "no_created_topics": "No created topics yet",
+    "no_added_topics": "No added topics yet"
   },
   "add": {
     "topic_title": "Title",

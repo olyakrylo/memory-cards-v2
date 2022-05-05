@@ -71,11 +71,15 @@ export const TopicItem = ({
   };
 
   const copyTopic = async () => {
-    const { topics } = await request("topics", "copy", "put", {
+    const { topics, new_id } = await request("topics", "copy", "put", {
       query: { id: topic._id },
       body: { title: topic.title },
     });
     setTopics(topics);
+    await router.push({
+      pathname: router.pathname,
+      query: { topic: new_id },
+    });
   };
 
   const shareTopic = async () => {

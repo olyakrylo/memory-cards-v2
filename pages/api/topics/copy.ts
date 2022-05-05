@@ -47,7 +47,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
 
       const updatedTopics = await Topic.find({ users_id: userId });
 
-      res.json({ topics: updatedTopics });
+      res.json({ topics: updatedTopics, new_id: newTopic._id });
     },
   };
 

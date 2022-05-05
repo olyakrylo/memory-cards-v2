@@ -164,7 +164,7 @@ export interface TopicsAPI {
     put: {
       query: { id: string };
       body: { title: string };
-      result: { topics: Topic[] };
+      result: { topics: Topic[]; new_id: string };
     };
   };
 }

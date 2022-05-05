@@ -3,9 +3,11 @@ import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import { connect } from "react-redux";
 
 import { ADMIN_DATA_LIMIT, AdminCard, AdminTabData } from "../../shared/admin";
 import { Topic, User } from "../../shared/models";
+import { State } from "../../shared/redux";
 
 const DynamicTopics = dynamic(() => import("../../components/admin/topics"), {
   ssr: false,
@@ -27,6 +29,7 @@ const CircularProgress = dynamic(
 const TABS = ["users", "topics", "cards", "images"];
 
 type AllDataProps = {
+  user?: User | null;
   SSRData: {
     users: AdminTabData<User>;
     topics: AdminTabData<Topic>;
@@ -35,7 +38,7 @@ type AllDataProps = {
   };
 };
 
-const AdminPanel = ({ SSRData }: AllDataProps) => {
+const AdminPanel = ({ SSRData, user }: AllDataProps) => {
   const router = useRouter();
 
   const [checking, setChecking] = useState(true);
@@ -51,19 +54,15 @@ const AdminPanel = ({ SSRData }: AllDataProps) => {
       });
     }
 
-    if (!checking) return;
+    if (!checking || !user) return;
 
-    import("../../utils/request").then(({ request }) => {
-      request("users", "", "get").then(({ user }) => {
-        if (!user?.admin) {
-          void router.push("/app");
-          return;
-        }
-
-        setChecking(false);
-      });
-    });
-  }, [router]);
+    if (user.admin) {
+      console.log(SSRData);
+      setChecking(false);
+    } else {
+      void router.push("/app");
+    }
+  }, [router, user]);
 
   const handleTabChange = (_: BaseSyntheticEvent, value: string): void => {
     void router.push({
@@ -105,7 +104,10 @@ const AdminPanel = ({ SSRData }: AllDataProps) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+export const getServerSideProps: GetServerSideProps = async ({
+  query,
+  req,
+}) => {
   const emptyData: AdminTabData<any> = {
     data: [],
     count: 0,
@@ -132,7 +134,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const limit = query.limit ?? ADMIN_DATA_LIMIT;
 
   const loadData = async (path: string): Promise<any> => {
-    const url = `${process.env.DATA_URL}/${path}?skip=${skip}&limit=${limit}`;
+    const url = `https://${req.headers.host}/api/all/${path}?skip=${skip}&limit=${limit}`;
     const response = await fetch(url);
     return await response.json();
   };
@@ -154,4 +156,8 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   };
 };
 
-export default AdminPanel;
+const mapStateToProps = (state: { main: State }) => ({
+  user: state.main.user,
+});
+
+export default connect(mapStateToProps)(AdminPanel);

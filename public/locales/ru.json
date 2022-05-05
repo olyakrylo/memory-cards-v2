@@ -31,7 +31,9 @@
     "redirect-in-seconds_many": "Редирект через {{count}} секунд",
     "non_working_link": "Нерабочая ссылка",
     "create_copy": "Создать копию",
-    "edit": "Редактировать"
+    "edit": "Редактировать",
+    "no_created_topics": "Еще нет созданных тем",
+    "no_added_topics": "Еще нет добавленных тем"
   },
   "add": {
     "topic_title": "Название",
