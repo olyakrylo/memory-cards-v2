@@ -54,10 +54,6 @@ body {
   :root {
     --body-padding-horizontal: 20px;
   }
-
-  body {
-    padding: 60px 20px;
-  }
 }
 
 a {

@@ -16,7 +16,7 @@
   .content {
     width: 100vw;
     max-width: unset;
-    margin-left: -20px;
+    margin: 0 calc(-1 * var(--body-padding-horizontal));
   }
 }
 
