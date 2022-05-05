@@ -57,7 +57,6 @@ const AdminPanel = ({ SSRData, user }: AllDataProps) => {
     if (!checking || !user) return;
 
     if (user.admin) {
-      console.log(SSRData);
       setChecking(false);
     } else {
       void router.push("/app");
@@ -140,7 +139,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 
   const [users, topics, cards, images] = await Promise.all(
-    TABS.map((tab) => {
+    TABS.map(async (tab) => {
       if (tab === query.tab) {
         return loadData(tab);
       }

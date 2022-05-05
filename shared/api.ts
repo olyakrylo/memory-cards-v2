@@ -171,9 +171,6 @@ export interface TopicsAPI {
 
 export interface CardsAPI {
   "": {
-    get: {
-      result: Card;
-    };
     put: {
       query: {};
       body: { cards: Omit<Card, "_id">[] };

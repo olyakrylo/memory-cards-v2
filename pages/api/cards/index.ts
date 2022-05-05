@@ -12,11 +12,6 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const catcher = (error: Error) => res.status(400).json({ error });
 
   const handleCase: ResponseFuncs = {
-    // get all
-    GET: async (req: NextApiRequest, res: NextApiResponse) => {
-      const { Card } = await connect();
-      res.json(await Card.find({}).catch(catcher));
-    },
     // create
     PUT: async (req: NextApiRequest, res: NextApiResponse) => {
       const { Card } = await connect();
