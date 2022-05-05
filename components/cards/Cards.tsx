@@ -11,11 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import {
-  ShuffleRounded,
-  AddRounded,
-  AddCircleRounded,
-} from "@mui/icons-material";
+import { ShuffleRounded, AddRounded } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
 
 import { Card, Topic, User } from "../../shared/models";
@@ -243,7 +239,6 @@ export const Cards = ({
               {canEditTopic() && (
                 <Typography className={styles.tip} color={"primary"}>
                   {t("ui.add_first_card")}
-                  <AddCircleRounded />
                 </Typography>
               )}
             </>
