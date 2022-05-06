@@ -1,50 +1,51 @@
 import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
 import { Subject } from "rxjs";
-import { Splide as ReactSplide } from "@splidejs/react-splide";
+import { Splide as ReactSplide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
-import {
-  FormControlLabel,
-  FormGroup,
-  IconButton,
-  Switch,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { IconButton, Tooltip, Typography } from "@mui/material";
 import { ShuffleRounded, AddRounded } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
+import classNames from "classnames";
 
 import { Card, Topic, User } from "../../shared/models";
 import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import { getCardsMatrix, utils, getCardIndex } from "./utils";
+import {
+  getCardsMatrix,
+  utils,
+  getCardIndex,
+  getUpdatedShuffledCards,
+} from "./utils";
 import { AppNotification } from "../../shared/notification";
 import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
-import classNames from "classnames";
+import CardsViewOptions from "./viewOptions";
 
 type CardProps = {
   user?: User | null;
-  currentTopic?: Topic;
   topics: Topic[];
   setTopics: (t: Topic[]) => void;
+  currentTopic?: Topic;
   setNotification: (n: AppNotification) => void;
+  cards: Record<string, Card[]>;
+  setCards: (t: string, c: Card[]) => void;
 };
 
 export const Cards = ({
-  currentTopic,
   user,
   topics,
   setTopics,
-  setNotification,
+  currentTopic,
+  cards,
+  setCards,
 }: CardProps) => {
   const router = useRouter();
 
   const [loading, setLoading] = useState<boolean>(false);
-  const [cards, setCards] = useState<Card[]>([]);
   const [hideArrows, setHideArrows] = useState<boolean>(false);
-  const [shuffledCards, setShuffledCards] = useState<Card[] | null>(null);
+  const [shuffledCards, setShuffledCards] = useState<Card[]>();
 
   const sliderRef = useRef<ReactSplide>(null);
 
@@ -52,6 +53,10 @@ export const Cards = ({
 
   const resetCards = new Subject<void>();
   const flipCard = new Subject<number>();
+
+  const currentTopicId = (): string => {
+    return (router.query.topic as string) ?? "";
+  };
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -62,8 +67,15 @@ export const Cards = ({
       ) {
         return;
       }
-      const index = sliderRef.current?.splide?.index;
+      let index = sliderRef.current?.splide?.index;
       if (typeof index !== "number") return;
+
+      if (shuffledCards) {
+        index = cards[currentTopicId()].findIndex(
+          (c) => shuffledCards[index as number]._id === c._id
+        );
+      }
+
       flipCard.next(index);
     };
 
@@ -74,29 +86,32 @@ export const Cards = ({
   });
 
   useEffect(() => {
-    request("config", "arrows", "get").then(({ hide }) => {
-      setHideArrows(hide);
-    });
-  }, [user]);
-
-  useEffect(() => {
-    if (!router.query.topic) {
-      setCards([]);
-      setShuffledCards(null);
+    if (!currentTopicId()) {
       return;
     }
 
     setLoading(true);
+
     request("cards", "by_topic", "get", {
       query: {
-        topic_id: router.query.topic as string,
+        topic_id: currentTopicId(),
       },
     }).then((cards) => {
-      setCards(cards);
+      setCards(currentTopicId(), cards);
       resetCards.next();
       setLoading(false);
     });
   }, [router.query.topic]);
+
+  useEffect(() => {
+    if (!shuffledCards) return;
+
+    const newShuffledCards = getUpdatedShuffledCards(
+      shuffledCards,
+      cards[currentTopicId()]
+    );
+    setShuffledCards(newShuffledCards);
+  }, [setCards, cards]);
 
   const canEditTopic = () => {
     return currentTopic?.author_id === user?._id;
@@ -107,90 +122,48 @@ export const Cards = ({
     resetCards.next();
 
     const index = getCardIndex(splideIndex, cardIndex);
-    sessionStorage.setItem(currentTopic._id.toString(), index.toString());
+    sessionStorage.setItem(currentTopicId(), index.toString());
   };
 
   const addCards = (newCards: Card[]): void => {
-    setCards([...cards, ...newCards]);
+    if (!currentTopic) return;
+
+    setCards(currentTopicId(), [...cards[currentTopicId()], ...newCards]);
     if (shuffledCards) {
       setShuffledCards([...shuffledCards, ...newCards]);
     }
   };
 
-  const updateCard = (updatedCard: Card): void => {
-    setCards(
-      cards.map((c) => {
-        if (c._id === updatedCard._id) return updatedCard;
-        return c;
-      })
-    );
-    if (shuffledCards) {
-      setShuffledCards(
-        shuffledCards.map((c) => {
-          if (c._id === updatedCard._id) return updatedCard;
-          return c;
-        })
-      );
-    }
-  };
-
-  const deleteCard = async (id: string) => {
-    await request("cards", "", "delete", { query: { ids: [id] } });
-    const updatedCards = cards.filter((c) => c._id !== id);
-    setCards(updatedCards);
-    if (shuffledCards) {
-      setShuffledCards(shuffledCards.filter((c) => c._id !== id));
-    }
-  };
-
   const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
     if (shuffledCards) {
-      setShuffledCards(null);
+      setShuffledCards(undefined);
     } else {
       const { default: shuffle } = await import("array-shuffle");
-      setShuffledCards(shuffle(cards));
+      setShuffledCards(shuffle(cards[currentTopicId()]));
     }
     event.target.blur();
   };
 
-  const toggleArrows = () => {
-    void request("config", "arrows", "put", {
-      body: {
-        hide: !hideArrows,
-      },
-    });
-    setHideArrows(!hideArrows);
-  };
-
   const isSelfTopic = (): boolean => {
-    return topics.some((t) => t._id === currentTopic?._id);
+    return topics.some((t) => t._id === currentTopicId());
   };
 
   const addCurrentTopic = async (): Promise<void> => {
-    if (!currentTopic) return;
     const updatedTopics = await request("topics", "public", "put", {
       body: {
-        topics_id: [currentTopic._id],
+        topics_id: [currentTopicId()],
       },
     });
     setTopics([...topics, ...updatedTopics]);
   };
 
-  const shareCard = async (index: number): Promise<void> => {
-    const { href } = window.location;
-    const link = `${href}&card=${index}`;
-    await navigator.clipboard.writeText(link);
-    setNotification({
-      severity: "success",
-      text: "ui.link_copied",
-      translate: true,
-      autoHide: 5000,
-    });
+  const actualCardIndex = (id: string): number => {
+    return cards[currentTopicId()].findIndex((c) => c._id === id);
   };
 
   const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
   const startIndexFromStorage = parseInt(
-    sessionStorage.getItem(currentTopic?._id.toString() ?? "") ?? ""
+    sessionStorage.getItem(currentTopicId()) ?? ""
   );
   const startIndex = startIndexFromUrl || startIndexFromStorage || 0;
 
@@ -203,7 +176,7 @@ export const Cards = ({
               onClick={toggleShuffle}
               classes={{ root: styles.shuffle }}
               aria-checked={!!shuffledCards}
-              aria-hidden={!cards.length}
+              aria-hidden={!cards[currentTopicId()]?.length}
             >
               <ShuffleRounded />
             </IconButton>
@@ -219,16 +192,10 @@ export const Cards = ({
               )}
             </div>
 
-            {canEditTopic() && (
-              <AddCard
-                currentTopic={currentTopic}
-                setLoading={setLoading}
-                addCards={addCards}
-              />
-            )}
+            {canEditTopic() && <AddCard addCards={addCards} />}
           </div>
 
-          {!loading && !cards.length && (
+          {!loading && !cards[currentTopicId()]?.length && (
             <>
               <Typography
                 className={classNames(styles.tip, styles.tip_nowrap)}
@@ -255,9 +222,9 @@ export const Cards = ({
         />
       )}
 
-      {!loading && !!cards.length && (
+      {!loading && !!cards[currentTopicId()]?.length && (
         <>
-          {getCardsMatrix(shuffledCards ?? cards).map(
+          {getCardsMatrix(shuffledCards ?? cards[currentTopicId()]).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
                 key={splideIndex}
@@ -278,30 +245,27 @@ export const Cards = ({
                 }}
               >
                 {cardsSlice.map((card, i) => (
-                  <CardItem
-                    index={getCardIndex(splideIndex, i)}
-                    key={card._id}
-                    card={card}
-                    showArrows={!hideArrows}
-                    canEditTopic={canEditTopic()}
-                    setLoading={setLoading}
-                    deleteCard={() => deleteCard(card._id)}
-                    updateCard={updateCard}
-                    shareCard={() => shareCard(getCardIndex(splideIndex, i))}
-                    resetCards={resetCards}
-                    flipCard={flipCard}
-                  />
+                  <SplideSlide key={card._id}>
+                    <CardItem
+                      index={actualCardIndex(card._id)}
+                      showArrows={!hideArrows}
+                      canEditTopic={canEditTopic()}
+                      resetCards={resetCards}
+                      flipCard={flipCard}
+                    />
+                  </SplideSlide>
                 ))}
               </ReactSplide>
             )
           )}
 
-          <FormGroup className={styles.arrowControl}>
-            <FormControlLabel
-              control={<Switch onChange={toggleArrows} checked={!hideArrows} />}
-              label={<Typography>{t("ui.show_arrows")}</Typography>}
-            />
-          </FormGroup>
+          <CardsViewOptions
+            hideArrows={hideArrows}
+            setHideArrows={setHideArrows}
+            shuffledCards={shuffledCards}
+            canEditTopic={canEditTopic()}
+            flipCard={flipCard}
+          />
         </>
       )}
     </div>

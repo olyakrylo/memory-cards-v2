@@ -74,11 +74,6 @@
   position: relative !important;
 }
 
-.arrowControl {
-  color: var(--black);
-  padding: 0 24px;
-}
-
 .shuffle {
   color: var(--dark-gray);
 }

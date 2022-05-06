@@ -1,0 +1,16 @@
+.container {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 24px;
+}
+
+.arrowControl {
+  color: var(--black);
+}
+
+.allCards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 300px);
+  grid-auto-rows: 250px;
+  justify-content: center;
+}

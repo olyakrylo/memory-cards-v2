@@ -1,15 +1,9 @@
-import {
-  BaseSyntheticEvent,
-  Dispatch,
-  SetStateAction,
-  useEffect,
-  useState,
-} from "react";
+import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Subject } from "rxjs";
-import { SplideSlide } from "@splidejs/react-splide";
 import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
+import { useRouter } from "next/router";
 
 import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
@@ -18,39 +12,48 @@ import CardMainContent from "./mainContent";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
 import CardDialogContent from "./dialogContent";
+import { AppNotification } from "../../../shared/notification";
+import { request } from "../../../utils/request";
 
 type CardItemProps = {
   index: number;
-  card: Card;
+  cards: Record<string, Card[]>;
+  setCards: (id: string, c: Card[]) => void;
   showArrows: boolean;
   canEditTopic: boolean;
-  setLoading: Dispatch<SetStateAction<boolean>>;
-  deleteCard: () => void;
-  updateCard: (c: Card) => void;
-  shareCard: () => void;
-  resetCards: Subject<void>;
+  resetCards?: Subject<void>;
   flipCard: Subject<number>;
+  setNotification: (n: AppNotification) => void;
 };
 
 export const CardItem = ({
   index,
-  card,
+  cards,
+  setCards,
   showArrows,
   canEditTopic,
-  setLoading,
-  updateCard,
-  shareCard,
-  deleteCard,
   resetCards,
   flipCard,
+  setNotification,
 }: CardItemProps) => {
   const { t } = useTranslation();
+  const router = useRouter();
 
   const [flipped, setFlipped] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
+  const currentTopicId = (): string => {
+    return (router.query.topic as string) ?? "";
+  };
+
+  const card = (): Card => {
+    return cards[currentTopicId()][index];
+  };
+
   useEffect(() => {
-    resetCards.subscribe(() => setFlipped(false));
+    if (resetCards) {
+      resetCards.subscribe(() => setFlipped(false));
+    }
     flipCard.subscribe((num) => {
       if (num !== index) return;
       setFlipped(!flipped);
@@ -66,22 +69,50 @@ export const CardItem = ({
     setDialogOpen(false);
   };
 
-  const handleDelete = (event: BaseSyntheticEvent): void => {
+  const handleDelete = async (event: BaseSyntheticEvent): Promise<void> => {
     event.stopPropagation();
-    deleteCard();
+    await request("cards", "", "delete", { query: { ids: [card()._id] } });
+    const updatedCards = cards[currentTopicId()].filter(
+      (c) => c._id !== card()._id
+    );
+    setCards(currentTopicId(), updatedCards);
   };
 
-  const handleShare = (event: BaseSyntheticEvent): void => {
+  const handleUpdate = async (updatedCard: Card): Promise<void> => {
+    setCards(
+      currentTopicId(),
+      cards[currentTopicId()].map((c) => {
+        if (c._id === updatedCard._id) return updatedCard;
+        return c;
+      })
+    );
+  };
+
+  const handleShare = async (event: BaseSyntheticEvent): Promise<void> => {
     event.stopPropagation();
-    shareCard();
+
+    const { href } = window.location;
+    const link = `${href}&card=${index}`;
+    await navigator.clipboard.writeText(link);
+
+    setNotification({
+      severity: "success",
+      text: "ui.link_copied",
+      translate: true,
+      autoHide: 5000,
+    });
   };
 
   const toggleCard = () => {
     setFlipped(!flipped);
   };
 
+  if (!card()) {
+    return <></>;
+  }
+
   return (
-    <SplideSlide>
+    <>
       <ReactCardFlip
         isFlipped={flipped}
         flipDirection="vertical"
@@ -91,12 +122,12 @@ export const CardItem = ({
       >
         <div className={styles.card} onClick={toggleCard}>
           <CardMainContent
-            card={card}
+            card={card()}
             field={"question"}
             openDialog={openDialog}
           />
 
-          {card._id && canEditTopic && (
+          {card()._id && canEditTopic && (
             <IconButton
               size={"small"}
               className={styles.card__del}
@@ -107,15 +138,11 @@ export const CardItem = ({
             </IconButton>
           )}
 
-          {card._id && canEditTopic && (
-            <EditCard
-              card={card}
-              setLoading={setLoading}
-              updateCard={updateCard}
-            />
+          {card()._id && canEditTopic && (
+            <EditCard card={card()} onUpdateCard={handleUpdate} />
           )}
 
-          {card._id && (
+          {card()._id && (
             <Tooltip title={t("ui.share") ?? ""}>
               <IconButton
                 className={styles.card__share}
@@ -133,7 +160,7 @@ export const CardItem = ({
           onClick={toggleCard}
         >
           <CardMainContent
-            card={card}
+            card={card()}
             field={"answer"}
             openDialog={openDialog}
           />
@@ -147,9 +174,9 @@ export const CardItem = ({
         onClose={closeDialog}
         content={
           <>
-            <CardDialogContent field={"question"} card={card} />
+            <CardDialogContent field={"question"} card={card()} />
             <Divider classes={{ root: styles.dialog__divider }} />
-            <CardDialogContent field={"answer"} card={card} />
+            <CardDialogContent field={"answer"} card={card()} />
           </>
         }
         actions={
@@ -158,6 +185,6 @@ export const CardItem = ({
           </IconButton>
         }
       />
-    </SplideSlide>
+    </>
   );
 };

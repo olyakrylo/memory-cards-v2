@@ -99,7 +99,6 @@ export const CardControlField = ({
   return (
     <div className={styles.container}>
       <TextField
-        required
         multiline
         inputRef={inputRef}
         rows={rowsCount}

@@ -20,8 +20,6 @@ type TopicItemProps = {
   topic: Topic;
   topics: Topic[];
   user?: User | null;
-  currentTopic?: Topic;
-  setCurrentTopic: (t?: Topic) => void;
   setTopics: (t: Topic[]) => void;
   setNotification: (n: AppNotification) => void;
 };
@@ -31,8 +29,6 @@ export const TopicItem = ({
   topic,
   topics: topicsList,
   setTopics,
-  currentTopic,
-  setCurrentTopic,
   setNotification,
 }: TopicItemProps) => {
   const router = useRouter();
@@ -41,6 +37,10 @@ export const TopicItem = ({
 
   const [menu, setMenu] = useState<null | HTMLElement>(null);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+
+  const currentTopicId = (): string => {
+    return (router.query.topic as string) ?? "";
+  };
 
   const selectTopic = async () => {
     await router.push({
@@ -60,12 +60,17 @@ export const TopicItem = ({
     if (updated) {
       const newTopics = topicsList.filter((t) => t._id !== topic._id);
       setTopics(newTopics);
-      setCurrentTopic(newTopics[0]);
+
       setNotification({
         severity: "warning",
         text: "ui.topic_deleted",
         translate: true,
         autoHide: 5000,
+      });
+
+      await router.push({
+        pathname: router.pathname,
+        query: { topic: newTopics[0]._id },
       });
     }
   };
@@ -119,7 +124,7 @@ export const TopicItem = ({
   return (
     <div
       className={styles.topic}
-      aria-selected={currentTopic?._id === topic._id}
+      aria-selected={currentTopicId() === topic._id}
       onClick={() => selectTopic()}
       key={topic._id}
     >
@@ -129,7 +134,7 @@ export const TopicItem = ({
         size="small"
         color="info"
         className={styles.topic__menu}
-        aria-hidden={currentTopic?._id !== topic._id}
+        aria-hidden={currentTopicId() !== topic._id}
         onClick={openMenu}
       >
         <MoreVert />
@@ -157,17 +162,16 @@ export const TopicItem = ({
         )}
 
         {isSelfTopic() && (
-          <>
-            <MenuItem className={styles.menuItem} onClick={openEditDialog}>
-              {t("ui.edit")}
-              <EditRounded color={"info"} />
-            </MenuItem>
+          <MenuItem className={styles.menuItem} onClick={openEditDialog}>
+            {t("ui.edit")}
+            <EditRounded color={"info"} />
+
             <EditTopic
               topic={topic}
               dialogOpen={editDialogOpen}
               closeDialog={closeEditDialog}
             />
-          </>
+          </MenuItem>
         )}
 
         <MenuItem className={styles.menuItem} onClick={shareTopic}>

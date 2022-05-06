@@ -4,23 +4,24 @@ import { IconButton } from "@mui/material";
 
 import { request } from "../../../utils/request";
 import styles from "../Cards.module.css";
-import { Card, ShortCard, Topic } from "../../../shared/models";
+import { Card, ShortCard } from "../../../shared/models";
 import CardControl from "../control";
 import { uploadImage } from "../../../utils/images";
 import { ControlCardFieldContent } from "../control/CardControl";
+import { useRouter } from "next/router";
 
 type AddCardProps = {
-  currentTopic: Topic;
-  setLoading: (v: boolean) => void;
   addCards: (cards: Card[]) => void;
 };
 
-export const AddCard = ({
-  currentTopic,
-  setLoading,
-  addCards,
-}: AddCardProps) => {
+export const AddCard = ({ addCards }: AddCardProps) => {
+  const router = useRouter();
+
   const [newCardOpen, setNewCardOpen] = useState<boolean>(false);
+
+  const currentTopicId = (): string => {
+    return (router.query.topic as string) ?? "";
+  };
 
   const openNewCardDialog = (e: any) => {
     e.stopPropagation();
@@ -36,7 +37,6 @@ export const AddCard = ({
   ) => {
     setNewCardOpen(false);
     if (!data && !cardsFromFile?.length) return;
-    setLoading(true);
 
     let newCards: Card[] = [];
 
@@ -45,7 +45,7 @@ export const AddCard = ({
         body: {
           cards: cardsFromFile.map((c) => ({
             ...c,
-            topic_id: currentTopic._id,
+            topic_id: currentTopicId(),
           })),
         },
       });
@@ -70,13 +70,12 @@ export const AddCard = ({
 
       newCards = await request("cards", "", "put", {
         body: {
-          cards: [{ ...cardData, topic_id: currentTopic._id }],
+          cards: [{ ...cardData, topic_id: currentTopicId() }],
         },
       });
     }
 
     addCards(newCards);
-    setLoading(false);
     return;
   };
 

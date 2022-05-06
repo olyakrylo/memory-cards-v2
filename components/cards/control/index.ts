@@ -1,15 +1,13 @@
 import { connect } from "react-redux";
 
-import { State } from "../../../shared/redux";
 import { setNotification } from "../../../redux/actions/main";
 
 import { CardControl } from "./CardControl";
+import { State } from "../../../shared/redux";
 
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    currentTopic: state.main.currentTopic,
-  };
-};
+const mapStateToProps = (state: { main: State }) => ({
+  currentTopic: state.main.currentTopic,
+});
 
 const mapDispatchToProps = {
   setNotification,
