@@ -1,5 +1,5 @@
 import * as t from "../../shared/redux";
-import { Topic, User } from "../../shared/models";
+import { Card, Topic, User } from "../../shared/models";
 import { AppNotification } from "../../shared/notification";
 
 export const setUser = (user?: User | null) => (dispatch: Function) => {
@@ -22,6 +22,14 @@ export const setTopics = (topics: Topic[]) => (dispatch: Function) => {
     payload: topics,
   });
 };
+
+export const setCards =
+  (topicId: string, cards: Card[]) => (dispatch: Function) => {
+    dispatch({
+      type: t.SET_CARDS,
+      payload: { topicId, cards },
+    });
+  };
 
 export const setDarkMode = (darkMode: boolean) => (dispatch: Function) => {
   dispatch({

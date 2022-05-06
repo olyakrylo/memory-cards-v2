@@ -147,7 +147,7 @@ export const CardControl = ({
           <CardControlField
             field="question"
             value={question}
-            rowsCount={3}
+            rowsCount={2}
             handleChange={(data) => onChangeField("question", data)}
             handleImage={(data) => onChangeImage("question", data)}
             disabled={!!cardsFromFile.length}
@@ -156,7 +156,7 @@ export const CardControl = ({
           <CardControlField
             field="answer"
             value={answer}
-            rowsCount={6}
+            rowsCount={4}
             handleChange={(data) => onChangeField("answer", data)}
             handleImage={(data) => onChangeImage("answer", data)}
             disabled={!!cardsFromFile.length}

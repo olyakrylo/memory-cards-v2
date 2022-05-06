@@ -9,13 +9,12 @@ const mapStateToProps = (state: { main: State }) => {
   return {
     user: state.main.user,
     topics: state.main.topics,
-    currentTopic: state.main.currentTopic,
   };
 };
 
 const mapDispatchToProps = {
-  setCurrentTopic,
   setTopics,
+  setCurrentTopic,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Topics);

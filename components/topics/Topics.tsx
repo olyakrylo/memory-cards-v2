@@ -17,7 +17,6 @@ import AddTopic from "./add";
 
 type TopicsProps = {
   user?: User | null;
-  currentTopic?: Topic;
   setCurrentTopic: (topic?: Topic) => void;
   topics: Topic[];
   setTopics: (topics: Topic[]) => void;
@@ -25,7 +24,6 @@ type TopicsProps = {
 
 export const Topics = ({
   user,
-  currentTopic,
   setCurrentTopic,
   topics,
   setTopics,
@@ -38,14 +36,17 @@ export const Topics = ({
 
   const router = useRouter();
 
+  const currentTopicId = (): string => {
+    return (router.query.topic as string) ?? "";
+  };
+
   useEffect(() => {
-    const { topic: queryTopic } = router.query;
-    if (!queryTopic) {
+    if (!currentTopicId()) {
       setCurrentTopic(undefined);
       return;
     }
 
-    const fromUserTopics = topics.find((t) => t._id === queryTopic);
+    const fromUserTopics = topics.find((t) => t._id === currentTopicId());
     if (fromUserTopics) {
       setCurrentTopic(fromUserTopics);
       return;
@@ -90,7 +91,7 @@ export const Topics = ({
     <div className={styles.container}>
       <div
         className={classNames(styles.content, {
-          [styles.content_centered]: !currentTopic,
+          [styles.content_centered]: !currentTopicId(),
         })}
         aria-hidden={hidden}
       >

@@ -5,6 +5,7 @@ import { State } from "../../shared/redux";
 const main = (
   state: State = {
     topics: [],
+    cards: {},
     notification: { severity: "success", text: "" },
   },
   action: AnyAction
@@ -32,6 +33,15 @@ const main = (
       return {
         ...state,
         topics: action.payload,
+      };
+
+    case t.SET_CARDS:
+      return {
+        ...state,
+        cards: {
+          ...state.cards,
+          [action.payload.topicId]: action.payload.cards,
+        },
       };
 
     case t.SET_NOTIFICATION:

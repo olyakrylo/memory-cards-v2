@@ -7,28 +7,33 @@ import {
   useMediaQuery,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import classNames from "classnames";
 
 import styles from "./Dialog.module.css";
 import DialogTransition from "./transition";
 
 type DialogProps = {
   open: boolean;
-  size: Breakpoint;
+  size?: Breakpoint;
   responsive?: boolean;
+  onlyFullScreen?: boolean;
   onClose?: () => void;
   title?: JSX.Element;
   content: JSX.Element;
   actions: JSX.Element;
+  grayContent?: boolean;
 };
 
 export const AppDialog = ({
   open,
   size,
   responsive,
+  onlyFullScreen,
   title,
   content,
   actions,
   onClose,
+  grayContent,
 }: DialogProps) => {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -36,7 +41,7 @@ export const AppDialog = ({
   return (
     <Dialog
       open={open}
-      fullScreen={responsive ? fullScreen : false}
+      fullScreen={responsive ? fullScreen : !!onlyFullScreen}
       maxWidth={size}
       fullWidth={true}
       TransitionComponent={DialogTransition}
@@ -44,7 +49,11 @@ export const AppDialog = ({
     >
       {title && <DialogTitle className={styles.title}>{title}</DialogTitle>}
 
-      <DialogContent dividers={true} className={styles.content}>
+      <DialogContent
+        className={classNames(styles.content, {
+          [styles.content_gray]: grayContent,
+        })}
+      >
         {content}
       </DialogContent>
 
