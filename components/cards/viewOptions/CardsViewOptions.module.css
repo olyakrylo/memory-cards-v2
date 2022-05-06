@@ -14,3 +14,33 @@
   grid-auto-rows: 250px;
   justify-content: center;
 }
+
+@keyframes appearEven {
+  0% {
+    transform: translateX(-100vw);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes appearOdd {
+  0% {
+    transform: translateX(100vw);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.card_even {
+  animation-name: appearEven;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}
+
+.card_odd {
+  animation-name: appearOdd;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+}

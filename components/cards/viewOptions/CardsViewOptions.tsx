@@ -14,6 +14,7 @@ import AppDialog from "../../dialog";
 import CardItem from "../item";
 import { request } from "../../../utils/request";
 import { Card, Topic, User } from "../../../shared/models";
+import classNames from "classnames";
 
 type CardsViewOptionsProps = {
   user: User;
@@ -52,12 +53,13 @@ export const CardsViewOptions = ({
   }, [user]);
 
   const toggleArrows = () => {
+    const newState = !hideArrows;
+    setHideArrows(newState);
     void request("config", "arrows", "put", {
       body: {
-        hide: !hideArrows,
+        hide: newState,
       },
     });
-    setHideArrows(!hideArrows);
   };
 
   const openAllCards = () => {
@@ -99,13 +101,20 @@ export const CardsViewOptions = ({
         content={
           <div className={styles.allCards}>
             {(shuffledCards ?? cards[currentTopicId()]).map((card, i) => (
-              <CardItem
+              <div
                 key={card._id}
-                index={actualCardIndex(card._id)}
-                showArrows={false}
-                canEditTopic={canEditTopic}
-                flipCard={flipCard}
-              />
+                className={classNames({
+                  [styles.card_even]: i % 2 === 0,
+                  [styles.card_odd]: i % 2 !== 0,
+                })}
+              >
+                <CardItem
+                  index={actualCardIndex(card._id)}
+                  showArrows={false}
+                  canEditTopic={canEditTopic}
+                  flipCard={flipCard}
+                />
+              </div>
             ))}
           </div>
         }

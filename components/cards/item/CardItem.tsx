@@ -4,6 +4,7 @@ import { Subject } from "rxjs";
 import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
 import { useRouter } from "next/router";
+import classNames from "classnames";
 
 import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
@@ -14,7 +15,6 @@ import AppDialog from "../../dialog";
 import CardDialogContent from "./dialogContent";
 import { AppNotification } from "../../../shared/notification";
 import { request } from "../../../utils/request";
-
 type CardItemProps = {
   index: number;
   cards: Record<string, Card[]>;
@@ -116,9 +116,9 @@ export const CardItem = ({
       <ReactCardFlip
         isFlipped={flipped}
         flipDirection="vertical"
-        containerClassName={`${styles.cardContainer} ${
-          showArrows && styles.cardContainer_arrows
-        }`}
+        containerClassName={classNames(styles.cardContainer, {
+          [styles.cardContainer_arrows]: showArrows,
+        })}
       >
         <div className={styles.card} onClick={toggleCard}>
           <CardMainContent
