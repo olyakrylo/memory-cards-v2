@@ -169,7 +169,7 @@ export const Cards = ({
 
   return (
     <div className={styles.container}>
-      {currentTopic && (
+      {currentTopicId() && (
         <>
           <div className={styles.control}>
             <IconButton
@@ -182,8 +182,8 @@ export const Cards = ({
             </IconButton>
 
             <div className={styles.control__topic}>
-              <Typography>{currentTopic.title}</Typography>
-              {currentTopic && !isSelfTopic() && (
+              <Typography>{currentTopic?.title}</Typography>
+              {currentTopicId() && !isSelfTopic() && (
                 <Tooltip title={t("add.save_topic") ?? ""}>
                   <IconButton onClick={addCurrentTopic}>
                     <AddRounded />
@@ -215,7 +215,7 @@ export const Cards = ({
 
       {loading && (
         <SkeletonLoader
-          height={350}
+          height={"50vh"}
           classes={`${styles.skeleton} ${
             hideArrows ? "" : styles.skeleton_arrows
           }`}
@@ -233,7 +233,7 @@ export const Cards = ({
                 className={styles.slider}
                 options={{
                   keyboard: isBrowser ? "global" : false,
-                  height: 400,
+                  height: "50vh",
                   arrows: !hideArrows,
                   classes: {
                     arrow: `splide__arrow ${styles.arrow}`,

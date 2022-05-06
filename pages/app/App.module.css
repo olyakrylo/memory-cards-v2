@@ -1,14 +1,13 @@
 .container {
-  min-height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   row-gap: 24px;
 }
 
 .content {
-  width: 700px;
+  width: 50vw;
   max-width: 100%;
-  margin: 0 auto;
+  margin: auto;
   display: flex;
 }
 
@@ -16,7 +15,7 @@
   .content {
     width: 100vw;
     max-width: unset;
-    margin: 0 calc(-1 * var(--body-padding-horizontal));
+    margin: auto calc(-1 * var(--body-padding-horizontal));
   }
 }
 
