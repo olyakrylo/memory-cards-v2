@@ -13,9 +13,10 @@ import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
 import {
   getCardsMatrix,
-  utils,
+  getPartStartIndex,
   getCardIndex,
   getUpdatedShuffledCards,
+  savedCardIndex,
 } from "./utils";
 import { AppNotification } from "../../shared/notification";
 import CardItem from "./item";
@@ -46,6 +47,9 @@ export const Cards = ({
   const [loading, setLoading] = useState<boolean>(false);
   const [hideArrows, setHideArrows] = useState<boolean>(false);
   const [shuffledCards, setShuffledCards] = useState<Card[]>();
+  const [currentCard, setCurrentCard] = useState<number>(
+    savedCardIndex(router)
+  );
 
   const sliderRef = useRef<ReactSplide>(null);
 
@@ -98,6 +102,7 @@ export const Cards = ({
       },
     }).then((cards) => {
       setCards(currentTopicId(), cards);
+      setCurrentCard(savedCardIndex(router));
       resetCards.next();
       setLoading(false);
     });
@@ -117,12 +122,23 @@ export const Cards = ({
     return currentTopic?.author_id === user?._id;
   };
 
-  const handleMoved = (splideIndex: number, cardIndex: number): void => {
+  const handleMoved = (cardIndex: number, splideIndex?: number): void => {
     if (!currentTopic) return;
     resetCards.next();
 
-    const index = getCardIndex(splideIndex, cardIndex);
+    const index = splideIndex
+      ? getCardIndex(splideIndex, cardIndex)
+      : cardIndex;
+    setCurrentCard(index);
     sessionStorage.setItem(currentTopicId(), index.toString());
+  };
+
+  const handleCardIndexChange = (index: number): void => {
+    handleMoved(index);
+
+    if (sliderRef.current?.splide) {
+      sliderRef.current.splide.go(index);
+    }
   };
 
   const addCards = (newCards: Card[]): void => {
@@ -161,12 +177,6 @@ export const Cards = ({
     return cards[currentTopicId()].findIndex((c) => c._id === id);
   };
 
-  const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
-  const startIndexFromStorage = parseInt(
-    sessionStorage.getItem(currentTopicId()) ?? ""
-  );
-  const startIndex = startIndexFromUrl || startIndexFromStorage || 0;
-
   return (
     <div className={styles.container}>
       {currentTopicId() && (
@@ -177,6 +187,7 @@ export const Cards = ({
               classes={{ root: styles.shuffle }}
               aria-checked={!!shuffledCards}
               aria-hidden={!cards[currentTopicId()]?.length}
+              disabled={loading}
             >
               <ShuffleRounded />
             </IconButton>
@@ -185,7 +196,7 @@ export const Cards = ({
               <Typography>{currentTopic?.title}</Typography>
               {currentTopicId() && !isSelfTopic() && (
                 <Tooltip title={t("add.save_topic") ?? ""}>
-                  <IconButton onClick={addCurrentTopic}>
+                  <IconButton onClick={addCurrentTopic} disabled={loading}>
                     <AddRounded />
                   </IconButton>
                 </Tooltip>
@@ -196,7 +207,7 @@ export const Cards = ({
           </div>
 
           {!loading && !cards[currentTopicId()]?.length && (
-            <>
+            <div className={styles.tipContainer}>
               <Typography
                 className={classNames(styles.tip, styles.tip_nowrap)}
                 color={"secondary"}
@@ -208,14 +219,14 @@ export const Cards = ({
                   {t("ui.add_first_card")}
                 </Typography>
               )}
-            </>
+            </div>
           )}
         </>
       )}
 
       {loading && (
         <SkeletonLoader
-          height={"50vh"}
+          height={"calc(50vh - 48px)"}
           classes={`${styles.skeleton} ${
             hideArrows ? "" : styles.skeleton_arrows
           }`}
@@ -229,19 +240,21 @@ export const Cards = ({
               <ReactSplide
                 key={splideIndex}
                 ref={sliderRef}
-                onMoved={(_, index) => handleMoved(splideIndex, index)}
+                onMoved={(_, index) => handleMoved(index, splideIndex)}
                 className={styles.slider}
                 options={{
                   keyboard: isBrowser ? "global" : false,
                   height: "50vh",
                   arrows: !hideArrows,
+                  pagination: false,
+                  lazyLoad: "nearby",
                   classes: {
                     arrow: `splide__arrow ${styles.arrow}`,
                     prev: `splide__arrow--prev ${styles.arrow_prev}`,
                     next: `splide__arrow--next ${styles.arrow_next}`,
                     pagination: `splide__pagination ${styles.pagination}`,
                   },
-                  start: utils(splideIndex, startIndex),
+                  start: getPartStartIndex(splideIndex, currentCard),
                 }}
               >
                 {cardsSlice.map((card, i) => (
@@ -258,15 +271,20 @@ export const Cards = ({
               </ReactSplide>
             )
           )}
-
-          <CardsViewOptions
-            hideArrows={hideArrows}
-            setHideArrows={setHideArrows}
-            shuffledCards={shuffledCards}
-            canEditTopic={canEditTopic()}
-            flipCard={flipCard}
-          />
         </>
+      )}
+
+      {currentTopicId() && (
+        <CardsViewOptions
+          loading={loading}
+          currentCard={currentCard}
+          onCardIndexChange={handleCardIndexChange}
+          hideArrows={hideArrows}
+          setHideArrows={setHideArrows}
+          shuffledCards={shuffledCards}
+          canEditTopic={canEditTopic()}
+          flipCard={flipCard}
+        />
       )}
     </div>
   );

@@ -1,9 +1,13 @@
 import { Card } from "../../shared/models";
 import { isBrowser } from "react-device-detect";
+import { NextRouter } from "next/router";
 
 export const CARDS_BY_SLIDER = 20;
 
-export const utils = (splideIndex: number, cardIndex: number): number => {
+export const getPartStartIndex = (
+  splideIndex: number,
+  cardIndex: number
+): number => {
   if (!cardIndex) return 0;
 
   if (
@@ -65,4 +69,12 @@ export const getUpdatedShuffledCards = (
   }
 
   return updatedCards;
+};
+
+export const savedCardIndex = (router: NextRouter): number => {
+  const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
+  const startIndexFromStorage = parseInt(
+    sessionStorage.getItem(router.query.topic as string) ?? ""
+  );
+  return startIndexFromUrl || startIndexFromStorage || 0;
 };
