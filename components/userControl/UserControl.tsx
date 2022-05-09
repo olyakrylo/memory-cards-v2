@@ -4,23 +4,22 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
 import { User } from "../../shared/models";
-import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
 import { languages } from "../../utils/i18n";
+import { useUser } from "../../hooks";
 
 type UserControlProps = {
   user?: User | null;
-  setUser: (user?: User | null) => void;
 };
 
-export const UserControl = ({ user, setUser }: UserControlProps) => {
+export const UserControl = ({ user }: UserControlProps) => {
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
 
   const { t } = useTranslation();
+  const userService = useUser();
 
-  const handleLogout = async () => {
-    await request("users", "logout", "get");
-    setUser(null);
+  const handleLogout = () => {
+    void userService.logout();
   };
 
   const userMenuOpened = Boolean(userMenu);

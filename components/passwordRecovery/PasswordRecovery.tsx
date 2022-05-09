@@ -2,19 +2,13 @@ import { useTranslation } from "react-i18next";
 import { BaseSyntheticEvent, Fragment, useState } from "react";
 import { Button, CircularProgress, TextField, Typography } from "@mui/material";
 
-import { AppNotification } from "../../shared/notification";
-import { request } from "../../utils/request";
 import styles from "./PasswordRecovery.module.css";
 import AppDialog from "../dialog";
+import { useUser } from "../../hooks";
 
-type PasswordRecoveryProps = {
-  setNotification: (n: AppNotification) => void;
-};
-
-export const PasswordRecovery = ({
-  setNotification,
-}: PasswordRecoveryProps) => {
+export const PasswordRecovery = () => {
   const { t } = useTranslation();
+  const userService = useUser();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
@@ -41,30 +35,14 @@ export const PasswordRecovery = ({
     }
 
     setLoading(true);
-    const { sent, no_user } = await request("users", "recovery", "post", {
-      body: {
-        email,
-      },
-    });
+    const { sent, no_user } = await userService.sendRecoveryMessage(email);
     setLoading(false);
 
     if (no_user) {
       setEmailError("user_not_found");
       return;
     }
-
-    if (!sent) {
-      setNotification({
-        severity: "error",
-        text: "auth.recovery.sending_problem",
-        translate: true,
-      });
-    } else {
-      setNotification({
-        severity: "success",
-        text: "auth.recovery.message_sent",
-        translate: true,
-      });
+    if (sent) {
       setDialogOpen(false);
     }
   };

@@ -1,29 +1,23 @@
 import { useEffect } from "react";
 import { Brightness4 } from "@mui/icons-material";
 
-import { request } from "../../utils/request";
 import styles from "./Header.module.css";
+import { useConfig } from "../../hooks";
 
-type HeaderProps = {
-  darkMode?: boolean;
-  setDarkMode: (darkMode: boolean) => void;
-};
+export const Header = () => {
+  const config = useConfig();
 
-export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
   useEffect(() => {
-    request("config", "color", "get").then(({ dark }) => {
-      if (!dark) return;
-      document.documentElement.classList.add("dark");
-      setDarkMode(true);
+    config.getColorMode().then(({ dark }) => {
+      if (dark) {
+        document.documentElement.classList.add("dark");
+      }
     });
-  }, [setDarkMode]);
+  });
 
   const toggleTheme = () => {
-    const newMode = !darkMode;
     document.documentElement.classList.toggle("dark");
-    setDarkMode(newMode);
-
-    void request("config", "color", "put", { body: { dark: newMode } });
+    config.toggleColorMode();
   };
 
   return (

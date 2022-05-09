@@ -3,19 +3,19 @@ import { Subject } from "rxjs";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
-import { State } from "../shared/redux";
-import { Card, CardFieldContent, ShortCard } from "../shared/models";
-import { setCards } from "../redux/actions/main";
-import { useTopics } from "./index";
-import { request } from "../utils/request";
-import { ControlCardFieldContent } from "../components/cards/control/CardControl";
-import { uploadImage } from "../utils/images";
-import { getUpdatedShuffledCards } from "../components/cards/utils";
-import { UpdatedResult } from "../shared/api";
+import { State } from "../../shared/redux";
+import { Card, CardFieldContent, ShortCard } from "../../shared/models";
+import { setCards } from "../../redux/actions/main";
+import { useApi, useTopics, useFiles } from "../index";
+import { ControlCardFieldContent } from "../../components/cards/control/CardControl";
+import { getUpdatedShuffledCards } from "../../components/cards/utils";
+import { UpdatedResult } from "../../shared/api";
 
 export const useCardsImpl = () => {
-  const topics = useTopics();
   const router = useRouter();
+  const topics = useTopics();
+  const api = useApi();
+  const files = useFiles();
 
   const { cards, user } = useSelector((state: { main: State }) => ({
     cards: state.main.cards,
@@ -39,19 +39,18 @@ export const useCardsImpl = () => {
   }, [user?._id]);
 
   useEffect(() => {
-    if (!topics.currentTopic) return;
-    void loadTopicCards(topics.currentTopic._id);
-  }, [topics.currentTopic]);
+    if (!topics.currentId) return;
+    void loadTopicCards(topics.currentId);
+  }, [topics.currentId]);
 
   useEffect(() => {
     if (!shuffledCards) return;
-
     const newShuffledCards = getUpdatedShuffledCards(shuffledCards, current());
     setShuffledCards(newShuffledCards);
   }, [cards]);
 
   const current = (): Card[] => {
-    return cards[topics.currentId()] ?? [];
+    return cards[topics.currentId] ?? [];
   };
 
   const set = (topicId: string, cards: Card[]): void => {
@@ -66,7 +65,7 @@ export const useCardsImpl = () => {
     if (cards[topicId]) return;
 
     setLoading(true);
-    const cardsList = await request("cards", "by_topic", "get", {
+    const cardsList = await api.request("cards", "by_topic", "get", {
       query: {
         topic_id: topicId,
       },
@@ -77,13 +76,13 @@ export const useCardsImpl = () => {
   };
 
   const countByTopic = (topicId: string): Promise<{ count: number }> => {
-    return request("cards", "by_topic_count", "get", {
+    return api.request("cards", "by_topic_count", "get", {
       query: { topic_id: topicId },
     });
   };
 
   const getByTopic = (topicId: string): Promise<Card[]> => {
-    return request("cards", "by_topic", "get", {
+    return api.request("cards", "by_topic", "get", {
       query: { topic_id: topicId },
     });
   };
@@ -105,12 +104,12 @@ export const useCardsImpl = () => {
     cardsFromFile?: ShortCard[],
     topic?: string
   ): Promise<void> => {
-    const topicId = topic ?? topics.currentId();
+    const topicId = topic ?? topics.currentId;
 
     let newCards: Card[] = [];
 
     if (cardsFromFile?.length) {
-      newCards = await request("cards", "", "put", {
+      newCards = await api.request("cards", "", "put", {
         body: {
           cards: cardsFromFile.map((c) => ({
             ...c,
@@ -129,15 +128,15 @@ export const useCardsImpl = () => {
       };
 
       if (data?.question.image && typeof data.question.image !== "string") {
-        cardData.question.image = await uploadImage(
+        cardData.question.image = await files.upload(
           data.question.image as File
         );
       }
       if (data?.answer.image && typeof data.answer.image !== "string") {
-        cardData.answer.image = await uploadImage(data.answer.image as File);
+        cardData.answer.image = await files.upload(data.answer.image as File);
       }
 
-      newCards = await request("cards", "", "put", {
+      newCards = await api.request("cards", "", "put", {
         body: {
           cards: [{ ...cardData, topic_id: topicId }],
         },
@@ -148,13 +147,13 @@ export const useCardsImpl = () => {
   };
 
   const deleteCard = async (topicId: string, cardId: string): Promise<void> => {
-    await request("cards", "", "delete", { query: { ids: [cardId] } });
+    await api.request("cards", "", "delete", { query: { ids: [cardId] } });
     const updatedCards = cards[topicId].filter((c) => c._id !== cardId);
     dispatchCards(topicId, updatedCards);
   };
 
   const deleteMany = (ids: string[]): Promise<UpdatedResult> => {
-    return request("cards", "", "delete", {
+    return api.request("cards", "", "delete", {
       query: { ids },
     });
   };
@@ -167,13 +166,13 @@ export const useCardsImpl = () => {
     }
   ): Promise<void> => {
     if (data.question.image && typeof data.question.image !== "string") {
-      data.question.image = await uploadImage(data.question.image as File);
+      data.question.image = await files.upload(data.question.image as File);
     }
     if (data.answer.image && typeof data.answer.image !== "string") {
-      data.answer.image = await uploadImage(data.answer.image as File);
+      data.answer.image = await files.upload(data.answer.image as File);
     }
 
-    const updatedCard = await request("cards", "", "patch", {
+    const updatedCard = await api.request("cards", "", "patch", {
       body: {
         ...card,
         question: data.question as CardFieldContent,
@@ -182,7 +181,7 @@ export const useCardsImpl = () => {
     });
 
     dispatchCards(
-      topics.currentId(),
+      topics.currentId,
       current().map((c) => {
         if (c._id === updatedCard._id) return updatedCard;
         return c;
@@ -191,7 +190,7 @@ export const useCardsImpl = () => {
   };
 
   const configArrows = async (): Promise<void> => {
-    request("config", "arrows", "get").then(({ hide }) => {
+    api.request("config", "arrows", "get").then(({ hide }) => {
       setHideArrows(hide);
     });
   };
@@ -199,7 +198,7 @@ export const useCardsImpl = () => {
   const toggleArrows = (): void => {
     const newState = !hideArrows;
     setHideArrows(newState);
-    void request("config", "arrows", "put", {
+    void api.request("config", "arrows", "put", {
       body: {
         hide: newState,
       },
@@ -241,33 +240,4 @@ export const useCardsImpl = () => {
     saveIndex,
     getSavedIndex,
   };
-};
-
-export const useCardsInitialState = {
-  current: () => [] as Card[],
-  set: (tid: string, c: Card[]) => {},
-  get: (tid: string) => [] as Card[] | undefined,
-  loadTopicCards: (tid: string) => Promise.resolve(),
-  countByTopic: (tid: string) => Promise.resolve({ count: 0 }),
-  getByTopic: (tid: string) => Promise.resolve([] as Card[]),
-  resetCards: new Subject<void>(),
-  flipCard: new Subject<number>(),
-  loading: () => false,
-  hideArrows: () => false,
-  configArrows: () => Promise.resolve(),
-  toggleArrows: () => {},
-  shuffledCards: () => undefined as Card[] | undefined,
-  toggleShuffle: () => Promise.resolve(),
-  addCards: () => Promise.resolve(),
-  deleteCard: (tid: string, cid: string) => Promise.resolve(),
-  deleteMany: (ids: string[]) => Promise.resolve({ updated: false }),
-  updateCard: (
-    c: Card,
-    data: {
-      question: ControlCardFieldContent;
-      answer: ControlCardFieldContent;
-    }
-  ) => Promise.resolve(),
-  saveIndex: (i: number, tid: string) => {},
-  getSavedIndex: (tid: string) => 0,
 };

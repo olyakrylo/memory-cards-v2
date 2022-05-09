@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 import styles from "./AppImage.module.css";
-import { getImageSrc } from "../../utils/images";
+import { getImageSrc } from "../../utils/get-image-src";
 import SkeletonLoader from "../skeletonLoader";
 
 type CardImageProps = {

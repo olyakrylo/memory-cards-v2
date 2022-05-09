@@ -29,10 +29,14 @@ export const Cards = ({ user }: CardProps) => {
   const sliderRef = useRef<ReactSplide>(null);
 
   useEffect(() => {
-    if (!topics.currentTopic) return;
+    if (!topics.currentId) return;
 
-    setCurrentCardIndex(cards.getSavedIndex(topics.currentTopic._id));
-  }, [topics.currentTopic]);
+    const currIndex = cards.getSavedIndex(topics.currentId);
+    setCurrentCardIndex(currIndex);
+    if (sliderRef.current?.splide) {
+      sliderRef.current.splide.go(currIndex);
+    }
+  }, [topics.currentId]);
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -73,7 +77,7 @@ export const Cards = ({ user }: CardProps) => {
     const index = splideIndex
       ? getCardIndex(splideIndex, cardIndex)
       : cardIndex;
-    cards.saveIndex(index, topics.currentId());
+    cards.saveIndex(index, topics.currentId);
     setCurrentCardIndex(index);
   };
 
@@ -91,11 +95,11 @@ export const Cards = ({ user }: CardProps) => {
   };
 
   const isSelfTopic = (): boolean => {
-    return topics.list().some((t) => t._id === topics.currentId());
+    return topics.list().some((t) => t._id === topics.currentId);
   };
 
   const addCurrentTopic = async (): Promise<void> => {
-    await topics.updatePublicTopics([topics.currentId()]);
+    await topics.updatePublicTopics([topics.currentId]);
   };
 
   const actualCardIndex = (id: string): number => {
@@ -104,7 +108,7 @@ export const Cards = ({ user }: CardProps) => {
 
   return (
     <div className={styles.container}>
-      {topics.currentId() && (
+      {topics.currentId && (
         <>
           <div className={styles.control}>
             <IconButton
@@ -119,7 +123,7 @@ export const Cards = ({ user }: CardProps) => {
 
             <div className={styles.control__topic}>
               <Typography>{topics.currentTopic?.title}</Typography>
-              {topics.currentId() && !isSelfTopic() && (
+              {topics.currentId && !isSelfTopic() && (
                 <Tooltip title={t("add.save_topic") ?? ""}>
                   <IconButton
                     onClick={addCurrentTopic}
@@ -199,7 +203,7 @@ export const Cards = ({ user }: CardProps) => {
         </>
       )}
 
-      {topics.currentId() && (
+      {topics.currentId && (
         <CardsViewOptions
           currentCardIndex={currentCardIndex}
           onCardIndexChange={handleCardIndexChange}

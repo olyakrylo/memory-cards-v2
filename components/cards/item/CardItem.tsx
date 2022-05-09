@@ -58,7 +58,7 @@ export const CardItem = ({
 
   const handleDelete = (event: BaseSyntheticEvent): void => {
     event.stopPropagation();
-    void cards.deleteCard(topics.currentId(), card()._id);
+    void cards.deleteCard(topics.currentId, card()._id);
   };
 
   const handleShare = async (event: BaseSyntheticEvent): Promise<void> => {

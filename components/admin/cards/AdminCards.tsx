@@ -1,6 +1,5 @@
 import { Divider, Typography } from "@mui/material";
 
-import { request } from "../../../utils/request";
 import AppImage from "../../image";
 import { AdminCard, AdminTabData } from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";

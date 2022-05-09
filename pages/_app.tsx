@@ -7,6 +7,8 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import dynamic from "next/dynamic";
 import { SingletonHooksContainer } from "react-singleton-hook";
+import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
@@ -15,10 +17,7 @@ import "../utils/i18n";
 import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
 import { User } from "../shared/models";
-import { setUser } from "../redux/actions/main";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
-import { request } from "../utils/request";
+import { useUser } from "../hooks";
 
 const Notification = dynamic(() => import("../components/notification"));
 const Header = dynamic(() => import("../components/header"));
@@ -26,7 +25,6 @@ const Header = dynamic(() => import("../components/header"));
 type MyAppProps = {
   darkMode?: boolean;
   user?: User | null;
-  setUser: (u: User | null) => void;
 };
 
 function MyApp({
@@ -34,7 +32,6 @@ function MyApp({
   pageProps,
   darkMode,
   user,
-  setUser,
 }: AppProps & MyAppProps) {
   const theme = createTheme({
     palette: palette(darkMode ? "dark" : "light"),
@@ -49,6 +46,7 @@ function MyApp({
 
   const { i18n } = useTranslation();
   const router = useRouter();
+  const userService = useUser();
 
   useEffect(() => {
     if (router.pathname.startsWith("/recovery")) {
@@ -67,14 +65,8 @@ function MyApp({
       return;
     }
 
-    request("users", "", "get").then(({ user }) => {
-      if (user) {
-        setUser(user);
-      } else {
-        setUser(null);
-      }
-    });
-  }, [user, setUser]);
+    void userService.loadUser();
+  }, [user]);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -108,10 +100,8 @@ const mapStateToProps = (state: { main: State }) => {
   };
 };
 
-const mapDispatchToProps = {
-  setUser,
-};
+// const mapDispatchToProps = {
+//   setUser,
+// };
 
-export default wrapper.withRedux(
-  connect(mapStateToProps, mapDispatchToProps)(MyApp)
-);
+export default wrapper.withRedux(connect(mapStateToProps)(MyApp));

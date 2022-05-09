@@ -61,7 +61,7 @@ export const Topics = ({ user }: TopicsProps) => {
     <div className={styles.container}>
       <div
         className={classNames(styles.content, {
-          [styles.content_centered]: !topics.currentId(),
+          [styles.content_centered]: !topics.currentTopic?._id,
         })}
         aria-hidden={hidden}
       >

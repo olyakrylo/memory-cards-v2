@@ -30,10 +30,6 @@ export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
   const [menu, setMenu] = useState<null | HTMLElement>(null);
   const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
 
-  const currentTopicId = (): string => {
-    return (router.query.topic as string) ?? "";
-  };
-
   const selectTopic = async () => {
     await router.push({
       pathname: "/app",
@@ -103,7 +99,7 @@ export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
   return (
     <div
       className={styles.topic}
-      aria-selected={currentTopicId() === topic._id}
+      aria-selected={topics.currentId === topic._id}
       onClick={() => selectTopic()}
       key={topic._id}
     >
@@ -113,7 +109,7 @@ export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
         size="small"
         color="info"
         className={styles.topic__menu}
-        aria-hidden={currentTopicId() !== topic._id}
+        aria-hidden={topics.currentId !== topic._id}
         onClick={openMenu}
       >
         <MoreVert />
