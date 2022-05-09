@@ -6,6 +6,7 @@ import { ThemeProvider } from "@mui/system";
 import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import dynamic from "next/dynamic";
+import { SingletonHooksContainer } from "react-singleton-hook";
 
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
@@ -91,6 +92,7 @@ function MyApp({
       <ThemeProvider theme={theme}>
         <Header />
 
+        <SingletonHooksContainer />
         <Component {...pageProps} />
 
         <Notification />

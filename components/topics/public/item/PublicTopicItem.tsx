@@ -8,10 +8,10 @@ import {
 } from "@mui/icons-material";
 
 import SkeletonLoader from "../../../skeletonLoader";
-import { request } from "../../../../utils/request";
 import { Card, CardField, TopicExt } from "../../../../shared/models";
 import styles from "./PublicTopicItem.module.css";
 import AppImage from "../../../image";
+import { useCards } from "../../../../hooks";
 
 type PublicTopicItemProps = {
   topic: TopicExt;
@@ -25,12 +25,12 @@ export const PublicTopicItem = ({
   toggleTopic,
 }: PublicTopicItemProps) => {
   const { t } = useTranslation();
+  const cards = useCards();
 
   const [expanded, setExpanded] = useState<boolean>(false);
-  const [cards, setCards] = useState<Card[] | null>(null);
 
   const toggleExpand = () => {
-    if (!expanded && !cards) {
+    if (!expanded && !cards.get(topic._id)) {
       void loadCards();
     }
     setExpanded(!expanded);
@@ -42,10 +42,7 @@ export const PublicTopicItem = ({
   };
 
   const loadCards = async (): Promise<void> => {
-    const cards = await request("cards", "by_topic", "get", {
-      query: { topic_id: topic._id },
-    });
-    setCards(cards);
+    await cards.loadTopicCards(topic._id);
   };
 
   return (
@@ -84,10 +81,12 @@ export const PublicTopicItem = ({
 
       {expanded && (
         <div className={styles.topic__content}>
-          {!cards && <SkeletonLoader height={64} count={topic.cards_count} />}
+          {!cards.get(topic._id) && (
+            <SkeletonLoader height={64} count={topic.cards_count} />
+          )}
 
-          {cards &&
-            cards.map((card) => (
+          {cards.get(topic._id) &&
+            cards.get(topic._id)?.map((card) => (
               <div key={card._id} className={styles.card}>
                 <PublicTopicCardField card={card} field="question" />
                 <PublicTopicCardField card={card} field="answer" />

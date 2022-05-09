@@ -6,79 +6,42 @@ import {
   ViewComfyRounded,
 } from "@mui/icons-material";
 import { useTranslation } from "react-i18next";
-import { Subject } from "rxjs";
-import { useRouter } from "next/router";
 import classNames from "classnames";
 
 import styles from "./CardsViewOptions.module.css";
 import AppDialog from "../../dialog";
 import CardItem from "../item";
-import { request } from "../../../utils/request";
-import { Card, Topic, User } from "../../../shared/models";
+import { useCards, useTopics } from "../../../hooks";
 
 type CardsViewOptionsProps = {
-  loading: boolean;
-  user: User;
-  cards: Record<string, Card[]>;
-  currentTopic?: Topic;
-  currentCard: number;
+  currentCardIndex: number;
   onCardIndexChange: (v: number) => void;
-  hideArrows: boolean;
-  setHideArrows: (hide: boolean) => void;
-  shuffledCards?: Card[];
   canEditTopic: boolean;
-  flipCard: Subject<number>;
 };
 
 export const CardsViewOptions = ({
-  loading,
-  user,
-  cards,
-  currentTopic,
-  currentCard,
+  currentCardIndex,
   onCardIndexChange,
-  shuffledCards,
-  hideArrows,
-  setHideArrows,
   canEditTopic,
-  flipCard,
 }: CardsViewOptionsProps) => {
   const { t } = useTranslation();
-  const router = useRouter();
+  const topics = useTopics();
+  const cards = useCards();
 
   const [allCardsOpen, setAllCardsOpen] = useState<boolean>(false);
   const [cardInputValue, setCardInputValue] = useState<string>("");
 
-  const currentTopicId = (): string => {
-    return (router.query.topic as string) ?? "";
-  };
-
   useEffect(() => {
-    request("config", "arrows", "get").then(({ hide }) => {
-      setHideArrows(hide);
-    });
-  }, [user]);
-
-  useEffect(() => {
-    setCardInputValue((currentCard + 1).toString());
-  }, [currentCard]);
+    setCardInputValue((currentCardIndex + 1).toString());
+  }, [currentCardIndex]);
 
   const toggleArrows = () => {
-    const newState = !hideArrows;
-    setHideArrows(newState);
-    void request("config", "arrows", "put", {
-      body: {
-        hide: newState,
-      },
-    });
+    cards.toggleArrows();
   };
 
   const handleCardInput = (event: BaseSyntheticEvent): void => {
     const { value } = event.target;
-    if (
-      !/^[0-9]*$/.test(value) ||
-      parseInt(value) > cards[currentTopicId()].length
-    ) {
+    if (!/^[0-9]*$/.test(value) || parseInt(value) > cards.current().length) {
       return;
     }
     setCardInputValue(value);
@@ -87,11 +50,11 @@ export const CardsViewOptions = ({
   const handleKeyUp = (event: any): void => {
     if (event.code !== "Enter") return;
     event.target.blur();
-    changeCardIndex();
+    changeCardIndex(event);
   };
 
-  const changeCardIndex = (): void => {
-    onCardIndexChange(parseInt(cardInputValue, 10) - 1);
+  const changeCardIndex = (event: BaseSyntheticEvent): void => {
+    onCardIndexChange(parseInt(event.target.value, 10) - 1);
   };
 
   const openAllCards = () => {
@@ -103,7 +66,7 @@ export const CardsViewOptions = ({
   };
 
   const actualCardIndex = (id: string): number => {
-    return cards[currentTopicId()]?.findIndex((c) => c._id === id) ?? 0;
+    return cards.current().findIndex((c) => c._id === id) ?? 0;
   };
 
   return (
@@ -111,14 +74,14 @@ export const CardsViewOptions = ({
       <Tooltip title={t("ui.show_arrows") ?? ""}>
         <IconButton
           onClick={toggleArrows}
-          color={hideArrows ? "info" : "primary"}
-          disabled={loading || !cards[currentTopicId()]?.length}
+          color={cards.hideArrows() ? "info" : "primary"}
+          disabled={cards.loading() || !cards.current().length}
         >
           <CodeRounded />
         </IconButton>
       </Tooltip>
 
-      {!!cards[currentTopicId()]?.length && (
+      {!!cards.current().length && (
         <Typography className={styles.counter}>
           <input
             className={styles.counter__input}
@@ -129,14 +92,14 @@ export const CardsViewOptions = ({
           />{" "}
           /{" "}
           <span className={styles.counter__total}>
-            {cards[currentTopicId()].length}
+            {cards.current().length}
           </span>
         </Typography>
       )}
 
       <IconButton
         onClick={openAllCards}
-        disabled={loading || !cards[currentTopicId()]?.length}
+        disabled={cards.loading() || !cards.current().length}
       >
         <ViewComfyRounded />
       </IconButton>
@@ -147,12 +110,12 @@ export const CardsViewOptions = ({
         grayContent
         title={
           <Typography color={"primary"} textAlign={"center"}>
-            {currentTopic?.title.toLowerCase()}
+            {topics.currentTopic?.title.toLowerCase()}
           </Typography>
         }
         content={
           <div className={styles.allCards}>
-            {(shuffledCards ?? cards[currentTopicId()])?.map((card, i) => (
+            {(cards.shuffledCards() ?? cards.current()).map((card, i) => (
               <div
                 key={card._id}
                 className={classNames({
@@ -162,9 +125,8 @@ export const CardsViewOptions = ({
               >
                 <CardItem
                   index={actualCardIndex(card._id)}
-                  showArrows={false}
                   canEditTopic={canEditTopic}
-                  flipCard={flipCard}
+                  noArrows
                 />
               </div>
             ))}

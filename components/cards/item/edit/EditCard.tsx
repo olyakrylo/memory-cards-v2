@@ -2,19 +2,19 @@ import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { EditRounded } from "@mui/icons-material";
 
-import { Card, CardFieldContent, ShortCard } from "../../../../shared/models";
-import { request } from "../../../../utils/request";
+import { Card } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
 import CardControl from "../../control";
-import { uploadImage } from "../../../../utils/images";
 import { ControlCardFieldContent } from "../../control/CardControl";
+import { useCards } from "../../../../hooks";
 
 type EditCardProps = {
   card: Card;
-  onUpdateCard: (card: Card) => void;
 };
 
-export const EditCard = ({ card, onUpdateCard }: EditCardProps) => {
+export const EditCard = ({ card }: EditCardProps) => {
+  const cards = useCards();
+
   const [editCardOpen, setEditCardOpen] = useState<boolean>(false);
 
   const openEditCardDialog = (e: any) => {
@@ -22,34 +22,13 @@ export const EditCard = ({ card, onUpdateCard }: EditCardProps) => {
     setEditCardOpen(true);
   };
 
-  const onCloseEditCardDialog = async (
-    data?: {
-      question: ControlCardFieldContent;
-      answer: ControlCardFieldContent;
-    },
-    cardsFromFile?: ShortCard[],
-    card?: Card
-  ) => {
+  const onCloseEditCardDialog = async (data?: {
+    question: ControlCardFieldContent;
+    answer: ControlCardFieldContent;
+  }) => {
     setEditCardOpen(false);
-    if (!card || !data || isSame(data)) return;
-
-    if (data.question.image && typeof data.question.image !== "string") {
-      data.question.image = await uploadImage(data.question.image as File);
-    }
-    if (data.answer.image && typeof data.answer.image !== "string") {
-      data.answer.image = await uploadImage(data.answer.image as File);
-    }
-
-    const updatedCard = await request("cards", "", "patch", {
-      body: {
-        ...card,
-        question: data.question as CardFieldContent,
-        answer: data.answer as CardFieldContent,
-      },
-    });
-    if (updatedCard) {
-      onUpdateCard(updatedCard);
-    }
+    if (!data || isSame(data)) return;
+    await cards.updateCard(card, data);
   };
 
   const isSame = (newData: {
@@ -76,7 +55,7 @@ export const EditCard = ({ card, onUpdateCard }: EditCardProps) => {
       <CardControl
         card={card}
         open={editCardOpen}
-        onClose={onCloseEditCardDialog}
+        onClose={(data) => onCloseEditCardDialog(data)}
       />
     </IconButton>
   );

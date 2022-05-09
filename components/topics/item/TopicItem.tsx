@@ -11,28 +11,20 @@ import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Topic, User } from "../../../shared/models";
-import { request } from "../../../utils/request";
 import styles from "../Topics.module.css";
 import { AppNotification } from "../../../shared/notification";
 import EditTopic from "./edit";
+import { useTopics } from "../../../hooks";
 
 type TopicItemProps = {
   topic: Topic;
-  topics: Topic[];
   user?: User | null;
-  setTopics: (t: Topic[]) => void;
   setNotification: (n: AppNotification) => void;
 };
 
-export const TopicItem = ({
-  user,
-  topic,
-  topics: topicsList,
-  setTopics,
-  setNotification,
-}: TopicItemProps) => {
+export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
   const router = useRouter();
-
+  const topics = useTopics();
   const { t } = useTranslation();
 
   const [menu, setMenu] = useState<null | HTMLElement>(null);
@@ -50,40 +42,27 @@ export const TopicItem = ({
   };
 
   const deleteTopic = async () => {
-    if (!user) return;
-    const { updated } = await request("topics", "", "delete", {
-      body: {
-        user_id: user?._id,
-        topic_id: topic._id,
-      },
+    const { updatedTopics } = await topics.deleteTopic(topic._id);
+    if (!updatedTopics) return;
+
+    setNotification({
+      severity: "warning",
+      text: "ui.topic_deleted",
+      translate: true,
+      autoHide: 5000,
     });
-    if (updated) {
-      const newTopics = topicsList.filter((t) => t._id !== topic._id);
-      setTopics(newTopics);
 
-      setNotification({
-        severity: "warning",
-        text: "ui.topic_deleted",
-        translate: true,
-        autoHide: 5000,
-      });
-
-      await router.push({
-        pathname: router.pathname,
-        query: { topic: newTopics[0]._id },
-      });
-    }
+    await router.push({
+      pathname: router.pathname,
+      query: { topic: updatedTopics[0]?._id ?? "" },
+    });
   };
 
   const copyTopic = async () => {
-    const { topics, new_id } = await request("topics", "copy", "put", {
-      query: { id: topic._id },
-      body: { title: topic.title },
-    });
-    setTopics(topics);
+    const { newId } = await topics.copyTopic(topic);
     await router.push({
       pathname: router.pathname,
-      query: { topic: new_id },
+      query: { topic: newId },
     });
   };
 
@@ -169,7 +148,7 @@ export const TopicItem = ({
             <EditTopic
               topic={topic}
               dialogOpen={editDialogOpen}
-              closeDialog={closeEditDialog}
+              onDialogClose={closeEditDialog}
             />
           </MenuItem>
         )}

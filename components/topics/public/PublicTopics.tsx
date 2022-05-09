@@ -5,19 +5,15 @@ import { Button, debounce, TextField, Typography } from "@mui/material";
 
 import styles from "./PublicTopics.module.css";
 import mainStyles from "../Topics.module.css";
-import { request } from "../../../utils/request";
-import { Topic, TopicExt } from "../../../shared/models";
+import { TopicExt } from "../../../shared/models";
 import AppDialog from "../../dialog";
 import SkeletonLoader from "../../skeletonLoader";
 import PublicTopicItem from "./item";
+import { useTopics } from "../../../hooks";
 
-type PublicTopicsProps = {
-  topics: Topic[];
-  setTopics: (topics: Topic[]) => void;
-};
-
-export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
+export const PublicTopics = () => {
   const { t } = useTranslation();
+  const topics = useTopics();
 
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -35,11 +31,12 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
     setPublicTopics([]);
     setFilteredTopics([]);
 
-    request("topics", "public_count", "get")
+    topics
+      .getPublicCount()
       .then(({ count }) => {
         setCount(count);
       })
-      .then(() => request("topics", "public", "get"))
+      .then(() => topics.getPublicList())
       .then((data) => {
         setPublicTopics(data);
         setFilteredTopics(data);
@@ -69,12 +66,7 @@ export const PublicTopics = ({ topics, setTopics }: PublicTopicsProps) => {
   };
 
   const updateTopics = async (): Promise<void> => {
-    const updatedTopics = await request("topics", "public", "put", {
-      body: {
-        topics_id: selectedTopics,
-      },
-    });
-    setTopics([...topics, ...updatedTopics]);
+    await topics.updatePublicTopics(selectedTopics);
     setDialogOpen(false);
   };
 

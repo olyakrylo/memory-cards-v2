@@ -5,36 +5,21 @@ import { AddBoxRounded } from "@mui/icons-material";
 import { useRouter } from "next/router";
 
 import mainStyles from "../Topics.module.css";
-import { Topic, User } from "../../../shared/models";
 import TopicControl from "../control";
-import { request } from "../../../utils/request";
+import { useTopics } from "../../../hooks";
 
-type AddTopicProps = {
-  user?: User | null;
-  topics: Topic[];
-  setTopics: (t: Topic[]) => void;
-};
-
-export const AddTopic = ({ user, topics, setTopics }: AddTopicProps) => {
+export const AddTopic = () => {
   const router = useRouter();
+  const topics = useTopics();
+
   const { t } = useTranslation();
 
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const addTopic = async (title: string, isPublic: boolean): Promise<void> => {
-    if (!user) return;
-
-    const newTopic = await request("topics", "", "put", {
-      body: {
-        users_id: [user._id],
-        author_id: user._id,
-        title,
-        public: isPublic,
-      },
-    });
+    const { newTopic } = await topics.addTopic(title, isPublic);
 
     if (newTopic) {
-      setTopics([...topics, newTopic]);
       closeDialog();
       await router.push({
         pathname: "/app",

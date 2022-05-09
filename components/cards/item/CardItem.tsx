@@ -1,60 +1,47 @@
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Subject } from "rxjs";
 import { Divider, IconButton, Tooltip } from "@mui/material";
 import { DeleteTwoTone, Share, ZoomInMapRounded } from "@mui/icons-material";
-import { useRouter } from "next/router";
 import classNames from "classnames";
+import ReactCardFlip from "react-card-flip";
 
 import { Card } from "../../../shared/models";
 import styles from "./CardItem.module.css";
-import ReactCardFlip from "react-card-flip";
 import CardMainContent from "./mainContent";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
 import CardDialogContent from "./dialogContent";
 import { AppNotification } from "../../../shared/notification";
-import { request } from "../../../utils/request";
+import { useCards, useTopics } from "../../../hooks";
+
 type CardItemProps = {
   index: number;
-  cards: Record<string, Card[]>;
   setCards: (id: string, c: Card[]) => void;
-  showArrows: boolean;
   canEditTopic: boolean;
-  resetCards?: Subject<void>;
-  flipCard: Subject<number>;
   setNotification: (n: AppNotification) => void;
+  noArrows?: boolean;
 };
 
 export const CardItem = ({
   index,
-  cards,
-  setCards,
-  showArrows,
   canEditTopic,
-  resetCards,
-  flipCard,
   setNotification,
+  noArrows,
 }: CardItemProps) => {
   const { t } = useTranslation();
-  const router = useRouter();
+  const cards = useCards();
+  const topics = useTopics();
 
   const [flipped, setFlipped] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
-  const currentTopicId = (): string => {
-    return (router.query.topic as string) ?? "";
-  };
-
   const card = (): Card => {
-    return cards[currentTopicId()][index];
+    return cards.current()[index];
   };
 
   useEffect(() => {
-    if (resetCards) {
-      resetCards.subscribe(() => setFlipped(false));
-    }
-    flipCard.subscribe((num) => {
+    cards.resetCards.subscribe(() => setFlipped(false));
+    cards.flipCard.subscribe((num) => {
       if (num !== index) return;
       setFlipped(!flipped);
     });
@@ -69,23 +56,9 @@ export const CardItem = ({
     setDialogOpen(false);
   };
 
-  const handleDelete = async (event: BaseSyntheticEvent): Promise<void> => {
+  const handleDelete = (event: BaseSyntheticEvent): void => {
     event.stopPropagation();
-    await request("cards", "", "delete", { query: { ids: [card()._id] } });
-    const updatedCards = cards[currentTopicId()].filter(
-      (c) => c._id !== card()._id
-    );
-    setCards(currentTopicId(), updatedCards);
-  };
-
-  const handleUpdate = async (updatedCard: Card): Promise<void> => {
-    setCards(
-      currentTopicId(),
-      cards[currentTopicId()].map((c) => {
-        if (c._id === updatedCard._id) return updatedCard;
-        return c;
-      })
-    );
+    void cards.deleteCard(topics.currentId(), card()._id);
   };
 
   const handleShare = async (event: BaseSyntheticEvent): Promise<void> => {
@@ -117,7 +90,7 @@ export const CardItem = ({
         isFlipped={flipped}
         flipDirection="vertical"
         containerClassName={classNames(styles.cardContainer, {
-          [styles.cardContainer_arrows]: showArrows,
+          [styles.cardContainer_arrows]: noArrows ? false : !cards.hideArrows(),
         })}
       >
         <div className={styles.card} onClick={toggleCard}>
@@ -138,9 +111,7 @@ export const CardItem = ({
             </IconButton>
           )}
 
-          {card()._id && canEditTopic && (
-            <EditCard card={card()} onUpdateCard={handleUpdate} />
-          )}
+          {card()._id && canEditTopic && <EditCard card={card()} />}
 
           {card()._id && (
             <Tooltip title={t("ui.share") ?? ""}>
@@ -156,7 +127,9 @@ export const CardItem = ({
         </div>
 
         <div
-          className={`${styles.card} ${showArrows && styles.card_arrows}`}
+          className={classNames(styles.card, {
+            [styles.card_arrows]: !cards.hideArrows(),
+          })}
           onClick={toggleCard}
         >
           <CardMainContent

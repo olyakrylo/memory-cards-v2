@@ -10,9 +10,9 @@ import {
   CardField,
   CardFieldContent,
   ShortCard,
-  Topic,
 } from "../../../shared/models";
 import { AppNotification } from "../../../shared/notification";
+import { useTopics } from "../../../hooks";
 
 export type ControlCardFieldContent = {
   text: string;
@@ -20,27 +20,26 @@ export type ControlCardFieldContent = {
 };
 
 type CardControlProps = {
-  currentTopic?: Topic;
   open: boolean;
   onClose: (
     data?: {
       question: ControlCardFieldContent;
       answer: ControlCardFieldContent;
     },
-    cardsFromFile?: ShortCard[],
-    card?: Card
+    cardsFromFile?: ShortCard[]
   ) => void;
   card?: Card;
   setNotification: (n: AppNotification) => void;
 };
 
 export const CardControl = ({
-  currentTopic,
   open,
   onClose,
   card,
   setNotification,
 }: CardControlProps) => {
+  const topics = useTopics();
+
   const [question, setQuestion] = useState<ControlCardFieldContent>({
     text: "",
   });
@@ -65,7 +64,7 @@ export const CardControl = ({
 
   const onSave = (e: any) => {
     e.stopPropagation();
-    onClose({ question, answer }, cardsFromFile, card);
+    onClose({ question, answer }, cardsFromFile);
   };
 
   const onCloseDialog = (e: any) => {
@@ -139,7 +138,7 @@ export const CardControl = ({
       title={
         <>
           {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
-          <span className={styles.topic}>{currentTopic?.title}</span>
+          <span className={styles.topic}>{topics.currentTopic?.title}</span>
         </>
       }
       content={

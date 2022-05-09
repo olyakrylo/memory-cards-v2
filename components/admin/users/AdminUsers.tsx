@@ -3,15 +3,17 @@ import { useState } from "react";
 
 import { Topic, User } from "../../../shared/models";
 import styles from "./AdminUsers.module.css";
-import { request } from "../../../utils/request";
 import SkeletonLoader from "../../skeletonLoader";
 import { AdminData } from "../AdminData";
 import { AdminTabData } from "../../../shared/admin";
+import { useTopics } from "../../../hooks";
 
 type AdminUsersProps = AdminTabData<User>;
 
 export const AdminUsers = ({ data, count }: AdminUsersProps) => {
-  const [topics, setTopics] = useState<
+  const topics = useTopics();
+
+  const [topicsData, setTopicsData] = useState<
     Record<
       string,
       {
@@ -22,24 +24,19 @@ export const AdminUsers = ({ data, count }: AdminUsersProps) => {
   >({});
 
   const handleExpand = (id: string, expanded: boolean) => {
-    if (expanded && !topics[id]) {
+    if (expanded && !topicsData[id]) {
       void loadTopics(id);
     }
   };
 
-  const loadTopics = async (id: string) => {
-    const query = { id };
-    const { count } = await request("topics", "by_author_count", "get", {
-      query,
-    });
-    setTopics({ ...topics, [id]: { count } });
+  const loadTopics = async (authorId: string) => {
+    const { count } = await topics.getByAuthorCount(authorId);
+    setTopicsData({ ...topicsData, [authorId]: { count } });
 
-    const { topics: data } = await request("topics", "by_author", "get", {
-      query,
-    });
-    setTopics({
-      ...topics,
-      [id]: { ...topics[id], data },
+    const { topics: data } = await topics.getByAuthorList(authorId);
+    setTopicsData({
+      ...topicsData,
+      [authorId]: { ...topicsData[authorId], data },
     });
   };
 
@@ -64,11 +61,11 @@ export const AdminUsers = ({ data, count }: AdminUsersProps) => {
         </Typography>
 
         <div className={styles.topicsList}>
-          {!topics[user._id]?.data && (
-            <SkeletonLoader count={topics[user._id]?.count} height={24} />
+          {!topicsData[user._id]?.data && (
+            <SkeletonLoader count={topicsData[user._id]?.count} height={24} />
           )}
 
-          {topics[user._id]?.data?.map((topic) => (
+          {topicsData[user._id]?.data?.map((topic) => (
             <Typography key={topic._id}>{topic.title}</Typography>
           ))}
         </div>
