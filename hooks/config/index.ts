@@ -26,6 +26,7 @@ export const useConfigImpl = () => {
   };
 
   return {
+    darkMode,
     toggleColorMode,
     getColorMode,
   };

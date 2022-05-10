@@ -3,15 +3,11 @@ import { Brightness4 } from "@mui/icons-material";
 import Link from "next/link";
 
 import styles from "./Header.module.css";
-import { useConfig } from "../../hooks";
-import { User } from "../../shared/models";
+import { useConfig, useUser } from "../../hooks";
 
-type HeaderProps = {
-  user?: User | null;
-};
-
-export const Header = ({ user }: HeaderProps) => {
+export const Header = () => {
   const config = useConfig();
+  const { info: user } = useUser();
 
   useEffect(() => {
     console.log("here");

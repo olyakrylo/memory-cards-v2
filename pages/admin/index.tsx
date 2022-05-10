@@ -3,11 +3,10 @@ import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
 import { BaseSyntheticEvent, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
-import { connect } from "react-redux";
 
 import { ADMIN_DATA_LIMIT, AdminCard, AdminTabData } from "../../shared/admin";
 import { Topic, User } from "../../shared/models";
-import { State } from "../../shared/redux";
+import { useUser, useUserService } from "../../hooks";
 
 const DynamicTopics = dynamic(() => import("../../components/admin/topics"), {
   ssr: false,
@@ -29,7 +28,6 @@ const CircularProgress = dynamic(
 const TABS = ["users", "topics", "cards", "images"];
 
 type AllDataProps = {
-  user?: User | null;
   SSRData: {
     users: AdminTabData<User>;
     topics: AdminTabData<Topic>;
@@ -38,8 +36,11 @@ type AllDataProps = {
   };
 };
 
-const AdminPanel = ({ SSRData, user }: AllDataProps) => {
+const AdminPanel = ({ SSRData }: AllDataProps) => {
+  useUserService();
+
   const router = useRouter();
+  const { info: user } = useUser();
 
   const [checking, setChecking] = useState(true);
   const [tabsValue, setTabsValue] = useState<typeof TABS[number]>(TABS[0]);
@@ -155,8 +156,4 @@ export const getServerSideProps: GetServerSideProps = async ({
   };
 };
 
-const mapStateToProps = (state: { main: State }) => ({
-  user: state.main.user,
-});
-
-export default connect(mapStateToProps)(AdminPanel);
+export default AdminPanel;

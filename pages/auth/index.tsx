@@ -3,12 +3,13 @@ import dynamic from "next/dynamic";
 
 import styles from "./Auth.module.css";
 import { AuthCredentials, AuthMode } from "../../shared/auth";
-import { useUser } from "../../hooks";
+import { useUser, useUserService } from "../../hooks";
 
 const AuthSide = dynamic(() => import("../../components/authSide"));
 const CardFlip = dynamic(() => import("react-card-flip"));
 
 const Auth = () => {
+  useUserService();
   const userService = useUser();
 
   const [mode, setMode] = useState<AuthMode>("signIn");

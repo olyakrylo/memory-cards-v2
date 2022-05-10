@@ -6,24 +6,20 @@ import { ShuffleRounded, AddRounded } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
 import classNames from "classnames";
 
-import { User } from "../../shared/models";
 import styles from "./Cards.module.css";
 import { getCardsMatrix, getPartStartIndex, getCardIndex } from "./utils";
 import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
 import CardsViewOptions from "./viewOptions";
-import { useCards, useCardsService, useTopics } from "../../hooks";
+import { useCards, useCardsService, useTopics, useUser } from "../../hooks";
 
-type CardProps = {
-  user?: User | null;
-};
-
-export const Cards = ({ user }: CardProps) => {
+export const Cards = () => {
   const { t } = useTranslation();
   const cards = useCards();
   const cardsService = useCardsService();
   const topics = useTopics();
+  const { info: user } = useUser();
 
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
 

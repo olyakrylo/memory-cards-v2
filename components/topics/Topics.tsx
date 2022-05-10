@@ -12,16 +12,14 @@ import TopicItem from "./item";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
 import AddTopic from "./add";
-import { useTopics, useTopicsService } from "../../hooks";
+import { useTopics, useTopicsService, useUser } from "../../hooks";
 
-type TopicsProps = {
-  user?: User | null;
-};
-
-export const Topics = ({ user }: TopicsProps) => {
-  const { t } = useTranslation();
+export const Topics = () => {
   useTopicsService();
+
+  const { t } = useTranslation();
   const topics = useTopics();
+  const { info: user } = useUser();
 
   const [loading, setLoading] = useState<boolean>(true);
   const [hidden, setHidden] = useState<boolean>(false);

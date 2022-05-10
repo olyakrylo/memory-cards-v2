@@ -1,13 +1,21 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+
 import { setNotification } from "../../redux/actions/main";
 import { AppNotification } from "../../shared/notification";
-import { AlertColor } from "@mui/material";
+import { State } from "../../shared/redux";
 
 export const useNotificationImpl = () => {
   const dispatch = useDispatch();
 
+  const notification = useSelector(
+    (state: { main: State }) => state.main.notification
+  );
   const dispatchNotification = (n: AppNotification) => {
     dispatch(setNotification(n));
+  };
+
+  const set = (n: AppNotification): void => {
+    dispatchNotification(n);
   };
 
   const setError = (text: string, translate = true, autoHide = 5000) => {
@@ -37,5 +45,5 @@ export const useNotificationImpl = () => {
     });
   };
 
-  return { setError, setWarning, setSuccess };
+  return { current: notification, set, setError, setWarning, setSuccess };
 };

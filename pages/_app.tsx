@@ -1,4 +1,3 @@
-import { connect } from "react-redux";
 import Head from "next/head";
 import "@splidejs/splide/dist/css/splide.min.css";
 import { createTheme, StyledEngineProvider } from "@mui/material/styles";
@@ -7,34 +6,22 @@ import { useTranslation } from "react-i18next";
 import { Helmet } from "react-helmet";
 import dynamic from "next/dynamic";
 import { SingletonHooksContainer } from "react-singleton-hook";
-import { useRouter } from "next/router";
-import { useEffect } from "react";
 
 import "../styles/globals.css";
 import type { AppProps } from "next/app";
 import { wrapper } from "../redux/store";
 import "../utils/i18n";
-import { State } from "../shared/redux";
 import { palette } from "../utils/palette";
-import { User } from "../shared/models";
-import { useUser } from "../hooks";
+import { useConfig } from "../hooks";
 
 const Notification = dynamic(() => import("../components/notification"));
 const Header = dynamic(() => import("../components/header"));
 
-type MyAppProps = {
-  darkMode?: boolean;
-  user?: User | null;
-};
+function MyApp({ Component, pageProps }: AppProps) {
+  const config = useConfig();
 
-function MyApp({
-  Component,
-  pageProps,
-  darkMode,
-  user,
-}: AppProps & MyAppProps) {
   const theme = createTheme({
-    palette: palette(darkMode ? "dark" : "light"),
+    palette: palette(config.darkMode ? "dark" : "light"),
     typography: {
       fontSize: 14,
       fontWeightLight: 300,
@@ -45,28 +32,6 @@ function MyApp({
   });
 
   const { i18n } = useTranslation();
-  const router = useRouter();
-  const userService = useUser();
-
-  useEffect(() => {
-    if (router.pathname.startsWith("/recovery")) {
-      return;
-    }
-
-    if (user) {
-      if (router.pathname === "/auth") {
-        void router.push("/app");
-      }
-      return;
-    }
-
-    if (user === null) {
-      void router.push("/auth");
-      return;
-    }
-
-    void userService.loadUser();
-  }, [user]);
 
   return (
     <StyledEngineProvider injectFirst>
@@ -93,15 +58,4 @@ function MyApp({
   );
 }
 
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    darkMode: state.main.darkMode,
-    user: state.main.user,
-  };
-};
-
-// const mapDispatchToProps = {
-//   setUser,
-// };
-
-export default wrapper.withRedux(connect(mapStateToProps)(MyApp));
+export default wrapper.withRedux(MyApp);

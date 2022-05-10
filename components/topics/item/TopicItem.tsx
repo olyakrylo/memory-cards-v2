@@ -10,19 +10,19 @@ import {
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { Topic, User } from "../../../shared/models";
+import { Topic } from "../../../shared/models";
 import styles from "../Topics.module.css";
 import EditTopic from "./edit";
-import { useNotification, useTopics } from "../../../hooks";
+import { useNotification, useTopics, useUser } from "../../../hooks";
 
 type TopicItemProps = {
   topic: Topic;
-  user?: User | null;
 };
 
-export const TopicItem = ({ user, topic }: TopicItemProps) => {
+export const TopicItem = ({ topic }: TopicItemProps) => {
   const router = useRouter();
   const topics = useTopics();
+  const { info: user } = useUser();
   const notification = useNotification();
   const { t } = useTranslation();
 

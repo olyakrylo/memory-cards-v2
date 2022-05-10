@@ -1,10 +1,11 @@
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { User } from "../../shared/models";
 import { setUser } from "../../redux/actions/main";
 import { AuthCredentials } from "../../shared/auth";
 import { useApi, useNotification } from "../index";
 import { UpdatedResult } from "../../shared/api";
+import { State } from "../../shared/redux";
 
 export const useUserImpl = () => {
   const dispatch = useDispatch();
@@ -12,6 +13,7 @@ export const useUserImpl = () => {
   const notification = useNotification();
   const api = useApi();
 
+  const user = useSelector((state: { main: State }) => state.main.user);
   const dispatchUser = (user?: User | null) => {
     dispatch(setUser(user));
   };
@@ -106,6 +108,7 @@ export const useUserImpl = () => {
   };
 
   return {
+    info: user,
     loadUser,
     logIn,
     signUp,
