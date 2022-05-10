@@ -70,11 +70,3 @@ export const getUpdatedShuffledCards = (
 
   return updatedCards;
 };
-
-export const savedCardIndex = (router: NextRouter): number => {
-  const startIndexFromUrl = parseInt((router.query.card as string) ?? "");
-  const startIndexFromStorage = parseInt(
-    sessionStorage.getItem(router.query.topic as string) ?? ""
-  );
-  return startIndexFromUrl || startIndexFromStorage || 0;
-};

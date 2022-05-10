@@ -10,9 +10,8 @@ import {
   CardField,
   CardFieldContent,
   ShortCard,
-  Topic,
 } from "../../../shared/models";
-import { AppNotification } from "../../../shared/notification";
+import { useTopics, useNotification } from "../../../hooks";
 
 export type ControlCardFieldContent = {
   text: string;
@@ -20,27 +19,21 @@ export type ControlCardFieldContent = {
 };
 
 type CardControlProps = {
-  currentTopic?: Topic;
   open: boolean;
   onClose: (
     data?: {
       question: ControlCardFieldContent;
       answer: ControlCardFieldContent;
     },
-    cardsFromFile?: ShortCard[],
-    card?: Card
+    cardsFromFile?: ShortCard[]
   ) => void;
   card?: Card;
-  setNotification: (n: AppNotification) => void;
 };
 
-export const CardControl = ({
-  currentTopic,
-  open,
-  onClose,
-  card,
-  setNotification,
-}: CardControlProps) => {
+export const CardControl = ({ open, onClose, card }: CardControlProps) => {
+  const topics = useTopics();
+  const notification = useNotification();
+
   const [question, setQuestion] = useState<ControlCardFieldContent>({
     text: "",
   });
@@ -65,7 +58,7 @@ export const CardControl = ({
 
   const onSave = (e: any) => {
     e.stopPropagation();
-    onClose({ question, answer }, cardsFromFile, card);
+    onClose({ question, answer }, cardsFromFile);
   };
 
   const onCloseDialog = (e: any) => {
@@ -104,12 +97,7 @@ export const CardControl = ({
         });
       setCardsFromFile(cardsData);
     } catch {
-      setNotification({
-        severity: "error",
-        autoHide: 5000,
-        translate: true,
-        text: "add.invalid_file_content",
-      });
+      notification.setError("add.invalid_file_content");
     }
   };
 
@@ -139,7 +127,7 @@ export const CardControl = ({
       title={
         <>
           {t(card ? "add.edit_card_in" : "add.new_card_for")}{" "}
-          <span className={styles.topic}>{currentTopic?.title}</span>
+          <span className={styles.topic}>{topics.currentTopic?.title}</span>
         </>
       }
       content={

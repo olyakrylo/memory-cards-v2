@@ -3,34 +3,33 @@ import { Divider, Typography } from "@mui/material";
 
 import { Card as CardType, Topic } from "../../../shared/models";
 import { AdminTabData } from "../../../shared/admin";
-import { request } from "../../../utils/request";
 import SkeletonLoader from "../../skeletonLoader";
 import { AdminData } from "../AdminData";
 import styles from "./AdminTopics.module.css";
 import AppImage from "../../image";
+import { useCards } from "../../../hooks";
 
 type AdminTopicsProps = AdminTabData<Topic>;
 
 export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
-  const [cards, setCards] = useState<
+  const cards = useCards();
+
+  const [cardsData, setCardsData] = useState<
     Record<string, { count: number; data?: CardType[] }>
   >({});
 
   const handleExpand = (id: string, expanded: boolean) => {
-    if (expanded && !cards[id]) {
+    if (expanded && !cardsData[id]) {
       void loadCards(id);
     }
   };
 
   const loadCards = async (id: string) => {
-    const query = { topic_id: id };
-    const { count } = await request("cards", "by_topic_count", "get", {
-      query,
-    });
-    setCards({ ...cards, [id]: { count } });
+    const { count } = await cards.countByTopic(id);
+    setCardsData({ ...cardsData, [id]: { count } });
 
-    const data = await request("cards", "by_topic", "get", { query });
-    setCards({ ...cards, [id]: { ...cards[id], data } });
+    const data = await cards.getByTopic(id);
+    setCardsData({ ...cardsData, [id]: { ...cardsData[id], data } });
   };
 
   const topicTitle = (topic: Topic): string => {
@@ -56,11 +55,11 @@ export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
         </Typography>
 
         <div className={styles.cardsList}>
-          {!cards[topic._id]?.data && (
-            <SkeletonLoader count={cards[topic._id]?.count} height={18} />
+          {!cardsData[topic._id]?.data && (
+            <SkeletonLoader count={cardsData[topic._id]?.count} height={18} />
           )}
 
-          {cards[topic._id]?.data?.map((card) => (
+          {cardsData[topic._id]?.data?.map((card) => (
             <div key={card._id} className={styles.card}>
               {card.question.text && (
                 <Typography fontWeight={500}>{card.question.text}</Typography>

@@ -1,18 +1,18 @@
 import { Divider, Typography } from "@mui/material";
 
-import { request } from "../../../utils/request";
 import AppImage from "../../image";
 import { AdminCard, AdminTabData } from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";
 import { AdminData } from "../AdminData";
+import { useCards } from "../../../hooks";
 
 type AdminCardsProps = AdminTabData<AdminCard>;
 
 export const AdminCards = ({ data, count }: AdminCardsProps) => {
+  const cards = useCards();
+
   const deleteCards = (selectedIds: string[]): Promise<UpdatedResult> => {
-    return request("cards", "", "delete", {
-      query: { ids: selectedIds },
-    });
+    return cards.deleteMany(selectedIds);
   };
 
   const cardTitle = (card: AdminCard): string => {

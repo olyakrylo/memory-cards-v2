@@ -6,9 +6,9 @@ import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
 import styles from "./CardControlField.module.css";
 import { ControlCardFieldContent } from "../CardControl";
 import { CardField, CardFieldContent } from "../../../../shared/models";
-import { AppNotification } from "../../../../shared/notification";
 import AppImage from "../../../image";
 import SkeletonLoader from "../../../skeletonLoader";
+import { useNotification } from "../../../../hooks";
 
 const IMAGE_HEIGHT = 250;
 
@@ -19,7 +19,6 @@ type CardControlFieldProps = {
   handleChange: (data: Partial<CardFieldContent>) => void;
   handleImage: (f?: File) => void;
   disabled: boolean;
-  setNotification: (n: AppNotification) => void;
 };
 
 export const CardControlField = ({
@@ -29,9 +28,9 @@ export const CardControlField = ({
   handleChange,
   handleImage,
   disabled,
-  setNotification,
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
+  const notification = useNotification();
 
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -48,12 +47,7 @@ export const CardControlField = ({
 
     if (file.type.startsWith("image")) {
       if (file.size > 10 * 1024 * 1024) {
-        setNotification({
-          severity: "error",
-          autoHide: 5000,
-          text: "add.too_large_image",
-          translate: true,
-        });
+        notification.setError("add.too_large_image");
         return;
       }
 
@@ -76,12 +70,7 @@ export const CardControlField = ({
     } else if (file.type.startsWith("text")) {
       const text = await file.text();
       if (!text) {
-        setNotification({
-          autoHide: 5000,
-          severity: "error",
-          text: "add.invalid_file_content",
-          translate: true,
-        });
+        notification.setError("add.invalid_file_content");
       } else {
         handleChange({ text });
 

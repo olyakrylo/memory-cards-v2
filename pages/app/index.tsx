@@ -1,10 +1,8 @@
-import { connect } from "react-redux";
 import { CircularProgress } from "@mui/material";
 import dynamic from "next/dynamic";
 
-import { State } from "../../shared/redux";
-import { User } from "../../shared/models";
 import styles from "./App.module.css";
+import { useUser, useUserService } from "../../hooks";
 
 const CardsLoaderComponent = (
   <CircularProgress className={styles.loader} size={40} />
@@ -15,11 +13,11 @@ const Cards = dynamic(() => import("../../components/cards"), {
   loading: () => CardsLoaderComponent,
 });
 
-type AppProps = {
-  user?: User | null;
-};
+const App = () => {
+  useUserService();
 
-const App = ({ user }: AppProps) => {
+  const { info: user } = useUser();
+
   return (
     <div className={`${styles.container}`}>
       <Topics />
@@ -33,10 +31,4 @@ const App = ({ user }: AppProps) => {
   );
 };
 
-const mapStateToProps = (state: { main: State }) => {
-  return {
-    user: state.main.user,
-  };
-};
-
-export default connect(mapStateToProps)(App);
+export default App;

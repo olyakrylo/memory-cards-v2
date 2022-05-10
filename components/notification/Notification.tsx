@@ -2,18 +2,11 @@ import { useTranslation } from "react-i18next";
 import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { BaseSyntheticEvent } from "react";
 
-import { AppNotification } from "../../shared/notification";
+import { useNotification } from "../../hooks";
 
-type NotificationProps = {
-  notification: AppNotification;
-  setNotification: (n: AppNotification) => void;
-};
-
-export const Notification = ({
-  notification,
-  setNotification,
-}: NotificationProps) => {
+export const Notification = () => {
   const { t } = useTranslation();
+  const notification = useNotification();
 
   const handleClose = (
     _: BaseSyntheticEvent,
@@ -22,21 +15,23 @@ export const Notification = ({
     if (reason === "clickaway") {
       return;
     }
-    setNotification({ ...notification, text: "" });
+    notification.set({ ...notification.current, text: "" });
   };
 
   return (
     <Snackbar
-      open={!!notification.text}
-      autoHideDuration={notification.autoHide}
+      open={!!notification.current.text}
+      autoHideDuration={notification.current.autoHide}
       onClose={handleClose}
     >
       <Alert
-        severity={notification.severity}
+        severity={notification.current.severity}
         sx={{ width: "100%" }}
         onClose={handleClose}
       >
-        {notification.translate ? t(notification.text) : notification.text}
+        {notification.current.translate
+          ? t(notification.current.text)
+          : notification.current.text}
       </Alert>
     </Snackbar>
   );

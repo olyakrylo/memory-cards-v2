@@ -1,49 +1,34 @@
 import { Topic } from "../../../../shared/models";
 import TopicControl from "../../control";
-import { request } from "../../../../utils/request";
+import { useTopics } from "../../../../hooks";
 
 type EditTopicProps = {
   dialogOpen: boolean;
-  closeDialog: () => void;
+  onDialogClose: () => void;
   topic: Topic;
-  topics: Topic[];
-  setTopics: (t: Topic[]) => void;
 };
 
 export const EditTopic = ({
   dialogOpen,
-  closeDialog,
+  onDialogClose,
   topic,
-  topics,
-  setTopics,
 }: EditTopicProps) => {
+  const topics = useTopics();
+
   const edit = async (title: string, isPublic: boolean): Promise<void> => {
     if (topic.public === isPublic && topic.title === title) {
-      closeDialog();
+      onDialogClose();
       return;
     }
 
-    const updatedTopic = await request("topics", "", "patch", {
-      body: {
-        _id: topic._id,
-        title,
-        public: isPublic,
-      },
-    });
-
-    const updatedTopicsList = topics.map((item) => {
-      if (item._id !== topic._id) return item;
-      return updatedTopic;
-    });
-
-    setTopics(updatedTopicsList);
-    closeDialog();
+    await topics.updateTopic(topic, title, isPublic);
+    onDialogClose();
   };
 
   return (
     <TopicControl
       open={dialogOpen}
-      onClose={closeDialog}
+      onClose={onDialogClose}
       onConfirm={edit}
       topic={topic}
     />

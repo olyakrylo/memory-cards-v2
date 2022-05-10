@@ -4,8 +4,8 @@ import { useTranslation } from "react-i18next";
 import dynamic from "next/dynamic";
 
 import { User } from "../../shared/models";
-import { request } from "../../utils/request";
 import styles from "./Recovery.module.css";
+import { useUser } from "../../hooks";
 
 const AuthInput = dynamic(() => import("../../components/authInput"));
 
@@ -20,7 +20,7 @@ const REDIRECT_TIME = 5; // seconds
 
 const Recovery = () => {
   const router = useRouter();
-
+  const userService = useUser();
   const { t } = useTranslation();
 
   const [user, setUser] = useState<User | undefined>();
@@ -35,9 +35,7 @@ const Recovery = () => {
 
   useEffect(() => {
     if (!router.query.id) return;
-    request("users", "recovery_user", "get", {
-      query: { id: router.query.id as string },
-    }).then(({ user }) => {
+    userService.getRecoveryUser(router.query.id as string).then(({ user }) => {
       setUser(user);
       setLoading(false);
     });
@@ -65,15 +63,12 @@ const Recovery = () => {
     if (!user) return;
     if (!validateInputs()) return;
 
-    const { encryptPassword } = await import("../../utils/encrypt-password");
-
     setLoading(true);
-    const { updated } = await request("users", "recovery_user", "put", {
-      body: {
-        id: user?._id,
-        password: await encryptPassword(password.first),
-      },
-    });
+    const { updated } = await userService.updateRecoveryUser(
+      user,
+      password.first
+    );
+
     if (updated) {
       setSuccess(true);
       setLoading(false);

@@ -1,6 +1,4 @@
-import { useRouter } from "next/router";
 import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
-import { Subject } from "rxjs";
 import { Splide as ReactSplide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import { IconButton, Tooltip, Typography } from "@mui/material";
@@ -8,59 +6,34 @@ import { ShuffleRounded, AddRounded } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
 import classNames from "classnames";
 
-import { Card, Topic, User } from "../../shared/models";
-import { request } from "../../utils/request";
 import styles from "./Cards.module.css";
-import {
-  getCardsMatrix,
-  getPartStartIndex,
-  getCardIndex,
-  getUpdatedShuffledCards,
-  savedCardIndex,
-} from "./utils";
-import { AppNotification } from "../../shared/notification";
+import { getCardsMatrix, getPartStartIndex, getCardIndex } from "./utils";
 import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
 import CardsViewOptions from "./viewOptions";
+import { useCards, useCardsService, useTopics, useUser } from "../../hooks";
 
-type CardProps = {
-  user?: User | null;
-  topics: Topic[];
-  setTopics: (t: Topic[]) => void;
-  currentTopic?: Topic;
-  setNotification: (n: AppNotification) => void;
-  cards: Record<string, Card[]>;
-  setCards: (t: string, c: Card[]) => void;
-};
+export const Cards = () => {
+  const { t } = useTranslation();
+  const cards = useCards();
+  const cardsService = useCardsService();
+  const topics = useTopics();
+  const { info: user } = useUser();
 
-export const Cards = ({
-  user,
-  topics,
-  setTopics,
-  currentTopic,
-  cards,
-  setCards,
-}: CardProps) => {
-  const router = useRouter();
-
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hideArrows, setHideArrows] = useState<boolean>(false);
-  const [shuffledCards, setShuffledCards] = useState<Card[]>();
-  const [currentCard, setCurrentCard] = useState<number>(
-    savedCardIndex(router)
-  );
+  const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
 
   const sliderRef = useRef<ReactSplide>(null);
 
-  const { t } = useTranslation();
+  useEffect(() => {
+    if (!topics.currentId) return;
 
-  const resetCards = new Subject<void>();
-  const flipCard = new Subject<number>();
-
-  const currentTopicId = (): string => {
-    return (router.query.topic as string) ?? "";
-  };
+    const currIndex = cards.getSavedIndex(topics.currentId);
+    setCurrentCardIndex(currIndex);
+    if (sliderRef.current?.splide) {
+      sliderRef.current.splide.go(currIndex);
+    }
+  }, [topics.currentId]);
 
   useEffect(() => {
     if (!isBrowser) return;
@@ -74,13 +47,15 @@ export const Cards = ({
       let index = sliderRef.current?.splide?.index;
       if (typeof index !== "number") return;
 
-      if (shuffledCards) {
-        index = cards[currentTopicId()].findIndex(
-          (c) => shuffledCards[index as number]._id === c._id
-        );
+      if (cards.currentShuffled()) {
+        index = cards
+          .current()
+          .findIndex(
+            (c) => cards.currentShuffled()?.[index as number]._id === c._id
+          );
       }
 
-      flipCard.next(index);
+      cardsService.flipCard.next(index);
     };
 
     window.addEventListener("keyup", handleKeyup);
@@ -89,48 +64,18 @@ export const Cards = ({
     };
   });
 
-  useEffect(() => {
-    if (!currentTopicId()) {
-      return;
-    }
-
-    setLoading(true);
-
-    request("cards", "by_topic", "get", {
-      query: {
-        topic_id: currentTopicId(),
-      },
-    }).then((cards) => {
-      setCards(currentTopicId(), cards);
-      setCurrentCard(savedCardIndex(router));
-      resetCards.next();
-      setLoading(false);
-    });
-  }, [router.query.topic]);
-
-  useEffect(() => {
-    if (!shuffledCards) return;
-
-    const newShuffledCards = getUpdatedShuffledCards(
-      shuffledCards,
-      cards[currentTopicId()]
-    );
-    setShuffledCards(newShuffledCards);
-  }, [setCards, cards]);
-
-  const canEditTopic = () => {
-    return currentTopic?.author_id === user?._id;
+  const canEditTopic = (): boolean => {
+    return topics.currentTopic?.author_id === user?._id;
   };
 
   const handleMoved = (cardIndex: number, splideIndex?: number): void => {
-    if (!currentTopic) return;
-    resetCards.next();
+    cardsService.resetCards.next();
 
     const index = splideIndex
       ? getCardIndex(splideIndex, cardIndex)
       : cardIndex;
-    setCurrentCard(index);
-    sessionStorage.setItem(currentTopicId(), index.toString());
+    cards.saveIndex(index, topics.currentId);
+    setCurrentCardIndex(index);
   };
 
   const handleCardIndexChange = (index: number): void => {
@@ -141,72 +86,56 @@ export const Cards = ({
     }
   };
 
-  const addCards = (newCards: Card[]): void => {
-    if (!currentTopic) return;
-
-    setCards(currentTopicId(), [...cards[currentTopicId()], ...newCards]);
-    if (shuffledCards) {
-      setShuffledCards([...shuffledCards, ...newCards]);
-    }
-  };
-
   const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
-    if (shuffledCards) {
-      setShuffledCards(undefined);
-    } else {
-      const { default: shuffle } = await import("array-shuffle");
-      setShuffledCards(shuffle(cards[currentTopicId()]));
-    }
+    await cards.toggleShuffle();
     event.target.blur();
   };
 
   const isSelfTopic = (): boolean => {
-    return topics.some((t) => t._id === currentTopicId());
+    return topics.list().some((t) => t._id === topics.currentId);
   };
 
   const addCurrentTopic = async (): Promise<void> => {
-    const updatedTopics = await request("topics", "public", "put", {
-      body: {
-        topics_id: [currentTopicId()],
-      },
-    });
-    setTopics([...topics, ...updatedTopics]);
+    await topics.updatePublicTopics([topics.currentId]);
   };
 
   const actualCardIndex = (id: string): number => {
-    return cards[currentTopicId()].findIndex((c) => c._id === id);
+    return cards.current().findIndex((c) => c._id === id);
   };
 
   return (
     <div className={styles.container}>
-      {currentTopicId() && (
+      {topics.currentId && (
         <>
           <div className={styles.control}>
             <IconButton
               onClick={toggleShuffle}
               classes={{ root: styles.shuffle }}
-              aria-checked={!!shuffledCards}
-              aria-hidden={!cards[currentTopicId()]?.length}
-              disabled={loading}
+              aria-checked={!!cards.currentShuffled()}
+              aria-hidden={!cards.current().length}
+              disabled={cards.loading}
             >
               <ShuffleRounded />
             </IconButton>
 
             <div className={styles.control__topic}>
-              <Typography>{currentTopic?.title}</Typography>
-              {currentTopicId() && !isSelfTopic() && (
+              <Typography>{topics.currentTopic?.title}</Typography>
+              {topics.currentId && !isSelfTopic() && (
                 <Tooltip title={t("add.save_topic") ?? ""}>
-                  <IconButton onClick={addCurrentTopic} disabled={loading}>
+                  <IconButton
+                    onClick={addCurrentTopic}
+                    disabled={cards.loading}
+                  >
                     <AddRounded />
                   </IconButton>
                 </Tooltip>
               )}
             </div>
 
-            {canEditTopic() && <AddCard addCards={addCards} />}
+            {canEditTopic() && <AddCard />}
           </div>
 
-          {!loading && !cards[currentTopicId()]?.length && (
+          {!cards.loading && !cards.current().length && (
             <div className={styles.tipContainer}>
               <Typography
                 className={classNames(styles.tip, styles.tip_nowrap)}
@@ -224,18 +153,18 @@ export const Cards = ({
         </>
       )}
 
-      {loading && (
+      {cards.loading && (
         <SkeletonLoader
           height={"calc(50vh - 48px)"}
           classes={`${styles.skeleton} ${
-            hideArrows ? "" : styles.skeleton_arrows
+            cards.hideArrows ? "" : styles.skeleton_arrows
           }`}
         />
       )}
 
-      {!loading && !!cards[currentTopicId()]?.length && (
+      {!cards.loading && !!cards.current().length && (
         <>
-          {getCardsMatrix(shuffledCards ?? cards[currentTopicId()]).map(
+          {getCardsMatrix(cards.currentShuffled() ?? cards.current()).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
                 key={splideIndex}
@@ -245,7 +174,7 @@ export const Cards = ({
                 options={{
                   keyboard: isBrowser ? "global" : false,
                   height: "50vh",
-                  arrows: !hideArrows,
+                  arrows: !cards.hideArrows,
                   pagination: false,
                   lazyLoad: "nearby",
                   classes: {
@@ -254,17 +183,14 @@ export const Cards = ({
                     next: `splide__arrow--next ${styles.arrow_next}`,
                     pagination: `splide__pagination ${styles.pagination}`,
                   },
-                  start: getPartStartIndex(splideIndex, currentCard),
+                  start: getPartStartIndex(splideIndex, currentCardIndex),
                 }}
               >
                 {cardsSlice.map((card, i) => (
                   <SplideSlide key={card._id}>
                     <CardItem
                       index={actualCardIndex(card._id)}
-                      showArrows={!hideArrows}
                       canEditTopic={canEditTopic()}
-                      resetCards={resetCards}
-                      flipCard={flipCard}
                     />
                   </SplideSlide>
                 ))}
@@ -274,16 +200,11 @@ export const Cards = ({
         </>
       )}
 
-      {currentTopicId() && (
+      {topics.currentId && (
         <CardsViewOptions
-          loading={loading}
-          currentCard={currentCard}
+          currentCardIndex={currentCardIndex}
           onCardIndexChange={handleCardIndexChange}
-          hideArrows={hideArrows}
-          setHideArrows={setHideArrows}
-          shuffledCards={shuffledCards}
           canEditTopic={canEditTopic()}
-          flipCard={flipCard}
         />
       )}
     </div>

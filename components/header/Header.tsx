@@ -1,36 +1,35 @@
 import { useEffect } from "react";
 import { Brightness4 } from "@mui/icons-material";
+import Link from "next/link";
 
-import { request } from "../../utils/request";
 import styles from "./Header.module.css";
+import { useConfig, useUser } from "../../hooks";
 
-type HeaderProps = {
-  darkMode?: boolean;
-  setDarkMode: (darkMode: boolean) => void;
-};
+export const Header = () => {
+  const config = useConfig();
+  const { info: user } = useUser();
 
-export const Header = ({ darkMode, setDarkMode }: HeaderProps) => {
   useEffect(() => {
-    request("config", "color", "get").then(({ dark }) => {
-      if (!dark) return;
-      document.documentElement.classList.add("dark");
-      setDarkMode(true);
+    console.log("here");
+    config.getColorMode().then(({ dark }) => {
+      if (dark) {
+        document.documentElement.classList.add("dark");
+      }
     });
-  }, [setDarkMode]);
+  }, [user?._id]);
 
   const toggleTheme = () => {
-    const newMode = !darkMode;
     document.documentElement.classList.toggle("dark");
-    setDarkMode(newMode);
-
-    void request("config", "color", "put", { body: { dark: newMode } });
+    config.toggleColorMode();
   };
 
   return (
     <div className={styles.container}>
-      <div className={styles.title}>
-        Memory <span className={styles.title_gray}>cards</span>
-      </div>
+      <Link href={"/app"} passHref>
+        <div className={styles.title}>
+          Memory <span className={styles.title_gray}>cards</span>
+        </div>
+      </Link>
       <button className={styles.modeButton} onClick={toggleTheme}>
         <Brightness4 sx={{ fontSize: 34 }} />
       </button>

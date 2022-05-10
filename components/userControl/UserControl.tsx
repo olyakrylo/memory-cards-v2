@@ -3,24 +3,18 @@ import { useTranslation } from "react-i18next";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import { Settings } from "@mui/icons-material";
 
-import { User } from "../../shared/models";
-import { request } from "../../utils/request";
 import styles from "./UserControl.module.css";
 import { languages } from "../../utils/i18n";
+import { useUser } from "../../hooks";
 
-type UserControlProps = {
-  user?: User | null;
-  setUser: (user?: User | null) => void;
-};
-
-export const UserControl = ({ user, setUser }: UserControlProps) => {
+export const UserControl = () => {
   const [userMenu, setUserMenu] = useState<null | HTMLElement>(null);
 
   const { t } = useTranslation();
+  const user = useUser();
 
-  const handleLogout = async () => {
-    await request("users", "logout", "get");
-    setUser(null);
+  const handleLogout = () => {
+    void user.logout();
   };
 
   const userMenuOpened = Boolean(userMenu);
@@ -33,7 +27,7 @@ export const UserControl = ({ user, setUser }: UserControlProps) => {
 
   return (
     <div className={styles.container}>
-      {user?.login}
+      {user.info?.login}
       <IconButton className={styles.settings} onClick={openUserMenu}>
         <Settings />
       </IconButton>
