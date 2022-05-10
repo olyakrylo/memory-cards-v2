@@ -41,10 +41,6 @@
 }
 
 .tip {
-  max-width: 50vw;
-  display: flex;
-  justify-content: center;
-  gap: 16px;
   font-family: var(--brand-font-family);
   font-size: 20px;
   text-align: center;

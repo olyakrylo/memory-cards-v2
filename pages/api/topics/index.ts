@@ -45,7 +45,7 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         );
         updated = !updatedTopic.users_id.includes(user_id);
       } else {
-        Topic.findByIdAndDelete(topic_id, { new: true });
+        await Topic.findByIdAndDelete(topic_id, { new: true });
         updated = true;
       }
       res.json({ updated });

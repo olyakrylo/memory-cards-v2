@@ -1,3 +1,10 @@
-import { Header } from "./Header";
+import { connect } from "react-redux";
 
-export default Header;
+import { Header } from "./Header";
+import { State } from "../../shared/redux";
+
+const mapStateToProps = (state: { main: State }) => ({
+  user: state.main.user,
+});
+
+export default connect(mapStateToProps)(Header);

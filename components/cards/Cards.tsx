@@ -13,7 +13,7 @@ import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
 import CardsViewOptions from "./viewOptions";
-import { useCards, useTopics } from "../../hooks";
+import { useCards, useCardsService, useTopics } from "../../hooks";
 
 type CardProps = {
   user?: User | null;
@@ -22,6 +22,7 @@ type CardProps = {
 export const Cards = ({ user }: CardProps) => {
   const { t } = useTranslation();
   const cards = useCards();
+  const cardsService = useCardsService();
   const topics = useTopics();
 
   const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
@@ -50,15 +51,15 @@ export const Cards = ({ user }: CardProps) => {
       let index = sliderRef.current?.splide?.index;
       if (typeof index !== "number") return;
 
-      if (cards.shuffledCards()) {
+      if (cards.currentShuffled()) {
         index = cards
           .current()
           .findIndex(
-            (c) => cards.shuffledCards()?.[index as number]._id === c._id
+            (c) => cards.currentShuffled()?.[index as number]._id === c._id
           );
       }
 
-      cards.flipCard.next(index);
+      cardsService.flipCard.next(index);
     };
 
     window.addEventListener("keyup", handleKeyup);
@@ -72,7 +73,7 @@ export const Cards = ({ user }: CardProps) => {
   };
 
   const handleMoved = (cardIndex: number, splideIndex?: number): void => {
-    cards.resetCards.next();
+    cardsService.resetCards.next();
 
     const index = splideIndex
       ? getCardIndex(splideIndex, cardIndex)
@@ -114,9 +115,9 @@ export const Cards = ({ user }: CardProps) => {
             <IconButton
               onClick={toggleShuffle}
               classes={{ root: styles.shuffle }}
-              aria-checked={!!cards.shuffledCards()}
+              aria-checked={!!cards.currentShuffled()}
               aria-hidden={!cards.current().length}
-              disabled={cards.loading()}
+              disabled={cards.loading}
             >
               <ShuffleRounded />
             </IconButton>
@@ -127,7 +128,7 @@ export const Cards = ({ user }: CardProps) => {
                 <Tooltip title={t("add.save_topic") ?? ""}>
                   <IconButton
                     onClick={addCurrentTopic}
-                    disabled={cards.loading()}
+                    disabled={cards.loading}
                   >
                     <AddRounded />
                   </IconButton>
@@ -138,7 +139,7 @@ export const Cards = ({ user }: CardProps) => {
             {canEditTopic() && <AddCard />}
           </div>
 
-          {!cards.loading() && !cards.current().length && (
+          {!cards.loading && !cards.current().length && (
             <div className={styles.tipContainer}>
               <Typography
                 className={classNames(styles.tip, styles.tip_nowrap)}
@@ -156,18 +157,18 @@ export const Cards = ({ user }: CardProps) => {
         </>
       )}
 
-      {cards.loading() && (
+      {cards.loading && (
         <SkeletonLoader
           height={"calc(50vh - 48px)"}
           classes={`${styles.skeleton} ${
-            cards.hideArrows() ? "" : styles.skeleton_arrows
+            cards.hideArrows ? "" : styles.skeleton_arrows
           }`}
         />
       )}
 
-      {!cards.loading() && !!cards.current().length && (
+      {!cards.loading && !!cards.current().length && (
         <>
-          {getCardsMatrix(cards.shuffledCards() ?? cards.current()).map(
+          {getCardsMatrix(cards.currentShuffled() ?? cards.current()).map(
             (cardsSlice, splideIndex) => (
               <ReactSplide
                 key={splideIndex}
@@ -177,7 +178,7 @@ export const Cards = ({ user }: CardProps) => {
                 options={{
                   keyboard: isBrowser ? "global" : false,
                   height: "50vh",
-                  arrows: !cards.hideArrows(),
+                  arrows: !cards.hideArrows,
                   pagination: false,
                   lazyLoad: "nearby",
                   classes: {

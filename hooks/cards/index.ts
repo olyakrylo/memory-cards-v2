@@ -1,11 +1,14 @@
 import { useDispatch, useSelector } from "react-redux";
-import { Subject } from "rxjs";
-import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { State } from "../../shared/redux";
 import { Card, CardFieldContent, ShortCard } from "../../shared/models";
-import { setCards } from "../../redux/actions/main";
+import {
+  setCards,
+  setCardsLoading,
+  setHideArrows,
+  setShuffledCards,
+} from "../../redux/actions/main";
 import { useApi, useTopics, useFiles } from "../index";
 import { ControlCardFieldContent } from "../../components/cards/control/CardControl";
 import { getUpdatedShuffledCards } from "../../components/cards/utils";
@@ -17,44 +20,41 @@ export const useCardsImpl = () => {
   const api = useApi();
   const files = useFiles();
 
-  const { cards, user } = useSelector((state: { main: State }) => ({
-    cards: state.main.cards,
-    user: state.main.user,
-  }));
+  const { cards, shuffledCards, loading, hideArrows } = useSelector(
+    (state: { main: State }) => ({
+      cards: state.main.cards,
+      shuffledCards: state.main.shuffledCards,
+      loading: state.main.cardsLoading,
+      hideArrows: state.main.hideArrows,
+    })
+  );
   const dispatch = useDispatch();
-
-  const [shuffledCards, setShuffledCards] = useState<Card[]>();
-  const [loading, setLoading] = useState<boolean>(false);
-  const [hideArrows, setHideArrows] = useState<boolean>(false);
 
   const dispatchCards = (topicId: string, cards: Card[]): void => {
     dispatch(setCards(topicId, cards));
   };
 
-  const resetCards = new Subject<void>();
-  const flipCard = new Subject<number>();
+  const dispatchShuffledCards = (
+    topicId: string,
+    shuffledCards?: Card[]
+  ): void => {
+    dispatch(setShuffledCards(topicId, shuffledCards));
+  };
 
-  useEffect(() => {
-    void configArrows();
-  }, [user?._id]);
+  const dispatchLoading = (loading: boolean): void => {
+    dispatch(setCardsLoading(loading));
+  };
 
-  useEffect(() => {
-    if (!topics.currentId) return;
-    void loadTopicCards(topics.currentId);
-  }, [topics.currentId]);
-
-  useEffect(() => {
-    if (!shuffledCards) return;
-    const newShuffledCards = getUpdatedShuffledCards(shuffledCards, current());
-    setShuffledCards(newShuffledCards);
-  }, [cards]);
+  const dispatchArrows = (hide: boolean): void => {
+    dispatch(setHideArrows(hide));
+  };
 
   const current = (): Card[] => {
     return cards[topics.currentId] ?? [];
   };
 
-  const set = (topicId: string, cards: Card[]): void => {
-    dispatchCards(topicId, cards);
+  const currentShuffled = (): Card[] | undefined => {
+    return shuffledCards[topics.currentId];
   };
 
   const get = (topicId: string): Card[] | undefined => {
@@ -64,15 +64,14 @@ export const useCardsImpl = () => {
   const loadTopicCards = async (topicId: string): Promise<void> => {
     if (cards[topicId]) return;
 
-    setLoading(true);
+    dispatchLoading(true);
     const cardsList = await api.request("cards", "by_topic", "get", {
       query: {
         topic_id: topicId,
       },
     });
-    set(topicId, cardsList);
-    resetCards.next();
-    setLoading(false);
+    dispatchCards(topicId, cardsList);
+    dispatchLoading(false);
   };
 
   const countByTopic = (topicId: string): Promise<{ count: number }> => {
@@ -88,12 +87,22 @@ export const useCardsImpl = () => {
   };
 
   const toggleShuffle = async (): Promise<void> => {
-    if (shuffledCards) {
-      setShuffledCards(undefined);
+    if (currentShuffled()) {
+      dispatchShuffledCards(topics.currentId);
     } else {
       const { default: shuffle } = await import("array-shuffle");
-      setShuffledCards(shuffle(current()));
+      dispatchShuffledCards(topics.currentId, shuffle(current()));
     }
+  };
+
+  const updateShuffledCards = (): void => {
+    if (!currentShuffled()) return;
+
+    const updatedShuffledCards = getUpdatedShuffledCards(
+      currentShuffled() ?? [],
+      current()
+    );
+    dispatchShuffledCards(topics.currentId, updatedShuffledCards);
   };
 
   const addCards = async (
@@ -143,12 +152,13 @@ export const useCardsImpl = () => {
       });
     }
 
-    dispatchCards(topicId, [...current(), ...newCards]);
+    dispatchCards(topicId, [...cards[topicId], ...newCards]);
   };
 
   const deleteCard = async (topicId: string, cardId: string): Promise<void> => {
     await api.request("cards", "", "delete", { query: { ids: [cardId] } });
     const updatedCards = cards[topicId].filter((c) => c._id !== cardId);
+
     dispatchCards(topicId, updatedCards);
   };
 
@@ -191,13 +201,13 @@ export const useCardsImpl = () => {
 
   const configArrows = async (): Promise<void> => {
     api.request("config", "arrows", "get").then(({ hide }) => {
-      setHideArrows(hide);
+      dispatchArrows(hide);
     });
   };
 
   const toggleArrows = (): void => {
     const newState = !hideArrows;
-    setHideArrows(newState);
+    dispatchArrows(newState);
     void api.request("config", "arrows", "put", {
       body: {
         hide: newState,
@@ -219,20 +229,18 @@ export const useCardsImpl = () => {
   };
 
   return {
+    loading,
+    hideArrows,
     current,
-    set,
+    currentShuffled,
     get,
     loadTopicCards,
     countByTopic,
     getByTopic,
-    resetCards,
-    flipCard,
-    loading: () => loading,
-    hideArrows: () => hideArrows,
     configArrows,
     toggleArrows,
-    shuffledCards: () => shuffledCards,
     toggleShuffle,
+    updateShuffledCards,
     addCards,
     deleteCard,
     deleteMany,

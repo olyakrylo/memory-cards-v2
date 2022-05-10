@@ -12,19 +12,18 @@ import { useTranslation } from "react-i18next";
 
 import { Topic, User } from "../../../shared/models";
 import styles from "../Topics.module.css";
-import { AppNotification } from "../../../shared/notification";
 import EditTopic from "./edit";
-import { useTopics } from "../../../hooks";
+import { useNotification, useTopics } from "../../../hooks";
 
 type TopicItemProps = {
   topic: Topic;
   user?: User | null;
-  setNotification: (n: AppNotification) => void;
 };
 
-export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
+export const TopicItem = ({ user, topic }: TopicItemProps) => {
   const router = useRouter();
   const topics = useTopics();
+  const notification = useNotification();
   const { t } = useTranslation();
 
   const [menu, setMenu] = useState<null | HTMLElement>(null);
@@ -41,12 +40,7 @@ export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
     const { updatedTopics } = await topics.deleteTopic(topic._id);
     if (!updatedTopics) return;
 
-    setNotification({
-      severity: "warning",
-      text: "ui.topic_deleted",
-      translate: true,
-      autoHide: 5000,
-    });
+    notification.setWarning("ui.topic_deleted");
 
     await router.push({
       pathname: router.pathname,
@@ -65,12 +59,7 @@ export const TopicItem = ({ user, topic, setNotification }: TopicItemProps) => {
   const shareTopic = async () => {
     const { href } = window.location;
     await navigator.clipboard.writeText(href);
-    setNotification({
-      severity: "success",
-      text: "ui.link_copied",
-      translate: true,
-      autoHide: 5000,
-    });
+    notification.setSuccess("ui.link_copied");
   };
 
   const openEditDialog = () => {

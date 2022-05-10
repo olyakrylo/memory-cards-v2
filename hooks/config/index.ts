@@ -5,6 +5,7 @@ import { useApi } from "../index";
 
 export const useConfigImpl = () => {
   const api = useApi();
+
   const darkMode = useSelector((state: { main: State }) => state.main.darkMode);
   const dispatch = useDispatch();
 

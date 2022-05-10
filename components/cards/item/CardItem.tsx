@@ -11,26 +11,25 @@ import CardMainContent from "./mainContent";
 import EditCard from "./edit";
 import AppDialog from "../../dialog";
 import CardDialogContent from "./dialogContent";
-import { AppNotification } from "../../../shared/notification";
-import { useCards, useTopics } from "../../../hooks";
+import {
+  useCards,
+  useCardsService,
+  useTopics,
+  useNotification,
+} from "../../../hooks";
 
 type CardItemProps = {
   index: number;
-  setCards: (id: string, c: Card[]) => void;
   canEditTopic: boolean;
-  setNotification: (n: AppNotification) => void;
   noArrows?: boolean;
 };
 
-export const CardItem = ({
-  index,
-  canEditTopic,
-  setNotification,
-  noArrows,
-}: CardItemProps) => {
+export const CardItem = ({ index, canEditTopic, noArrows }: CardItemProps) => {
   const { t } = useTranslation();
   const cards = useCards();
+  const cardsService = useCardsService();
   const topics = useTopics();
+  const notification = useNotification();
 
   const [flipped, setFlipped] = useState<boolean>(false);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
@@ -40,8 +39,8 @@ export const CardItem = ({
   };
 
   useEffect(() => {
-    cards.resetCards.subscribe(() => setFlipped(false));
-    cards.flipCard.subscribe((num) => {
+    cardsService.resetCards.subscribe(() => setFlipped(false));
+    cardsService.flipCard.subscribe((num) => {
       if (num !== index) return;
       setFlipped(!flipped);
     });
@@ -68,12 +67,7 @@ export const CardItem = ({
     const link = `${href}&card=${index}`;
     await navigator.clipboard.writeText(link);
 
-    setNotification({
-      severity: "success",
-      text: "ui.link_copied",
-      translate: true,
-      autoHide: 5000,
-    });
+    notification.setSuccess("ui.link_copied");
   };
 
   const toggleCard = () => {
@@ -90,7 +84,7 @@ export const CardItem = ({
         isFlipped={flipped}
         flipDirection="vertical"
         containerClassName={classNames(styles.cardContainer, {
-          [styles.cardContainer_arrows]: noArrows ? false : !cards.hideArrows(),
+          [styles.cardContainer_arrows]: noArrows ? false : !cards.hideArrows,
         })}
       >
         <div className={styles.card} onClick={toggleCard}>
@@ -128,7 +122,7 @@ export const CardItem = ({
 
         <div
           className={classNames(styles.card, {
-            [styles.card_arrows]: !cards.hideArrows(),
+            [styles.card_arrows]: !cards.hideArrows,
           })}
           onClick={toggleCard}
         >

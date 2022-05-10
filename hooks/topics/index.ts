@@ -1,32 +1,30 @@
-import { useRouter } from "next/router";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect, useState } from "react";
 
 import { State } from "../../shared/redux";
 import { Topic, TopicExt } from "../../shared/models";
-import { setTopics } from "../../redux/actions/main";
+import { setCurrentTopic, setTopics } from "../../redux/actions/main";
 import { TopicsCount } from "../../shared/api";
 import { useApi } from "../index";
 
 export const useTopicsImpl = () => {
-  const router = useRouter();
   const api = useApi();
 
-  const [currentTopic, setCurrentTopic] = useState<Topic>();
-
-  const { user, topics } = useSelector((state: { main: State }) => ({
-    user: state.main.user,
-    topics: state.main.topics,
-  }));
+  const { user, topics, currentTopic } = useSelector(
+    (state: { main: State }) => ({
+      user: state.main.user,
+      topics: state.main.topics,
+      currentTopic: state.main.currentTopic,
+    })
+  );
   const dispatch = useDispatch();
 
   const dispatchTopics = (topics: Topic[]): void => {
     dispatch(setTopics(topics));
   };
 
-  useEffect(() => {
-    void updateCurrentTopic(router.query.topic as string);
-  }, [router.query.topic]);
+  const dispatchCurrentTopic = (topic?: Topic): void => {
+    dispatch(setCurrentTopic(topic));
+  };
 
   const getById = (id: string): Promise<{ topic?: Topic }> => {
     return api.request("topics", "", "get", {
@@ -36,19 +34,19 @@ export const useTopicsImpl = () => {
 
   const updateCurrentTopic = async (id?: string): Promise<void> => {
     if (!id) {
-      setCurrentTopic(undefined);
+      dispatchCurrentTopic(undefined);
       return;
     }
 
     const fromTopics = topics.find((t) => t._id === id);
     if (fromTopics) {
-      setCurrentTopic(fromTopics);
+      dispatchCurrentTopic(fromTopics);
       return;
     }
 
     getById(id).then(({ topic }) => {
       if (!topic) return;
-      setCurrentTopic(topic);
+      dispatchCurrentTopic(topic);
     });
   };
 
@@ -175,11 +173,11 @@ export const useTopicsImpl = () => {
   };
 
   return {
+    currentTopic,
+    currentId: currentTopic?._id ?? "",
     list,
     set,
     clear,
-    currentTopic,
-    currentId: currentTopic?._id ?? "",
     updateCurrentTopic,
     getById,
     getCount,

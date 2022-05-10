@@ -5,7 +5,6 @@ import dynamic from "next/dynamic";
 import { State } from "../../shared/redux";
 import { User } from "../../shared/models";
 import styles from "./App.module.css";
-import { useCards } from "../../hooks";
 
 const CardsLoaderComponent = (
   <CircularProgress className={styles.loader} size={40} />
@@ -21,8 +20,6 @@ type AppProps = {
 };
 
 const App = ({ user }: AppProps) => {
-  useCards();
-
   return (
     <div className={`${styles.container}`}>
       <Topics />

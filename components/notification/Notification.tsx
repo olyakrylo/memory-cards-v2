@@ -3,6 +3,7 @@ import { Alert, Snackbar, SnackbarCloseReason } from "@mui/material";
 import { BaseSyntheticEvent } from "react";
 
 import { AppNotification } from "../../shared/notification";
+import { useNotification } from "../../hooks";
 
 type NotificationProps = {
   notification: AppNotification;

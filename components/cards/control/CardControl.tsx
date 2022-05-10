@@ -11,8 +11,7 @@ import {
   CardFieldContent,
   ShortCard,
 } from "../../../shared/models";
-import { AppNotification } from "../../../shared/notification";
-import { useTopics } from "../../../hooks";
+import { useTopics, useNotification } from "../../../hooks";
 
 export type ControlCardFieldContent = {
   text: string;
@@ -29,16 +28,11 @@ type CardControlProps = {
     cardsFromFile?: ShortCard[]
   ) => void;
   card?: Card;
-  setNotification: (n: AppNotification) => void;
 };
 
-export const CardControl = ({
-  open,
-  onClose,
-  card,
-  setNotification,
-}: CardControlProps) => {
+export const CardControl = ({ open, onClose, card }: CardControlProps) => {
   const topics = useTopics();
+  const notification = useNotification();
 
   const [question, setQuestion] = useState<ControlCardFieldContent>({
     text: "",
@@ -103,12 +97,7 @@ export const CardControl = ({
         });
       setCardsFromFile(cardsData);
     } catch {
-      setNotification({
-        severity: "error",
-        autoHide: 5000,
-        translate: true,
-        text: "add.invalid_file_content",
-      });
+      notification.setError("add.invalid_file_content");
     }
   };
 

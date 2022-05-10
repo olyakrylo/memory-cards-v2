@@ -12,7 +12,7 @@ import TopicItem from "./item";
 import PublicTopics from "./public";
 import UserControl from "../userControl";
 import AddTopic from "./add";
-import { useTopics } from "../../hooks";
+import { useTopics, useTopicsService } from "../../hooks";
 
 type TopicsProps = {
   user?: User | null;
@@ -20,6 +20,7 @@ type TopicsProps = {
 
 export const Topics = ({ user }: TopicsProps) => {
   const { t } = useTranslation();
+  useTopicsService();
   const topics = useTopics();
 
   const [loading, setLoading] = useState<boolean>(true);

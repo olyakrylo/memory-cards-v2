@@ -74,8 +74,8 @@ export const CardsViewOptions = ({
       <Tooltip title={t("ui.show_arrows") ?? ""}>
         <IconButton
           onClick={toggleArrows}
-          color={cards.hideArrows() ? "info" : "primary"}
-          disabled={cards.loading() || !cards.current().length}
+          color={cards.hideArrows ? "info" : "primary"}
+          disabled={cards.loading || !cards.current().length}
         >
           <CodeRounded />
         </IconButton>
@@ -99,7 +99,7 @@ export const CardsViewOptions = ({
 
       <IconButton
         onClick={openAllCards}
-        disabled={cards.loading() || !cards.current().length}
+        disabled={cards.loading || !cards.current().length}
       >
         <ViewComfyRounded />
       </IconButton>
@@ -115,7 +115,7 @@ export const CardsViewOptions = ({
         }
         content={
           <div className={styles.allCards}>
-            {(cards.shuffledCards() ?? cards.current()).map((card, i) => (
+            {(cards.currentShuffled() ?? cards.current()).map((card, i) => (
               <div
                 key={card._id}
                 className={classNames({

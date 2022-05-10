@@ -1,12 +1,17 @@
 import { Card, Topic, User } from "./models";
 import { AppNotification } from "./notification";
 
-export const SET_USER = "SET_USER";
-export const SET_CURRENT_TOPIC = "SET_CURRENT_TOPIC";
-export const SET_DARK_MODE = "SET_DARK_MODE";
-export const SET_TOPICS = "SET_TOPICS";
-export const SET_NOTIFICATION = "SET_NOTIFICATION";
-export const SET_CARDS = "SET_CARDS";
+export enum ActionType {
+  SET_USER = "SET_USER",
+  SET_CURRENT_TOPIC = "SET_CURRENT_TOPIC",
+  SET_DARK_MODE = "SET_DARK_MODE",
+  SET_TOPICS = "SET_TOPICS",
+  SET_NOTIFICATION = "SET_NOTIFICATION",
+  SET_CARDS = "SET_CARDS",
+  SET_SHUFFLED_CARDS = "SET_SHUFFLED_CARDS",
+  SET_CARDS_LOADING = "SET_CARDS_LOADING",
+  SET_HIDE_ARROWS = "SET_HIDE_ARROWS",
+}
 
 export type State = {
   user?: User | null;
@@ -15,4 +20,7 @@ export type State = {
   darkMode?: boolean;
   notification: AppNotification;
   cards: Record<string, Card[]>;
+  shuffledCards: Record<string, Card[] | undefined>;
+  cardsLoading: boolean;
+  hideArrows: boolean;
 };
