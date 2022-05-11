@@ -1,6 +1,6 @@
-import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Button, Tooltip, Typography } from "@mui/material";
+import { Button } from "@mui/material";
 
 import styles from "./CardControl.module.css";
 import AppDialog from "../../dialog";
@@ -9,14 +9,11 @@ import {
   Card,
   CardField,
   CardFieldContent,
+  ControlCardFieldContent,
   ShortCard,
 } from "../../../shared/models";
-import { useTopics, useNotification } from "../../../hooks";
-
-export type ControlCardFieldContent = {
-  text: string;
-  image?: string | File;
-};
+import { useTopics } from "../../../hooks";
+import { CardsFromFile } from "./fromFile/CardsFromFile";
 
 type CardControlProps = {
   open: boolean;
@@ -27,12 +24,11 @@ type CardControlProps = {
     },
     cardsFromFile?: ShortCard[]
   ) => void;
-  card?: Card;
+  card?: Card | ShortCard;
 };
 
 export const CardControl = ({ open, onClose, card }: CardControlProps) => {
   const topics = useTopics();
-  const notification = useNotification();
 
   const [question, setQuestion] = useState<ControlCardFieldContent>({
     text: "",
@@ -66,7 +62,10 @@ export const CardControl = ({ open, onClose, card }: CardControlProps) => {
     onClose();
   };
 
-  const onChangeField = (field: CardField, data: Partial<CardFieldContent>) => {
+  const handleTextChange = (
+    field: CardField,
+    data: Partial<CardFieldContent>
+  ) => {
     if (field === "question") {
       setQuestion({ ...question, ...data });
     } else {
@@ -74,34 +73,11 @@ export const CardControl = ({ open, onClose, card }: CardControlProps) => {
     }
   };
 
-  const onCardsFileChange = async (
-    event: BaseSyntheticEvent
-  ): Promise<void> => {
-    const file = event.target.files[0] as File;
-    const text = await file.text();
-    const separator: Record<string, string> = {
-      "text/plain": " ",
-      "text/tab-separated-values": "\t",
-      "text/csv": ";",
-    };
-    try {
-      const cardsData = text
-        .split("\n")
-        .filter((row) => !!row.trim())
-        .map((row: string): ShortCard => {
-          const [q, a] = row.trim().split(separator[file.type]);
-          if (!q || !a) {
-            throw new Error();
-          }
-          return { question: { text: q }, answer: { text: a } };
-        });
-      setCardsFromFile(cardsData);
-    } catch {
-      notification.setError("add.invalid_file_content");
-    }
+  const handleCardFromFileChange = (cards: ShortCard[]) => {
+    setCardsFromFile(cards);
   };
 
-  const onChangeImage = (field: CardField, file?: File) => {
+  const handleImageChange = (field: CardField, file?: File) => {
     if (field === "question") {
       setQuestion({ ...question, image: file });
     } else {
@@ -136,8 +112,8 @@ export const CardControl = ({ open, onClose, card }: CardControlProps) => {
             field="question"
             value={question}
             rowsCount={2}
-            handleChange={(data) => onChangeField("question", data)}
-            handleImage={(data) => onChangeImage("question", data)}
+            onChange={(data) => handleTextChange("question", data)}
+            onChangeImage={(data) => handleImageChange("question", data)}
             disabled={!!cardsFromFile.length}
           />
 
@@ -145,39 +121,19 @@ export const CardControl = ({ open, onClose, card }: CardControlProps) => {
             field="answer"
             value={answer}
             rowsCount={4}
-            handleChange={(data) => onChangeField("answer", data)}
-            handleImage={(data) => onChangeImage("answer", data)}
+            onChange={(data) => handleTextChange("answer", data)}
+            onChangeImage={(data) => handleImageChange("answer", data)}
             disabled={!!cardsFromFile.length}
           />
 
           {!card && <div className={styles.or}>{t("ui.or")}</div>}
 
           {!card && (
-            <Tooltip title={`${t("add.file_formats")}`}>
-              <Button
-                variant="contained"
-                component="label"
-                className={styles.fileInput}
-              >
-                {t("ui.upload_from_file")}
-                <input
-                  type="file"
-                  hidden
-                  onChange={onCardsFileChange}
-                  accept=".txt"
-                />
-              </Button>
-            </Tooltip>
+            <CardsFromFile
+              cards={cardsFromFile}
+              onChangeCards={handleCardFromFileChange}
+            />
           )}
-
-          {cardsFromFile.map((card, i) => (
-            <div className={styles.card} key={i}>
-              <Typography classes={{ root: styles.card__question }}>
-                {card.question.text}
-              </Typography>
-              <Typography>{card.answer.text}</Typography>
-            </div>
-          ))}
         </div>
       }
       actions={

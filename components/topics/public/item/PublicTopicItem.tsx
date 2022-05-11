@@ -16,13 +16,13 @@ import { useCards } from "../../../../hooks";
 type PublicTopicItemProps = {
   topic: TopicExt;
   selected: boolean;
-  toggleTopic: () => void;
+  onToggleTopic: () => void;
 };
 
 export const PublicTopicItem = ({
   topic,
   selected,
-  toggleTopic,
+  onToggleTopic,
 }: PublicTopicItemProps) => {
   const { t } = useTranslation();
   const cards = useCards();
@@ -36,9 +36,9 @@ export const PublicTopicItem = ({
     setExpanded(!expanded);
   };
 
-  const onToggleTopic = (e: BaseSyntheticEvent) => {
+  const toggleTopic = (e: BaseSyntheticEvent) => {
     e.stopPropagation();
-    toggleTopic();
+    onToggleTopic();
   };
 
   const loadCards = async (): Promise<void> => {
@@ -73,7 +73,7 @@ export const PublicTopicItem = ({
           size="small"
           className={styles.topic__toggle}
           color={selected ? "secondary" : "primary"}
-          onClick={(e) => onToggleTopic(e)}
+          onClick={(e) => toggleTopic(e)}
         >
           {selected ? <RemoveCircleRounded /> : <AddCircleRounded />}
         </IconButton>

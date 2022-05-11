@@ -150,13 +150,13 @@ const Recovery = () => {
         <AuthInput
           label={t("auth.placeholder.password")}
           value={password.first}
-          changeHandler={handlePassword}
+          onChange={handlePassword}
           type="password"
         />
         <AuthInput
           label={t("auth.placeholder.repeat")}
           value={password.second}
-          changeHandler={(e) => handlePassword(e, true)}
+          onChange={(e) => handlePassword(e, true)}
           type="password"
         />
 

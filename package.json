@@ -17,6 +17,7 @@
     "@splidejs/react-splide": "0.7.5",
     "@splidejs/splide": "4.0.1",
     "@types/react-helmet": "^6.1.5",
+    "@types/uuid": "^8.3.4",
     "array-shuffle": "^3.0.0",
     "classnames": "^2.3.1",
     "cookies": "^0.8.0",
@@ -43,7 +44,8 @@
     "react-singleton-hook": "^3.3.0",
     "redux": "^4.1.2",
     "redux-thunk": "^2.4.1",
-    "rxjs": "^7.5.5"
+    "rxjs": "^7.5.5",
+    "uuid": "^8.3.2"
   },
   "devDependencies": {
     "@types/cookies": "^0.7.7",

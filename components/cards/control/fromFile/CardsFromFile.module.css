@@ -1,0 +1,53 @@
+.container {
+  display: grid;
+  grid-gap: 16px;
+}
+
+.fileInput {
+  height: max-content;
+}
+
+.cardsContainer {
+  display: grid;
+  grid-gap: 8px;
+}
+
+.card {
+  background-color: var(--bg-color);
+  display: grid;
+  grid-gap: 8px;
+  grid-template-areas: "question edit delete" "divider edit delete" "answer edit delete";
+  grid-template-columns: auto max-content max-content;
+  align-items: center;
+  padding: 8px 8px 8px 16px;
+  border-radius: 8px;
+  color: var(--black);
+  font-size: 14px;
+}
+
+.card__question,
+.card__answer {
+  display: grid;
+  grid-gap: 4px;
+}
+
+.card__question {
+  grid-area: question;
+  font-family: var(--brand-font-family);
+}
+
+.card__answer {
+  grid-area: answer;
+}
+
+.card__divider {
+  grid-area: divider;
+}
+
+.card__edit {
+  grid-area: edit;
+}
+
+.card__delete {
+  grid-area: delete;
+}

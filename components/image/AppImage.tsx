@@ -1,4 +1,5 @@
 import { useState } from "react";
+import classNames from "classnames";
 
 import styles from "./AppImage.module.css";
 import { getImageSrc } from "../../utils/get-image-src";
@@ -9,9 +10,16 @@ type CardImageProps = {
   alt: string;
   classes?: string;
   maxHeight?: string;
+  alignStart?: boolean;
 };
 
-export const AppImage = ({ src, classes, alt, maxHeight }: CardImageProps) => {
+export const AppImage = ({
+  src,
+  classes,
+  alt,
+  maxHeight,
+  alignStart,
+}: CardImageProps) => {
   const [loading, setLoading] = useState<boolean>(true);
 
   const handleLoad = () => {
@@ -29,7 +37,9 @@ export const AppImage = ({ src, classes, alt, maxHeight }: CardImageProps) => {
     <div className={`${styles.container} ${classes ?? ""}`}>
       {loading && <SkeletonLoader height={"100%"} width={"100%"} />}
       <img
-        className={styles.image}
+        className={classNames(styles.image, {
+          [styles.image_centered]: !alignStart,
+        })}
         src={imageSrc()}
         alt={alt}
         style={{ maxHeight: maxHeight ?? "100%" }}

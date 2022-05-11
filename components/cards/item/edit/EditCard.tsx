@@ -2,10 +2,9 @@ import { useState } from "react";
 import { IconButton } from "@mui/material";
 import { EditRounded } from "@mui/icons-material";
 
-import { Card } from "../../../../shared/models";
+import { Card, ControlCardFieldContent } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
 import CardControl from "../../control";
-import { ControlCardFieldContent } from "../../control/CardControl";
 import { useCards } from "../../../../hooks";
 
 type EditCardProps = {

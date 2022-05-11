@@ -21,7 +21,7 @@ export const Cards = () => {
   const topics = useTopics();
   const { info: user } = useUser();
 
-  const [currentCardIndex, setCurrentCardIndex] = useState<number>(0);
+  const [lastIndex, setLastIndex] = useState<number>(0);
 
   const sliderRef = useRef<ReactSplide>(null);
 
@@ -29,7 +29,7 @@ export const Cards = () => {
     if (!topics.currentId) return;
 
     const currIndex = cards.getSavedIndex(topics.currentId);
-    setCurrentCardIndex(currIndex);
+    setLastIndex(currIndex);
     if (sliderRef.current?.splide) {
       sliderRef.current.splide.go(currIndex);
     }
@@ -75,7 +75,7 @@ export const Cards = () => {
       ? getCardIndex(splideIndex, cardIndex)
       : cardIndex;
     cards.saveIndex(index, topics.currentId);
-    setCurrentCardIndex(index);
+    setLastIndex(index);
   };
 
   const handleCardIndexChange = (index: number): void => {
@@ -183,7 +183,7 @@ export const Cards = () => {
                     next: `splide__arrow--next ${styles.arrow_next}`,
                     pagination: `splide__pagination ${styles.pagination}`,
                   },
-                  start: getPartStartIndex(splideIndex, currentCardIndex),
+                  start: getPartStartIndex(splideIndex, lastIndex),
                 }}
               >
                 {cardsSlice.map((card, i) => (
@@ -202,7 +202,7 @@ export const Cards = () => {
 
       {topics.currentId && (
         <CardsViewOptions
-          currentCardIndex={currentCardIndex}
+          slideIndex={sliderRef.current?.splide?.index ?? 0}
           onCardIndexChange={handleCardIndexChange}
           canEditTopic={canEditTopic()}
         />

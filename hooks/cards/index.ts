@@ -10,7 +10,6 @@ import {
   setShuffledCards,
 } from "../../redux/actions/main";
 import { useApi, useTopics, useFiles } from "../index";
-import { ControlCardFieldContent } from "../../components/cards/control/CardControl";
 import { getUpdatedShuffledCards } from "../../components/cards/utils";
 import { UpdatedResult } from "../../shared/api";
 
@@ -62,8 +61,6 @@ export const useCardsImpl = () => {
   };
 
   const loadTopicCards = async (topicId: string): Promise<void> => {
-    if (cards[topicId]) return;
-
     dispatchLoading(true);
     const cardsList = await api.request("cards", "by_topic", "get", {
       query: {
@@ -106,53 +103,53 @@ export const useCardsImpl = () => {
   };
 
   const addCards = async (
-    data?: {
-      question: ControlCardFieldContent;
-      answer: ControlCardFieldContent;
-    },
-    cardsFromFile?: ShortCard[],
-    topic?: string
+    data?: ShortCard,
+    cardsFromFile?: ShortCard[]
   ): Promise<void> => {
-    const topicId = topic ?? topics.currentId;
+    if (!data && !cardsFromFile) return;
 
-    let newCards: Card[] = [];
-
-    if (cardsFromFile?.length) {
-      newCards = await api.request("cards", "", "put", {
-        body: {
-          cards: cardsFromFile.map((c) => ({
-            ...c,
-            topic_id: topicId,
-          })),
-        },
-      });
-    } else if (data) {
-      const cardData: ShortCard = {
-        question: {
-          text: data.question.text,
-        },
-        answer: {
-          text: data.answer.text,
-        },
-      };
-
-      if (data?.question.image && typeof data.question.image !== "string") {
-        cardData.question.image = await files.upload(
-          data.question.image as File
-        );
-      }
-      if (data?.answer.image && typeof data.answer.image !== "string") {
-        cardData.answer.image = await files.upload(data.answer.image as File);
-      }
-
-      newCards = await api.request("cards", "", "put", {
-        body: {
-          cards: [{ ...cardData, topic_id: topicId }],
-        },
-      });
+    const cardsArray = cardsFromFile ?? [];
+    if (data) {
+      cardsArray.unshift(data);
     }
 
-    dispatchCards(topicId, [...cards[topicId], ...newCards]);
+    const images = cardsArray.reduce((res, curr, i) => {
+      const imgObj: { question?: File; answer?: File } = {};
+      if (curr.question.image) {
+        imgObj.question = curr.question.image as File;
+      }
+      if (curr.answer.image) {
+        imgObj.answer = curr.answer.image as File;
+      }
+      if (!Object.keys(imgObj).length) return res;
+      return { ...res, [i]: imgObj };
+    }, {} as Record<number, { question?: File; answer?: File }>);
+
+    await Promise.all(
+      Object.entries(images).map(async ([idx, data]) => {
+        if (data.question) {
+          cardsArray[Number(idx)].question.image = await files.upload(
+            data.question
+          );
+        }
+        if (data.answer) {
+          cardsArray[Number(idx)].answer.image = await files.upload(
+            data.answer
+          );
+        }
+      })
+    );
+
+    const newCards = await api.request("cards", "", "put", {
+      body: {
+        cards: cardsArray.map((c) => ({
+          ...(c as Omit<Card, "_id" | "topic_id">),
+          topic_id: topics.currentId,
+        })),
+      },
+    });
+
+    dispatchCards(topics.currentId, [...cards[topics.currentId], ...newCards]);
   };
 
   const deleteCard = async (topicId: string, cardId: string): Promise<void> => {
@@ -168,13 +165,7 @@ export const useCardsImpl = () => {
     });
   };
 
-  const updateCard = async (
-    card: Card,
-    data: {
-      question: ControlCardFieldContent;
-      answer: ControlCardFieldContent;
-    }
-  ): Promise<void> => {
+  const updateCard = async (card: Card, data: ShortCard): Promise<void> => {
     if (data.question.image && typeof data.question.image !== "string") {
       data.question.image = await files.upload(data.question.image as File);
     }

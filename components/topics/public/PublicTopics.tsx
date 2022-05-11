@@ -126,7 +126,7 @@ export const PublicTopics = () => {
                 key={topic._id}
                 topic={topic}
                 selected={selectedTopics.includes(topic._id)}
-                toggleTopic={() => toggleTopic(topic._id)}
+                onToggleTopic={() => toggleTopic(topic._id)}
               />
             ))}
           </>

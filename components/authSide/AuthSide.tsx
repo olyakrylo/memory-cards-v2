@@ -10,15 +10,15 @@ import PasswordRecovery from "../passwordRecovery";
 
 type AuthSideProps = {
   mode: AuthMode;
-  emitAuth: (data: AuthCredentials) => void;
-  changeMode: () => void;
+  onAuth: (data: AuthCredentials) => void;
+  onChangeMode: () => void;
   loading: boolean;
 };
 
 export const AuthSide = ({
   mode,
-  emitAuth,
-  changeMode,
+  onAuth,
+  onChangeMode,
   loading,
 }: AuthSideProps) => {
   const { t } = useTranslation();
@@ -58,7 +58,7 @@ export const AuthSide = ({
   const handleAuth = () => {
     const checked = validateAuth();
     if (checked) {
-      emitAuth({ login, password, email });
+      onAuth({ login, password, email });
     }
   };
 
@@ -92,7 +92,7 @@ export const AuthSide = ({
         <AuthInput
           label={t("auth.placeholder.login").toLowerCase()}
           value={login}
-          changeHandler={handleLoginChange}
+          onChange={handleLoginChange}
           error={loginError ? t(`auth.error.${loginError}`) : ""}
           type="text"
           name="username"
@@ -101,7 +101,7 @@ export const AuthSide = ({
           <AuthInput
             label="email"
             value={email}
-            changeHandler={handleEmailChange}
+            onChange={handleEmailChange}
             error={emailError ? t(`auth.error.${emailError}`) : ""}
             type="email"
           />
@@ -109,7 +109,7 @@ export const AuthSide = ({
         <AuthInput
           label={t("auth.placeholder.password").toLowerCase()}
           value={password}
-          changeHandler={handlePasswordChange}
+          onChange={handlePasswordChange}
           error={passwordError ? t(`auth.error.${passwordError}`) : ""}
           type="password"
         />
@@ -125,7 +125,7 @@ export const AuthSide = ({
             {t(`auth.button.${mode}`)}
           </Button>
           {t("ui.or")}
-          <Button type="button" onClick={changeMode}>
+          <Button type="button" onClick={onChangeMode}>
             {t(`auth.button.${oppositeMode()}`)}
           </Button>
         </div>

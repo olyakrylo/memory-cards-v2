@@ -14,13 +14,13 @@ import CardItem from "../item";
 import { useCards, useTopics } from "../../../hooks";
 
 type CardsViewOptionsProps = {
-  currentCardIndex: number;
+  slideIndex: number;
   onCardIndexChange: (v: number) => void;
   canEditTopic: boolean;
 };
 
 export const CardsViewOptions = ({
-  currentCardIndex,
+  slideIndex,
   onCardIndexChange,
   canEditTopic,
 }: CardsViewOptionsProps) => {
@@ -32,8 +32,8 @@ export const CardsViewOptions = ({
   const [cardInputValue, setCardInputValue] = useState<string>("");
 
   useEffect(() => {
-    setCardInputValue((currentCardIndex + 1).toString());
-  }, [currentCardIndex]);
+    setCardInputValue((slideIndex + 1).toString());
+  }, [slideIndex]);
 
   const toggleArrows = () => {
     cards.toggleArrows();
@@ -50,11 +50,10 @@ export const CardsViewOptions = ({
   const handleKeyUp = (event: any): void => {
     if (event.code !== "Enter") return;
     event.target.blur();
-    changeCardIndex(event);
   };
 
   const changeCardIndex = (event: BaseSyntheticEvent): void => {
-    onCardIndexChange(parseInt(event.target.value, 10) - 1);
+    onCardIndexChange(parseInt(event.target.value || "1", 10) - 1);
   };
 
   const openAllCards = () => {

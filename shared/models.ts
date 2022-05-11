@@ -30,4 +30,9 @@ export type TopicExt = Topic & {
   cards_count: number;
 };
 
-export type ShortCard = Omit<Card, "_id" | "topic_id">;
+export type ControlCardFieldContent = {
+  text: string;
+  image?: string | File;
+};
+
+export type ShortCard = Record<CardField, ControlCardFieldContent>;

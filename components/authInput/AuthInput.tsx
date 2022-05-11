@@ -15,7 +15,7 @@ import styles from "./AuthInput.module.css";
 type AuthInputProps = {
   label: string;
   value: string;
-  changeHandler: (event: BaseSyntheticEvent) => void;
+  onChange: (event: BaseSyntheticEvent) => void;
   type: InputBaseProps["type"];
   error?: string;
   name?: string;
@@ -24,7 +24,7 @@ type AuthInputProps = {
 export const AuthInput = ({
   label,
   value,
-  changeHandler,
+  onChange,
   error,
   type,
   name,
@@ -42,7 +42,7 @@ export const AuthInput = ({
         classes={{ input: styles.input }}
         className={styles.formField}
         value={value}
-        onChange={changeHandler}
+        onChange={onChange}
         error={!!error}
         label={label}
         type={visible ? "text" : type}

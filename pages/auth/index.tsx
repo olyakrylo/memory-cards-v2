@@ -48,14 +48,14 @@ const Auth = () => {
       >
         <AuthSide
           mode="signIn"
-          emitAuth={onAuth}
-          changeMode={() => changeMode("signUp")}
+          onAuth={onAuth}
+          onChangeMode={() => changeMode("signUp")}
           loading={mode === "signIn" && loading}
         />
         <AuthSide
           mode="signUp"
-          emitAuth={onAuth}
-          changeMode={() => changeMode("signIn")}
+          onAuth={onAuth}
+          onChangeMode={() => changeMode("signIn")}
           loading={mode === "signUp" && loading}
         />
       </CardFlip>

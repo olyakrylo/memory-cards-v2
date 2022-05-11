@@ -49,6 +49,7 @@
     "add-topics_other": "Add {{count}} topics",
     "save_topic": "Save topic",
     "file_formats": "TXT, TSV or CSV",
+    "enter_text_or_paste": "Enter text or paste text/image",
     "attach_image_or_text": "Attach image or text file",
     "too_large_image": "Too large image (10MB max)",
     "invalid_file_content": "Invalid file content"

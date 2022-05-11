@@ -1,11 +1,26 @@
-import { BaseSyntheticEvent, useRef, useState } from "react";
+import {
+  BaseSyntheticEvent,
+  ClipboardEventHandler,
+  useRef,
+  useState,
+} from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton, TextField, Tooltip } from "@mui/material";
+import {
+  FormControl,
+  IconButton,
+  InputLabel,
+  OutlinedInput,
+  Tooltip,
+} from "@mui/material";
 import { AttachFileRounded, HighlightOffRounded } from "@mui/icons-material";
+import { v4 as UUID } from "uuid";
 
 import styles from "./CardControlField.module.css";
-import { ControlCardFieldContent } from "../CardControl";
-import { CardField, CardFieldContent } from "../../../../shared/models";
+import {
+  CardField,
+  CardFieldContent,
+  ControlCardFieldContent,
+} from "../../../../shared/models";
 import AppImage from "../../../image";
 import SkeletonLoader from "../../../skeletonLoader";
 import { useNotification } from "../../../../hooks";
@@ -16,8 +31,8 @@ type CardControlFieldProps = {
   field: CardField;
   value: ControlCardFieldContent;
   rowsCount: number;
-  handleChange: (data: Partial<CardFieldContent>) => void;
-  handleImage: (f?: File) => void;
+  onChange: (data: Partial<CardFieldContent>) => void;
+  onChangeImage: (f?: File) => void;
   disabled: boolean;
 };
 
@@ -25,8 +40,8 @@ export const CardControlField = ({
   field,
   value,
   rowsCount,
-  handleChange,
-  handleImage,
+  onChange,
+  onChangeImage,
   disabled,
 }: CardControlFieldProps) => {
   const { t } = useTranslation();
@@ -35,13 +50,13 @@ export const CardControlField = ({
   const [loading, setLoading] = useState<boolean>(false);
 
   const inputRef = useRef<HTMLTextAreaElement | null>();
-  const inputId = `${field}-file-input`;
+  const inputId = `${field}-${UUID()}`;
 
-  const onChangeInput = (event: BaseSyntheticEvent): void => {
-    handleChange({ text: event.target.value });
+  const handleInputChange = (event: BaseSyntheticEvent): void => {
+    onChange({ text: event.target.value });
   };
 
-  const onChangeAttach = async (event: BaseSyntheticEvent): Promise<void> => {
+  const handleAttach = async (event: BaseSyntheticEvent): Promise<void> => {
     const file = event.target.files[0] as File;
     if (!file) return;
 
@@ -65,14 +80,14 @@ export const CardControlField = ({
       const blob = await compressAccurately(conversionFile, 500);
 
       const fileFromBlob = new File([blob], file.name, { type: file.type });
-      handleImage(fileFromBlob);
+      onChangeImage(fileFromBlob);
       setLoading(false);
     } else if (file.type.startsWith("text")) {
       const text = await file.text();
       if (!text) {
         notification.setError("add.invalid_file_content");
       } else {
-        handleChange({ text });
+        onChange({ text });
 
         if (inputRef.current) {
           inputRef.current.focus();
@@ -81,45 +96,52 @@ export const CardControlField = ({
     }
   };
 
+  const handlePaste: ClipboardEventHandler = async (event): Promise<void> => {
+    const file = event.clipboardData?.files[0];
+    if (!file || !file.type.startsWith("image/")) return;
+
+    await handleAttach({ target: { files: [file] } } as BaseSyntheticEvent);
+  };
+
   const removeAttach = () => {
-    handleImage();
+    onChangeImage();
   };
 
   return (
-    <div className={styles.container}>
-      <TextField
+    <FormControl fullWidth onPaste={handlePaste} className={styles.container}>
+      <InputLabel>{t(`ui.${field}`)}</InputLabel>
+      <OutlinedInput
         multiline
         inputRef={inputRef}
         rows={rowsCount}
         label={t(`ui.${field}`)}
         value={value.text}
-        onChange={onChangeInput}
+        placeholder={t("add.enter_text_or_paste")}
+        onChange={handleInputChange}
         disabled={disabled}
-        InputProps={{
-          endAdornment: (
-            <>
-              <input
-                id={inputId}
-                className={styles.attachment}
-                type={"file"}
-                onChange={onChangeAttach}
-                disabled={disabled}
-                accept="text/*, image/*, image/heic"
-              />
-              <Tooltip
-                title={disabled ? "" : t("add.attach_image_or_text") ?? ""}
+        endAdornment={
+          <>
+            <input
+              id={inputId}
+              className={styles.attachment}
+              type={"file"}
+              onChange={handleAttach}
+              disabled={disabled}
+              accept="text/*, image/*, image/heic"
+            />
+            <Tooltip
+              title={disabled ? "" : t("add.attach_image_or_text") ?? ""}
+            >
+              <label
+                htmlFor={inputId}
+                className={styles.attachmentLabel}
+                aria-disabled={disabled}
               >
-                <label
-                  htmlFor={inputId}
-                  className={styles.attachmentLabel}
-                  aria-disabled={disabled}
-                >
-                  <AttachFileRounded />
-                </label>
-              </Tooltip>
-            </>
-          ),
-        }}
+                <AttachFileRounded />
+              </label>
+            </Tooltip>
+          </>
+        }
       />
 
       {loading && <SkeletonLoader height={IMAGE_HEIGHT} />}
@@ -142,6 +164,6 @@ export const CardControlField = ({
           </IconButton>
         </div>
       )}
-    </div>
+    </FormControl>
   );
 };
