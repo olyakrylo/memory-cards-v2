@@ -1,7 +1,9 @@
-import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { BaseSyntheticEvent, useState } from "react";
 import { IconButton, Tooltip, Typography } from "@mui/material";
 import {
   CodeRounded,
+  LoopRounded,
+  ShuffleRounded,
   SquareRounded,
   ViewComfyRounded,
 } from "@mui/icons-material";
@@ -14,46 +16,28 @@ import CardItem from "../item";
 import { useCards, useTopics } from "../../../hooks";
 
 type CardsViewOptionsProps = {
-  slideIndex: number;
-  onCardIndexChange: (v: number) => void;
   canEditTopic: boolean;
 };
 
-export const CardsViewOptions = ({
-  slideIndex,
-  onCardIndexChange,
-  canEditTopic,
-}: CardsViewOptionsProps) => {
+export const CardsViewOptions = ({ canEditTopic }: CardsViewOptionsProps) => {
   const { t } = useTranslation();
   const topics = useTopics();
   const cards = useCards();
 
   const [allCardsOpen, setAllCardsOpen] = useState<boolean>(false);
-  const [cardInputValue, setCardInputValue] = useState<string>("");
 
-  useEffect(() => {
-    setCardInputValue((slideIndex + 1).toString());
-  }, [slideIndex]);
-
-  const toggleArrows = () => {
-    cards.toggleArrows();
-  };
-
-  const handleCardInput = (event: BaseSyntheticEvent): void => {
-    const { value } = event.target;
-    if (!/^[0-9]*$/.test(value) || parseInt(value) > cards.current().length) {
-      return;
-    }
-    setCardInputValue(value);
-  };
-
-  const handleKeyUp = (event: any): void => {
-    if (event.code !== "Enter") return;
+  const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
+    await cards.toggleShuffle();
     event.target.blur();
   };
 
-  const changeCardIndex = (event: BaseSyntheticEvent): void => {
-    onCardIndexChange(parseInt(event.target.value || "1", 10) - 1);
+  const toggleSwap = (event: BaseSyntheticEvent) => {
+    topics.toggleCardsSwap();
+    event.target.blur();
+  };
+
+  const toggleArrows = () => {
+    cards.toggleArrows();
   };
 
   const openAllCards = () => {
@@ -68,40 +52,47 @@ export const CardsViewOptions = ({
     return cards.current().findIndex((c) => c._id === id) ?? 0;
   };
 
+  const disabled = (): boolean => {
+    return cards.loading || !cards.current().length;
+  };
+
   return (
     <div className={styles.container}>
-      <Tooltip title={t("ui.show_arrows") ?? ""}>
+      <Tooltip title={t("tip.show_arrows") ?? ""}>
         <IconButton
           onClick={toggleArrows}
           color={cards.hideArrows ? "info" : "primary"}
-          disabled={cards.loading || !cards.current().length}
         >
           <CodeRounded />
         </IconButton>
       </Tooltip>
 
-      {!!cards.current().length && (
-        <Typography className={styles.counter}>
-          <input
-            className={styles.counter__input}
-            value={cardInputValue}
-            onChange={handleCardInput}
-            onBlur={changeCardIndex}
-            onKeyUp={handleKeyUp}
-          />{" "}
-          /{" "}
-          <span className={styles.counter__total}>
-            {cards.current().length}
-          </span>
-        </Typography>
-      )}
+      <Tooltip title={t("tip.shuffle") ?? ""}>
+        <IconButton
+          onClick={toggleShuffle}
+          className={styles.shuffle}
+          color={cards.currentShuffled() ? "secondary" : "info"}
+          disabled={disabled()}
+        >
+          <ShuffleRounded />
+        </IconButton>
+      </Tooltip>
 
-      <IconButton
-        onClick={openAllCards}
-        disabled={cards.loading || !cards.current().length}
-      >
-        <ViewComfyRounded />
-      </IconButton>
+      <Tooltip title={t("tip.swap") ?? ""}>
+        <IconButton
+          color={topics.isSwapped() ? "primary" : "info"}
+          onClick={toggleSwap}
+          disabled={cards.loading}
+        >
+          <LoopRounded />
+        </IconButton>
+      </Tooltip>
+
+      <Tooltip title={t("tip.show_all_cards") ?? ""}>
+        <IconButton onClick={openAllCards} disabled={disabled()} color="info">
+          <ViewComfyRounded />
+        </IconButton>
+      </Tooltip>
 
       <AppDialog
         open={allCardsOpen}

@@ -1,18 +1,19 @@
-import { BaseSyntheticEvent, useEffect, useRef, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
 import { Splide as ReactSplide, SplideSlide } from "@splidejs/react-splide";
 import { useTranslation } from "react-i18next";
 import { IconButton, Tooltip, Typography } from "@mui/material";
-import { ShuffleRounded, AddRounded } from "@mui/icons-material";
+import { AddRounded } from "@mui/icons-material";
 import { isBrowser } from "react-device-detect";
 import classNames from "classnames";
 
 import styles from "./Cards.module.css";
-import { getCardsMatrix, getPartStartIndex, getCardIndex } from "./utils";
+import { getPartStartIndex, getCardIndex } from "./utils";
 import CardItem from "./item";
 import AddCard from "./add";
 import SkeletonLoader from "../skeletonLoader";
 import CardsViewOptions from "./viewOptions";
 import { useCards, useCardsService, useTopics, useUser } from "../../hooks";
+import { CardsCounter } from "./counter/CardsCounter";
 
 export const Cards = () => {
   const { t } = useTranslation();
@@ -27,12 +28,7 @@ export const Cards = () => {
 
   useEffect(() => {
     if (!topics.currentId) return;
-
-    const currIndex = cards.getSavedIndex(topics.currentId);
-    setLastIndex(currIndex);
-    if (sliderRef.current?.splide) {
-      sliderRef.current.splide.go(currIndex);
-    }
+    setLastIndex(cards.getSavedIndex(topics.currentId));
   }, [topics.currentId]);
 
   useEffect(() => {
@@ -78,17 +74,15 @@ export const Cards = () => {
     setLastIndex(index);
   };
 
-  const handleCardIndexChange = (index: number): void => {
-    handleMoved(index);
+  const handleCardIndexChange = (
+    cardIndex: number,
+    splideIndex?: number
+  ): void => {
+    handleMoved(cardIndex, splideIndex);
 
     if (sliderRef.current?.splide) {
-      sliderRef.current.splide.go(index);
+      sliderRef.current.splide.go(cardIndex);
     }
-  };
-
-  const toggleShuffle = async (event: BaseSyntheticEvent): Promise<void> => {
-    await cards.toggleShuffle();
-    event.target.blur();
   };
 
   const isSelfTopic = (): boolean => {
@@ -108,29 +102,17 @@ export const Cards = () => {
       {topics.currentId && (
         <>
           <div className={styles.control}>
-            <IconButton
-              onClick={toggleShuffle}
-              classes={{ root: styles.shuffle }}
-              aria-checked={!!cards.currentShuffled()}
-              aria-hidden={!cards.current().length}
-              disabled={cards.loading}
-            >
-              <ShuffleRounded />
-            </IconButton>
+            <Typography className={styles.control__topic}>
+              {topics.currentTopic?.title}
+            </Typography>
 
-            <div className={styles.control__topic}>
-              <Typography>{topics.currentTopic?.title}</Typography>
-              {topics.currentId && !isSelfTopic() && (
-                <Tooltip title={t("add.save_topic") ?? ""}>
-                  <IconButton
-                    onClick={addCurrentTopic}
-                    disabled={cards.loading}
-                  >
-                    <AddRounded />
-                  </IconButton>
-                </Tooltip>
-              )}
-            </div>
+            {topics.currentId && !isSelfTopic() && (
+              <Tooltip title={t("add.save_topic") ?? ""}>
+                <IconButton onClick={addCurrentTopic} disabled={cards.loading}>
+                  <AddRounded />
+                </IconButton>
+              </Tooltip>
+            )}
 
             {canEditTopic() && <AddCard />}
           </div>
@@ -155,7 +137,7 @@ export const Cards = () => {
 
       {cards.loading && (
         <SkeletonLoader
-          height={"calc(50vh - 48px)"}
+          height={"calc(50vh - 24px)"}
           classes={`${styles.skeleton} ${
             cards.hideArrows ? "" : styles.skeleton_arrows
           }`}
@@ -164,8 +146,8 @@ export const Cards = () => {
 
       {!cards.loading && !!cards.current().length && (
         <>
-          {getCardsMatrix(cards.currentShuffled() ?? cards.current()).map(
-            (cardsSlice, splideIndex) => (
+          {cards.currentMatrix().map((cardsSlice, splideIndex) => (
+            <Fragment key={splideIndex}>
               <ReactSplide
                 key={splideIndex}
                 ref={sliderRef}
@@ -195,18 +177,18 @@ export const Cards = () => {
                   </SplideSlide>
                 ))}
               </ReactSplide>
-            )
-          )}
+            </Fragment>
+          ))}
         </>
       )}
 
-      {topics.currentId && (
-        <CardsViewOptions
-          slideIndex={sliderRef.current?.splide?.index ?? 0}
-          onCardIndexChange={handleCardIndexChange}
-          canEditTopic={canEditTopic()}
-        />
-      )}
+      <CardsCounter
+        currentIndex={sliderRef?.current?.splide?.index ?? 0}
+        total={cards.current().length}
+        onChangeIndex={handleCardIndexChange}
+      />
+
+      {topics.currentId && <CardsViewOptions canEditTopic={canEditTopic()} />}
     </div>
   );
 };

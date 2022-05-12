@@ -10,7 +10,6 @@ export const Header = () => {
   const { info: user } = useUser();
 
   useEffect(() => {
-    console.log("here");
     config.getColorMode().then(({ dark }) => {
       if (dark) {
         document.documentElement.classList.add("dark");

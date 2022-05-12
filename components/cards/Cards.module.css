@@ -25,11 +25,7 @@
 }
 
 .control__topic {
-  display: flex;
-  align-items: center;
-  column-gap: 8px;
   color: var(--black);
-  text-align: center;
 }
 
 .tipContainer {
@@ -75,18 +71,6 @@
 
 .pagination {
   position: relative !important;
-}
-
-.shuffle {
-  color: var(--dark-gray);
-}
-
-.shuffle[aria-checked="true"] {
-  color: var(--red);
-}
-
-.shuffle[aria-hidden="true"] {
-  visibility: hidden;
 }
 
 .arrow {

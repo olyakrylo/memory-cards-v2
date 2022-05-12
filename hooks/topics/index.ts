@@ -2,18 +2,23 @@ import { useDispatch, useSelector } from "react-redux";
 
 import { State } from "../../shared/redux";
 import { Topic, TopicExt } from "../../shared/models";
-import { setCurrentTopic, setTopics } from "../../redux/actions/main";
+import {
+  setCurrentTopic,
+  setTopics,
+  toggleSwap,
+} from "../../redux/actions/main";
 import { TopicsCount } from "../../shared/api";
 import { useApi } from "../index";
 
 export const useTopicsImpl = () => {
   const api = useApi();
 
-  const { user, topics, currentTopic } = useSelector(
+  const { user, topics, currentTopic, swap } = useSelector(
     (state: { main: State }) => ({
       user: state.main.user,
       topics: state.main.topics,
       currentTopic: state.main.currentTopic,
+      swap: state.main.swap,
     })
   );
   const dispatch = useDispatch();
@@ -24,6 +29,10 @@ export const useTopicsImpl = () => {
 
   const dispatchCurrentTopic = (topic?: Topic): void => {
     dispatch(setCurrentTopic(topic));
+  };
+
+  const dispatchSwap = (topicId: string): void => {
+    dispatch(toggleSwap(topicId));
   };
 
   const getById = (id: string): Promise<{ topic?: Topic }> => {
@@ -160,6 +169,18 @@ export const useTopicsImpl = () => {
     dispatchTopics([...topics, ...updatedTopics]);
   };
 
+  const toggleCardsSwap = (topicId?: string) => {
+    const id = topicId ?? currentTopic?._id;
+    if (!id) return;
+    dispatchSwap(id);
+  };
+
+  const isSwapped = (topicId?: string) => {
+    const id = topicId ?? currentTopic?._id;
+    if (!id) return;
+    return swap[id];
+  };
+
   const list = (): Topic[] => {
     return topics;
   };
@@ -191,5 +212,7 @@ export const useTopicsImpl = () => {
     getByAuthorCount,
     getByAuthorList,
     updatePublicTopics,
+    toggleCardsSwap,
+    isSwapped,
   };
 };

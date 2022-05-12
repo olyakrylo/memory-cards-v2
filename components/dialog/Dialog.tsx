@@ -11,13 +11,14 @@ import classNames from "classnames";
 
 import styles from "./Dialog.module.css";
 import DialogTransition from "./transition";
+import { BaseSyntheticEvent } from "react";
 
 type DialogProps = {
   open: boolean;
   size?: Breakpoint;
   responsive?: boolean;
   onlyFullScreen?: boolean;
-  onClose?: () => void;
+  onClose?: (e: BaseSyntheticEvent) => void;
   title?: JSX.Element;
   content: JSX.Element;
   actions: JSX.Element;
@@ -46,6 +47,7 @@ export const AppDialog = ({
       fullWidth={true}
       TransitionComponent={DialogTransition}
       onClose={onClose}
+      onClick={(e) => e.stopPropagation()}
     >
       {title && <DialogTitle className={styles.title}>{title}</DialogTitle>}
 

@@ -7,7 +7,6 @@
     "or": "or",
     "language": "Language",
     "logout": "Log out",
-    "show_arrows": "Show arrows",
     "question": "Question",
     "answer": "Answer",
     "question_image": "Question image",
@@ -33,6 +32,16 @@
     "edit": "Edit",
     "no_created_topics": "No created topics yet",
     "no_added_topics": "No added topics yet"
+  },
+  "tip": {
+    "shuffle": "Shuffle",
+    "swap": "Swap questions and answers",
+    "show_all_cards": "Show all cards",
+    "new_card": "New card",
+    "edit_card": "Edit card",
+    "delete_card": "Delete card",
+    "reveal": "Fully reveal",
+    "show_arrows": "Show arrows"
   },
   "add": {
     "topic_title": "Title",

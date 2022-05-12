@@ -19,18 +19,6 @@ export const getPartStartIndex = (
   return cardIndex - splideIndex * CARDS_BY_SLIDER;
 };
 
-export const getCardsMatrix = (cards: Card[]): Card[][] => {
-  if (isBrowser) {
-    return [cards];
-  }
-
-  const matrix: Card[][] = [];
-  for (let i = 0; i < cards.length; i += CARDS_BY_SLIDER) {
-    matrix.push(cards.slice(i, i + CARDS_BY_SLIDER));
-  }
-  return matrix;
-};
-
 export const getCardIndex = (
   splideIndex: number,
   cardIndex: number

@@ -11,6 +11,7 @@ export enum ActionType {
   SET_SHUFFLED_CARDS = "SET_SHUFFLED_CARDS",
   SET_CARDS_LOADING = "SET_CARDS_LOADING",
   SET_HIDE_ARROWS = "SET_HIDE_ARROWS",
+  TOGGLE_SWAP = "TOGGLE_SWAP",
 }
 
 export type State = {
@@ -23,4 +24,5 @@ export type State = {
   shuffledCards: Record<string, Card[] | undefined>;
   cardsLoading: boolean;
   hideArrows: boolean;
+  swap: Record<string, boolean>;
 };

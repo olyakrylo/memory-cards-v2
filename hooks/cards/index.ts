@@ -10,8 +10,12 @@ import {
   setShuffledCards,
 } from "../../redux/actions/main";
 import { useApi, useTopics, useFiles } from "../index";
-import { getUpdatedShuffledCards } from "../../components/cards/utils";
+import {
+  CARDS_BY_SLIDER,
+  getUpdatedShuffledCards,
+} from "../../components/cards/utils";
 import { UpdatedResult } from "../../shared/api";
+import { isBrowser } from "react-device-detect";
 
 export const useCardsImpl = () => {
   const router = useRouter();
@@ -58,6 +62,22 @@ export const useCardsImpl = () => {
 
   const get = (topicId: string): Card[] | undefined => {
     return cards[topicId];
+  };
+
+  const currentMatrix = (): Card[][] => {
+    // disable for now
+    const cards = currentShuffled() ?? current();
+    return [cards];
+
+    // if (isBrowser) {
+    //   return [cards];
+    // }
+    //
+    // const matrix: Card[][] = [];
+    // for (let i = 0; i < cards.length; i += CARDS_BY_SLIDER) {
+    //   matrix.push(cards.slice(i, i + CARDS_BY_SLIDER));
+    // }
+    // return matrix;
   };
 
   const loadTopicCards = async (topicId: string): Promise<void> => {
@@ -223,6 +243,7 @@ export const useCardsImpl = () => {
     loading,
     hideArrows,
     current,
+    currentMatrix,
     currentShuffled,
     get,
     loadTopicCards,

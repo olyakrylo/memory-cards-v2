@@ -5,21 +5,21 @@ import { AppNotification } from "../../shared/notification";
 export const setUser = (user?: User | null) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_USER,
-    payload: user,
+    payload: { user },
   });
 };
 
 export const setCurrentTopic = (topic?: Topic) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_CURRENT_TOPIC,
-    payload: topic,
+    payload: { topic },
   });
 };
 
 export const setTopics = (topics: Topic[]) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_TOPICS,
-    payload: topics,
+    payload: { topics },
   });
 };
 
@@ -42,28 +42,32 @@ export const setShuffledCards =
 export const setCardsLoading = (loading: boolean) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_CARDS_LOADING,
-    payload: loading,
+    payload: { loading },
   });
 };
 
 export const setHideArrows = (hide: boolean) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_HIDE_ARROWS,
-    payload: hide,
+    payload: { hide },
   });
 };
 
 export const setDarkMode = (darkMode: boolean) => (dispatch: Function) => {
   dispatch({
     type: ActionType.SET_DARK_MODE,
-    payload: darkMode,
+    payload: { darkMode },
   });
+};
+
+export const toggleSwap = (topicId: string) => (dispatch: Function) => {
+  dispatch({ type: ActionType.TOGGLE_SWAP, payload: { topicId } });
 };
 
 export const setNotification =
   (notification: AppNotification) => (dispatch: Function) => {
     dispatch({
       type: ActionType.SET_NOTIFICATION,
-      payload: notification,
+      payload: { notification },
     });
   };

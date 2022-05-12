@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { IconButton } from "@mui/material";
+import { IconButton, Tooltip } from "@mui/material";
 import { EditRounded } from "@mui/icons-material";
+import { useTranslation } from "react-i18next";
 
 import { Card, ControlCardFieldContent } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
@@ -13,6 +14,7 @@ type EditCardProps = {
 
 export const EditCard = ({ card }: EditCardProps) => {
   const cards = useCards();
+  const { t } = useTranslation();
 
   const [editCardOpen, setEditCardOpen] = useState<boolean>(false);
 
@@ -43,19 +45,29 @@ export const EditCard = ({ card }: EditCardProps) => {
   };
 
   return (
-    <IconButton
-      className={styles.card__edit}
-      color="primary"
-      onClick={openEditCardDialog}
-      size={"small"}
-    >
-      <EditRounded />
+    <>
+      <Tooltip title={t("tip.edit_card") ?? ""}>
+        <IconButton
+          className={styles.card__edit}
+          color="primary"
+          onClick={openEditCardDialog}
+          size={"small"}
+        >
+          <EditRounded />
+
+          <CardControl
+            card={card}
+            open={editCardOpen}
+            onClose={(data) => onCloseEditCardDialog(data)}
+          />
+        </IconButton>
+      </Tooltip>
 
       <CardControl
         card={card}
         open={editCardOpen}
         onClose={(data) => onCloseEditCardDialog(data)}
       />
-    </IconButton>
+    </>
   );
 };

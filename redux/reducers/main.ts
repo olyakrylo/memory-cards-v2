@@ -9,6 +9,7 @@ const main = (
     shuffledCards: {},
     cardsLoading: false,
     hideArrows: false,
+    swap: {},
     notification: { severity: "success", text: "" },
   },
   action: AnyAction
@@ -17,25 +18,25 @@ const main = (
     case ActionType.SET_USER:
       return {
         ...state,
-        user: action.payload,
+        user: action.payload.user,
       };
 
     case ActionType.SET_CURRENT_TOPIC:
       return {
         ...state,
-        currentTopic: action.payload,
+        currentTopic: action.payload.topic,
       };
 
     case ActionType.SET_DARK_MODE:
       return {
         ...state,
-        darkMode: action.payload,
+        darkMode: action.payload.darkMode,
       };
 
     case ActionType.SET_TOPICS:
       return {
         ...state,
-        topics: action.payload,
+        topics: action.payload.topics,
       };
 
     case ActionType.SET_CARDS:
@@ -59,19 +60,29 @@ const main = (
     case ActionType.SET_CARDS_LOADING:
       return {
         ...state,
-        cardsLoading: action.payload,
+        cardsLoading: action.payload.loading,
       };
 
     case ActionType.SET_HIDE_ARROWS:
       return {
         ...state,
-        hideArrows: action.payload,
+        hideArrows: action.payload.hide,
+      };
+
+    case ActionType.TOGGLE_SWAP:
+      const { topicId } = action.payload;
+      return {
+        ...state,
+        swap: {
+          ...state.swap,
+          [topicId]: !state.swap[topicId],
+        },
       };
 
     case ActionType.SET_NOTIFICATION:
       return {
         ...state,
-        notification: action.payload,
+        notification: action.payload.notification,
       };
 
     default:

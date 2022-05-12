@@ -1,0 +1,31 @@
+.container {
+  color: var(--dark-gray);
+}
+
+.input,
+.count,
+.total {
+  display: inline-block;
+  width: 7ch;
+  padding: 0 4px;
+}
+
+.input,
+.count {
+  color: var(--medium-gray);
+  cursor: pointer;
+  text-align: end;
+}
+
+.input {
+  font: inherit;
+  border: none;
+  outline: none;
+  border-radius: 0;
+  background-color: transparent;
+  box-shadow: 0 -1px 0 0 var(--medium-gray) inset;
+}
+
+.total {
+  text-align: start;
+}
