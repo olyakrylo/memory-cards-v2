@@ -48,6 +48,9 @@ export const AppDialog = ({
       TransitionComponent={DialogTransition}
       onClose={onClose}
       onClick={(e) => e.stopPropagation()}
+      onKeyPress={(e) => e.stopPropagation()}
+      onKeyUp={(e) => e.stopPropagation()}
+      onKeyDown={(e) => e.stopPropagation()}
     >
       {title && <DialogTitle className={styles.title}>{title}</DialogTitle>}
 
