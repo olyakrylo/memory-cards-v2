@@ -4,6 +4,7 @@ import { Typography } from "@mui/material";
 import { Card } from "../../../../shared/models";
 import styles from "../CardItem.module.css";
 import AppImage from "../../../image";
+import { formatText } from "../../utils";
 
 type CardDialogContentProps = {
   field: "question" | "answer";
@@ -22,7 +23,7 @@ export const CardDialogContent = ({ field, card }: CardDialogContentProps) => {
       >
         {t(`ui.${field}`)}
       </Typography>
-      <Typography>{card[field].text}</Typography>
+      <Typography>{formatText(card[field].text)}</Typography>
 
       {card[field].image && (
         <AppImage

@@ -8,6 +8,7 @@ import styles from "../CardItem.module.css";
 import AppImage from "../../../image";
 import CardDialogContent from "../dialogContent";
 import AppDialog from "../../../dialog";
+import { formatText } from "../../utils";
 
 const MAX_TEXT_LENGTH = 300;
 
@@ -48,7 +49,7 @@ export const CardMainContent = ({ card, field }: CardMainContentProps) => {
 
       {!card[field].image && (
         <Typography className={styles.card__text}>
-          {cropText(card[field].text)}
+          {formatText(cropText(card[field].text))}
         </Typography>
       )}
 

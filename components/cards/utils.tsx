@@ -58,3 +58,36 @@ export const getUpdatedShuffledCards = (
 
   return updatedCards;
 };
+
+export const formatText = (text: string): JSX.Element => {
+  const boldFounds = text.matchAll(/(\*{2}.+?\*{2})/g);
+  const italicFounds = text.matchAll(/_{2}.+?_{2}/g);
+
+  const founds = [...Array.from(boldFounds), ...Array.from(italicFounds)].sort(
+    (a, b) => (a.index ?? 0) - (b.index ?? 0)
+  );
+
+  if (!founds.length) {
+    return <>{text}</>;
+  }
+
+  let res: (JSX.Element | string)[] = [];
+  let lastIndex = 0;
+
+  founds.forEach((match) => {
+    res.push(text.slice(lastIndex, match.index));
+
+    if (match[0].startsWith("**")) {
+      const clearString = match[0].replace(/(^\*{2}|\*{2}$)/g, "");
+      res.push(<b>{clearString}</b>);
+    } else if (match[0].startsWith("__")) {
+      const clearString = match[0].replace(/(^_{2}|_{2}$)/g, "");
+      res.push(<i>{clearString}</i>);
+    }
+    lastIndex = (match.index ?? 0) + match[0].length;
+  });
+
+  res.push(text.slice(lastIndex));
+
+  return <>{res}</>;
+};

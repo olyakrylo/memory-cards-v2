@@ -24,9 +24,19 @@ export const AddCard = () => {
     cardsFromFile?: ShortCard[]
   ) => {
     setNewCardOpen(false);
-    if (!data && !cardsFromFile?.length) return;
+    if (!data) return;
 
-    await cards.addCards(data, cardsFromFile);
+    const cardsData = cardsFromFile ?? [];
+    if (
+      data.question.text ||
+      data.question.image ||
+      data.answer.text ||
+      data.answer.image
+    ) {
+      cardsData.unshift(data);
+    }
+
+    await cards.addCards(cardsData);
   };
 
   return (
