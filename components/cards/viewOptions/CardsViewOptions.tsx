@@ -62,6 +62,7 @@ export const CardsViewOptions = ({ canEditTopic }: CardsViewOptionsProps) => {
         <IconButton
           onClick={toggleArrows}
           color={cards.hideArrows ? "info" : "primary"}
+          disabled={disabled()}
         >
           <CodeRounded />
         </IconButton>
@@ -82,7 +83,7 @@ export const CardsViewOptions = ({ canEditTopic }: CardsViewOptionsProps) => {
         <IconButton
           color={topics.isSwapped() ? "primary" : "info"}
           onClick={toggleSwap}
-          disabled={cards.loading}
+          disabled={disabled()}
         >
           <LoopRounded />
         </IconButton>

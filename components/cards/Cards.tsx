@@ -135,58 +135,59 @@ export const Cards = () => {
         </>
       )}
 
-      {cards.loading && (
-        <SkeletonLoader
-          height={"calc(50vh - 24px)"}
-          classes={`${styles.skeleton} ${
-            cards.hideArrows ? "" : styles.skeleton_arrows
-          }`}
-        />
-      )}
+      {(cards.loading || !!cards.current().length) && (
+        <div className={styles.content}>
+          {cards.loading && (
+            <SkeletonLoader
+              height={"50vh"}
+              classes={`${styles.skeleton} ${
+                cards.hideArrows ? "" : styles.skeleton_arrows
+              }`}
+            />
+          )}
 
-      {!cards.loading && !!cards.current().length && (
-        <>
-          {cards.currentMatrix().map((cardsSlice, splideIndex) => (
-            <Fragment key={splideIndex}>
-              <ReactSplide
-                key={splideIndex}
-                ref={sliderRef}
-                onMoved={(_, index) => handleMoved(index, splideIndex)}
-                className={styles.slider}
-                options={{
-                  keyboard: isBrowser ? "global" : false,
-                  height: "50vh",
-                  arrows: !cards.hideArrows,
-                  pagination: false,
-                  lazyLoad: "nearby",
-                  classes: {
-                    arrow: `splide__arrow ${styles.arrow}`,
-                    prev: `splide__arrow--prev ${styles.arrow_prev}`,
-                    next: `splide__arrow--next ${styles.arrow_next}`,
-                    pagination: `splide__pagination ${styles.pagination}`,
-                  },
-                  start: getPartStartIndex(splideIndex, lastIndex),
-                }}
-              >
-                {cardsSlice.map((card, i) => (
-                  <SplideSlide key={card._id}>
-                    <CardItem
-                      index={actualCardIndex(card._id)}
-                      canEditTopic={canEditTopic()}
-                    />
-                  </SplideSlide>
-                ))}
-              </ReactSplide>
-            </Fragment>
-          ))}
-        </>
-      )}
+          {!cards.loading && (
+            <>
+              {cards.currentMatrix().map((cardsSlice, splideIndex) => (
+                <ReactSplide
+                  key={splideIndex}
+                  ref={sliderRef}
+                  onMoved={(_, index) => handleMoved(index, splideIndex)}
+                  className={styles.slider}
+                  options={{
+                    keyboard: isBrowser ? "global" : false,
+                    arrows: !cards.hideArrows,
+                    pagination: false,
+                    lazyLoad: "nearby",
+                    classes: {
+                      arrow: `splide__arrow ${styles.arrow}`,
+                      prev: `splide__arrow--prev ${styles.arrow_prev}`,
+                      next: `splide__arrow--next ${styles.arrow_next}`,
+                      pagination: `splide__pagination ${styles.pagination}`,
+                    },
+                    start: getPartStartIndex(splideIndex, lastIndex),
+                  }}
+                >
+                  {cardsSlice.map((card, i) => (
+                    <SplideSlide key={card._id}>
+                      <CardItem
+                        index={actualCardIndex(card._id)}
+                        canEditTopic={canEditTopic()}
+                      />
+                    </SplideSlide>
+                  ))}
+                </ReactSplide>
+              ))}
+            </>
+          )}
 
-      <CardsCounter
-        currentIndex={sliderRef?.current?.splide?.index ?? 0}
-        total={cards.current().length}
-        onChangeIndex={handleCardIndexChange}
-      />
+          <CardsCounter
+            currentIndex={sliderRef?.current?.splide?.index ?? 0}
+            total={cards.current().length}
+            onChangeIndex={handleCardIndexChange}
+          />
+        </div>
+      )}
 
       {topics.currentId && <CardsViewOptions canEditTopic={canEditTopic()} />}
     </div>

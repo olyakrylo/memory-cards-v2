@@ -1,7 +1,8 @@
-import { BaseSyntheticEvent, useRef, useState } from "react";
+import { BaseSyntheticEvent, useState } from "react";
 import { Typography } from "@mui/material";
 
 import styles from "./CardsCounter.module.css";
+import { useCards } from "../../../hooks";
 
 type CardsCounterProps = {
   currentIndex: number;
@@ -14,6 +15,8 @@ export const CardsCounter = ({
   total,
   onChangeIndex,
 }: CardsCounterProps) => {
+  const cards = useCards();
+
   const [editMode, setEditMode] = useState<boolean>(false);
 
   const edit = () => {
@@ -57,7 +60,7 @@ export const CardsCounter = ({
       )}
       {!editMode && (
         <span className={styles.count} onClick={edit}>
-          {currentIndex + 1}
+          {cards.loading ? 0 : currentIndex + 1}
         </span>
       )}{" "}
       / <span className={styles.total}>{total}</span>

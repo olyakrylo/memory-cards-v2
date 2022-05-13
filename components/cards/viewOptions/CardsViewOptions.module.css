@@ -11,8 +11,8 @@
 
 .allCards {
   display: grid;
-  grid-template-columns: repeat(auto-fill, 300px);
-  grid-auto-rows: 250px;
+  grid-template-columns: repeat(auto-fill, 350px);
+  grid-auto-rows: 220px;
   justify-content: center;
 }
 

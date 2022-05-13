@@ -52,7 +52,7 @@ const main = (
       return {
         ...state,
         shuffledCards: {
-          ...state.cards,
+          ...state.shuffledCards,
           [action.payload.topicId]: action.payload.cards,
         },
       };

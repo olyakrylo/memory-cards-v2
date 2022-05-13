@@ -1,11 +1,12 @@
 .cardContainer {
-  height: calc(100% - 50px);
-  margin: 24px;
+  height: 100%;
+  margin: 0 24px;
+  padding-bottom: 24px;
   transition: margin 0.2s ease-in-out;
 }
 
 .cardContainer_arrows {
-  margin: 24px 56px;
+  margin: 0 56px;
 }
 
 .card {
