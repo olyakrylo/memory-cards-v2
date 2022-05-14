@@ -50,6 +50,10 @@ body {
   min-height: calc(100vh - 2 * var(--body-padding-vertical));
 }
 
+.splide__track {
+  width: 100%;
+}
+
 @media (max-width: 500px) {
   :root {
     --body-padding-horizontal: 20px;

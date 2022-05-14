@@ -139,7 +139,7 @@ export const Cards = () => {
         <div className={styles.content}>
           {cards.loading && (
             <SkeletonLoader
-              height={"50vh"}
+              height={"calc(100% - 48px)"}
               classes={`${styles.skeleton} ${
                 cards.hideArrows ? "" : styles.skeleton_arrows
               }`}
