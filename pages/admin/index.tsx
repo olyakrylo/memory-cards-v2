@@ -4,7 +4,11 @@ import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-import { ADMIN_DATA_LIMIT, AdminCard, AdminTabData } from "../../shared/admin";
+import {
+  ADMIN_DATA_LIMIT,
+  CardWithTopicTitle,
+  AdminTabData,
+} from "../../shared/admin";
 import { Topic, User } from "../../shared/models";
 import { useUser, useUserService } from "../../hooks";
 
@@ -31,7 +35,7 @@ type AllDataProps = {
   SSRData: {
     users: AdminTabData<User>;
     topics: AdminTabData<Topic>;
-    cards: AdminTabData<AdminCard>;
+    cards: AdminTabData<CardWithTopicTitle>;
     images: AdminTabData<string>;
   };
 };
@@ -134,7 +138,7 @@ export const getServerSideProps: GetServerSideProps = async ({
   const limit = query.limit ?? ADMIN_DATA_LIMIT;
 
   const loadData = async (path: string): Promise<any> => {
-    const url = `https://${req.headers.host}/api/all/${path}?skip=${skip}&limit=${limit}`;
+    const url = `https://${req.headers.host}/api/admin/${path}?skip=${skip}&limit=${limit}`;
     const response = await fetch(url);
     return await response.json();
   };

@@ -1,4 +1,5 @@
 import { Card, Topic, TopicExt, User } from "./models";
+import { CardWithTopicTitle } from "./admin";
 
 export type Paths = {
   users: UsersAPI;
@@ -6,6 +7,7 @@ export type Paths = {
   cards: CardsAPI;
   files: FilesAPI;
   config: ConfigAPI;
+  admin: AdminAPI;
 };
 
 export type Method = "get" | "post" | "put" | "delete" | "patch";
@@ -243,4 +245,55 @@ export interface ConfigAPI {
 export type TopicsCount = {
   self: number;
   public: number;
+};
+
+export type AdminAPI = {
+  users: {
+    get: {
+      query: { skip: number; limit: number };
+      body: {};
+      result: { count: number; data: User[] };
+    };
+    delete: {
+      query: {};
+      body: { ids: string[] };
+      result: UpdatedResult;
+    };
+  };
+  cards: {
+    get: {
+      query: { skip: number; limit: number };
+      body: {};
+      result: { count: number; data: CardWithTopicTitle[] };
+    };
+    delete: {
+      query: {};
+      body: { ids: string[] };
+      result: UpdatedResult;
+    };
+  };
+  topics: {
+    get: {
+      query: { skip: number; limit: number };
+      body: {};
+      result: { count: number; data: Topic[] };
+    };
+    delete: {
+      query: {};
+      body: { ids: string[] };
+      result: UpdatedResult;
+    };
+  };
+  images: {
+    get: {
+      query: { skip: number; limit: number };
+      body: {};
+      result: { count: number; data: string[] };
+    };
+    delete: {
+      query: {};
+      body: { keys: string[] };
+      result: UpdatedResult;
+    };
+  };
 };

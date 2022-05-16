@@ -18,7 +18,6 @@ interface AdminViewProps<T = any> {
   itemActions?: (item: T) => JSX.Element;
   itemCollapse?: (item: T) => JSX.Element;
   onToggleExpand?: (id: string, expanded: boolean) => void;
-  selectable?: boolean;
 }
 
 export function AdminView<T extends { _id: string }>({
@@ -30,7 +29,6 @@ export function AdminView<T extends { _id: string }>({
   itemActions,
   itemCollapse,
   onToggleExpand,
-  selectable,
 }: AdminViewProps<T>) {
   const router = useRouter();
 
@@ -109,11 +107,7 @@ export function AdminView<T extends { _id: string }>({
             actions={itemActions ? itemActions(item) : undefined}
             collapse={itemCollapse ? itemCollapse(item) : undefined}
             selected={selectedIds.includes(item._id)}
-            onToggleSelection={
-              selectable
-                ? (checked) => toggleSelection(item._id, checked)
-                : undefined
-            }
+            onToggleSelection={(checked) => toggleSelection(item._id, checked)}
             onToggleExpand={
               onToggleExpand
                 ? (expanded) => onToggleExpand(item._id, expanded)

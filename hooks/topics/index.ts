@@ -7,7 +7,7 @@ import {
   setTopics,
   toggleSwap,
 } from "../../redux/actions/main";
-import { TopicsCount } from "../../shared/api";
+import { TopicsCount, UpdatedResult } from "../../shared/api";
 import { useApi } from "../index";
 
 export const useTopicsImpl = () => {
@@ -169,6 +169,10 @@ export const useTopicsImpl = () => {
     dispatchTopics([...topics, ...updatedTopics]);
   };
 
+  const deleteMany = (ids: string[]): Promise<UpdatedResult> => {
+    return api.request("admin", "topics", "delete", { body: { ids } });
+  };
+
   const toggleCardsSwap = (topicId?: string) => {
     const id = topicId ?? currentTopic?._id;
     if (!id) return;
@@ -212,6 +216,7 @@ export const useTopicsImpl = () => {
     getByAuthorCount,
     getByAuthorList,
     updatePublicTopics,
+    deleteMany,
     toggleCardsSwap,
     isSwapped,
   };

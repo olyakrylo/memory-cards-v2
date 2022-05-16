@@ -1,26 +1,35 @@
 import { NextApiRequest, NextApiResponse } from "next";
-
+import { connect } from "../../../utils/connection";
 import { ResponseFuncs } from "../../../shared/api";
-import RedisClient from "../../../utils/redis";
 import { checkAccessToData } from "../../../utils/check-access-to-data";
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
   const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs;
 
+  const hasAccess = await checkAccessToData(req, res);
+  if (!hasAccess) {
+    res.status(403).json({ error: "Access denied" });
+    return;
+  }
+
+  const { Topic } = await connect();
+
   const handleCase: ResponseFuncs = {
     GET: async (req: NextApiRequest, res: NextApiResponse) => {
-      const hasAccess = await checkAccessToData(req, res);
-      if (!hasAccess) {
-        res.json({ error: "Access denied" });
-        return;
-      }
-
       const skip = parseInt(req.query.skip as string, 10) || 0;
       const limit = parseInt(req.query.limit as string, 10) || 0;
 
-      const keys = await RedisClient.getKeys();
+      const [count, topics] = await Promise.all([
+        Topic.count({}),
+        Topic.find({}).skip(skip).limit(limit),
+      ]);
 
-      res.json({ data: keys.slice(skip, skip + limit), count: keys.length });
+      res.json({ count, data: topics });
+    },
+    DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
+      const { ids } = req.body;
+      await Topic.deleteMany({ _id: { $in: ids } });
+      res.json({ updated: true });
     },
   };
 

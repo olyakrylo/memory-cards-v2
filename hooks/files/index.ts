@@ -1,4 +1,5 @@
 import { useApi } from "../index";
+import { UpdatedResult } from "../../shared/api";
 
 export const useFilesImpl = () => {
   const api = useApi();
@@ -14,5 +15,9 @@ export const useFilesImpl = () => {
     return filename;
   };
 
-  return { upload };
+  const deleteByKeys = (keys: string[]): Promise<UpdatedResult> => {
+    return api.request("admin", "images", "delete", { body: { keys } });
+  };
+
+  return { upload, deleteByKeys };
 };

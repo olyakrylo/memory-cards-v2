@@ -19,7 +19,7 @@ type ViewCardProps = {
   collapse?: JSX.Element;
   onToggleExpand?: (expanded: boolean) => void;
   selected?: boolean;
-  onToggleSelection?: (checked: boolean) => void;
+  onToggleSelection: (checked: boolean) => void;
 };
 
 export const ViewCard = ({
@@ -41,7 +41,6 @@ export const ViewCard = ({
   };
 
   const toggleSelection = (checked: boolean) => {
-    if (!onToggleSelection) return;
     onToggleSelection(checked);
   };
 
@@ -55,13 +54,11 @@ export const ViewCard = ({
       {content && <CardContent>{content}</CardContent>}
 
       <CardActions className={styles.card__actions}>
-        {onToggleSelection && (
-          <Checkbox
-            checked={selected}
-            onChange={(_, checked) => toggleSelection(checked)}
-            className={styles.card__checkbox}
-          />
-        )}
+        <Checkbox
+          checked={selected}
+          onChange={(_, checked) => toggleSelection(checked)}
+          className={styles.card__checkbox}
+        />
 
         {actions}
 
