@@ -2,26 +2,25 @@ import { IconButton, Pagination, Typography } from "@mui/material";
 import { DeleteOutlined } from "@mui/icons-material";
 import { Masonry } from "@mui/lab";
 import { useRouter } from "next/router";
-import { BaseSyntheticEvent, useState } from "react";
+import { useState } from "react";
 
-import styles from "./AdminData.module.css";
-import { ADMIN_DATA_LIMIT } from "../../shared/admin";
-import { UpdatedResult } from "../../shared/api";
-import AdminItemCard from "./item";
+import styles from "./AdminView.module.css";
+import { ADMIN_DATA_LIMIT } from "../../../shared/admin";
+import { UpdatedResult } from "../../../shared/api";
+import AdminItemCard from "./card";
 
-type AdminDataProps = {
+interface AdminViewProps<T = any> {
   count: number;
   deleteFunc?: (selected: string[]) => Promise<UpdatedResult>;
-  data: any[];
-  itemTitle: (item: any) => string;
-  itemContent?: (item: any) => JSX.Element;
-  itemActions?: (item: any) => JSX.Element;
-  itemCollapse?: (item: any) => JSX.Element;
+  data: T[];
+  itemTitle: (item: T) => string;
+  itemContent?: (item: T) => JSX.Element;
+  itemActions?: (item: T) => JSX.Element;
+  itemCollapse?: (item: T) => JSX.Element;
   onToggleExpand?: (id: string, expanded: boolean) => void;
-  selectable?: boolean;
-};
+}
 
-export const AdminData = ({
+export function AdminView<T extends { _id: string }>({
   count,
   deleteFunc,
   data,
@@ -30,8 +29,7 @@ export const AdminData = ({
   itemActions,
   itemCollapse,
   onToggleExpand,
-  selectable,
-}: AdminDataProps) => {
+}: AdminViewProps<T>) {
   const router = useRouter();
 
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
@@ -56,7 +54,7 @@ export const AdminData = ({
     });
   };
 
-  const onChangePage = async (_: BaseSyntheticEvent, page: number) => {
+  const onChangePage = async (...[, page]: [any, number]): Promise<void> => {
     await router.push({
       pathname: router.pathname,
       query: {
@@ -109,11 +107,7 @@ export const AdminData = ({
             actions={itemActions ? itemActions(item) : undefined}
             collapse={itemCollapse ? itemCollapse(item) : undefined}
             selected={selectedIds.includes(item._id)}
-            onToggleSelection={
-              selectable
-                ? (checked) => toggleSelection(item._id, checked)
-                : undefined
-            }
+            onToggleSelection={(checked) => toggleSelection(item._id, checked)}
             onToggleExpand={
               onToggleExpand
                 ? (expanded) => onToggleExpand(item._id, expanded)
@@ -124,4 +118,4 @@ export const AdminData = ({
       </Masonry>
     </>
   );
-};
+}

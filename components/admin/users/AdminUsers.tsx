@@ -4,14 +4,16 @@ import { useState } from "react";
 import { Topic, User } from "../../../shared/models";
 import styles from "./AdminUsers.module.css";
 import SkeletonLoader from "../../skeletonLoader";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import { AdminTabData } from "../../../shared/admin";
-import { useTopics } from "../../../hooks";
+import { useTopics, useUser } from "../../../hooks";
+import { UpdatedResult } from "../../../shared/api";
 
 type AdminUsersProps = AdminTabData<User>;
 
 export const AdminUsers = ({ data, count }: AdminUsersProps) => {
   const topics = useTopics();
+  const users = useUser();
 
   const [topicsData, setTopicsData] = useState<
     Record<
@@ -22,6 +24,10 @@ export const AdminUsers = ({ data, count }: AdminUsersProps) => {
       }
     >
   >({});
+
+  const deleteUsers = (ids: string[]): Promise<UpdatedResult> => {
+    return users.deleteMany(ids);
+  };
 
   const handleExpand = (id: string, expanded: boolean) => {
     if (expanded && !topicsData[id]) {
@@ -74,13 +80,14 @@ export const AdminUsers = ({ data, count }: AdminUsersProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       data={data}
       itemTitle={userTitle}
       itemContent={userContent}
       itemCollapse={userCollapse}
       onToggleExpand={handleExpand}
+      deleteFunc={deleteUsers}
     />
   );
 };

@@ -123,6 +123,7 @@ export const useCardsImpl = () => {
   };
 
   const addCards = async (cardsData: ShortCard[]): Promise<void> => {
+    dispatchLoading(true);
     const images = cardsData.reduce((res, curr, i) => {
       const imgObj: { question?: File; answer?: File } = {};
       if (curr.question.image) {
@@ -157,23 +158,27 @@ export const useCardsImpl = () => {
       },
     });
 
+    dispatchLoading(false);
     dispatchCards(topics.currentId, [...cards[topics.currentId], ...newCards]);
   };
 
   const deleteCard = async (topicId: string, cardId: string): Promise<void> => {
+    dispatchLoading(true);
     await api.request("cards", "", "delete", { query: { ids: [cardId] } });
     const updatedCards = cards[topicId].filter((c) => c._id !== cardId);
 
+    dispatchLoading(false);
     dispatchCards(topicId, updatedCards);
   };
 
   const deleteMany = (ids: string[]): Promise<UpdatedResult> => {
-    return api.request("cards", "", "delete", {
-      query: { ids },
+    return api.request("admin", "cards", "delete", {
+      body: { ids },
     });
   };
 
   const updateCard = async (card: Card, data: ShortCard): Promise<void> => {
+    dispatchLoading(true);
     if (data.question.image && typeof data.question.image !== "string") {
       data.question.image = await files.upload(data.question.image as File);
     }
@@ -189,6 +194,7 @@ export const useCardsImpl = () => {
       },
     });
 
+    dispatchLoading(false);
     dispatchCards(
       topics.currentId,
       current().map((c) => {

@@ -4,19 +4,25 @@ import { Divider, Typography } from "@mui/material";
 import { Card as CardType, Topic } from "../../../shared/models";
 import { AdminTabData } from "../../../shared/admin";
 import SkeletonLoader from "../../skeletonLoader";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import styles from "./AdminTopics.module.css";
 import AppImage from "../../image";
-import { useCards } from "../../../hooks";
+import { useCards, useTopics } from "../../../hooks";
+import { UpdatedResult } from "../../../shared/api";
 
 type AdminTopicsProps = AdminTabData<Topic>;
 
 export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
   const cards = useCards();
+  const topics = useTopics();
 
   const [cardsData, setCardsData] = useState<
     Record<string, { count: number; data?: CardType[] }>
   >({});
+
+  const deleteTopics = (ids: string[]): Promise<UpdatedResult> => {
+    return topics.deleteMany(ids);
+  };
 
   const handleExpand = (id: string, expanded: boolean) => {
     if (expanded && !cardsData[id]) {
@@ -82,13 +88,14 @@ export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       data={data}
       itemTitle={topicTitle}
       itemContent={topicContent}
       itemCollapse={topicCollapse}
       onToggleExpand={handleExpand}
+      deleteFunc={deleteTopics}
     />
   );
 };

@@ -10,19 +10,19 @@ import {
   IconButton,
 } from "@mui/material";
 
-import styles from "./AdminItem.module.css";
+import styles from "./ViewCard.module.css";
 
-type AdminCardProps = {
+type ViewCardProps = {
   title: string;
   content?: JSX.Element;
   actions?: JSX.Element;
   collapse?: JSX.Element;
   onToggleExpand?: (expanded: boolean) => void;
   selected?: boolean;
-  onToggleSelection?: (checked: boolean) => void;
+  onToggleSelection: (checked: boolean) => void;
 };
 
-export const AdminItem = ({
+export const ViewCard = ({
   title,
   content,
   actions,
@@ -30,7 +30,7 @@ export const AdminItem = ({
   onToggleExpand,
   selected,
   onToggleSelection,
-}: AdminCardProps) => {
+}: ViewCardProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const toggleExpand = () => {
@@ -41,7 +41,6 @@ export const AdminItem = ({
   };
 
   const toggleSelection = (checked: boolean) => {
-    if (!onToggleSelection) return;
     onToggleSelection(checked);
   };
 
@@ -55,13 +54,11 @@ export const AdminItem = ({
       {content && <CardContent>{content}</CardContent>}
 
       <CardActions className={styles.card__actions}>
-        {onToggleSelection && (
-          <Checkbox
-            checked={selected}
-            onChange={(_, checked) => toggleSelection(checked)}
-            className={styles.card__checkbox}
-          />
-        )}
+        <Checkbox
+          checked={selected}
+          onChange={(_, checked) => toggleSelection(checked)}
+          className={styles.card__checkbox}
+        />
 
         {actions}
 

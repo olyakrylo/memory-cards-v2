@@ -7,4 +7,4 @@ export interface AdminTabData<T> {
   data: T[];
 }
 
-export type AdminCard = Card & { topic_title: string };
+export type CardWithTopicTitle = Card & { topic_title: string };

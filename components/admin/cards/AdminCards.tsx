@@ -1,12 +1,12 @@
 import { Divider, Typography } from "@mui/material";
 
 import AppImage from "../../image";
-import { AdminCard, AdminTabData } from "../../../shared/admin";
+import { CardWithTopicTitle, AdminTabData } from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import { useCards } from "../../../hooks";
 
-type AdminCardsProps = AdminTabData<AdminCard>;
+type AdminCardsProps = AdminTabData<CardWithTopicTitle>;
 
 export const AdminCards = ({ data, count }: AdminCardsProps) => {
   const cards = useCards();
@@ -15,11 +15,11 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
     return cards.deleteMany(selectedIds);
   };
 
-  const cardTitle = (card: AdminCard): string => {
+  const cardTitle = (card: CardWithTopicTitle): string => {
     return card.topic_title;
   };
 
-  const cardContent = (card: AdminCard): JSX.Element => {
+  const cardContent = (card: CardWithTopicTitle): JSX.Element => {
     return (
       <>
         <code>Topic: {card.topic_id}</code>
@@ -29,7 +29,7 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
     );
   };
 
-  const cardCollapse = (card: AdminCard): JSX.Element => {
+  const cardCollapse = (card: CardWithTopicTitle): JSX.Element => {
     return (
       <>
         <Typography fontWeight={500} color={"primary"} gutterBottom>
@@ -54,14 +54,13 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       deleteFunc={deleteCards}
       data={data}
       itemTitle={cardTitle}
       itemContent={cardContent}
       itemCollapse={cardCollapse}
-      selectable
     />
   );
 };

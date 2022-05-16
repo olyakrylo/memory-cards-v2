@@ -107,6 +107,10 @@ export const useUserImpl = () => {
     });
   };
 
+  const deleteMany = (ids: string[]): Promise<UpdatedResult> => {
+    return api.request("admin", "users", "delete", { body: { ids } });
+  };
+
   return {
     info: user,
     loadUser,
@@ -116,5 +120,6 @@ export const useUserImpl = () => {
     sendRecoveryMessage,
     getRecoveryUser,
     updateRecoveryUser,
+    deleteMany,
   };
 };
