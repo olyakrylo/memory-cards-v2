@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Topic, User } from "../../../shared/models";
 import styles from "./AdminUsers.module.css";
 import SkeletonLoader from "../../skeletonLoader";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import { AdminTabData } from "../../../shared/admin";
 import { useTopics } from "../../../hooks";
 
@@ -74,7 +74,7 @@ export const AdminUsers = ({ data, count }: AdminUsersProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       data={data}
       itemTitle={userTitle}

@@ -1,7 +1,7 @@
 import { Tab, Tabs } from "@mui/material";
 import { useRouter } from "next/router";
 import { GetServerSideProps } from "next";
-import { BaseSyntheticEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
 import { ADMIN_DATA_LIMIT, AdminCard, AdminTabData } from "../../shared/admin";
@@ -64,7 +64,7 @@ const AdminPanel = ({ SSRData }: AllDataProps) => {
     }
   }, [router, user]);
 
-  const handleTabChange = (_: BaseSyntheticEvent, value: string): void => {
+  const handleTabChange = (...[, value]: [any, string]): void => {
     void router.push({
       pathname: router.pathname,
       query: { tab: value },

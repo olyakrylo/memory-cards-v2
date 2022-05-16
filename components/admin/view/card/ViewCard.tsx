@@ -10,9 +10,9 @@ import {
   IconButton,
 } from "@mui/material";
 
-import styles from "./AdminItem.module.css";
+import styles from "./ViewCard.module.css";
 
-type AdminCardProps = {
+type ViewCardProps = {
   title: string;
   content?: JSX.Element;
   actions?: JSX.Element;
@@ -22,7 +22,7 @@ type AdminCardProps = {
   onToggleSelection?: (checked: boolean) => void;
 };
 
-export const AdminItem = ({
+export const ViewCard = ({
   title,
   content,
   actions,
@@ -30,7 +30,7 @@ export const AdminItem = ({
   onToggleExpand,
   selected,
   onToggleSelection,
-}: AdminCardProps) => {
+}: ViewCardProps) => {
   const [expanded, setExpanded] = useState<boolean>(false);
 
   const toggleExpand = () => {

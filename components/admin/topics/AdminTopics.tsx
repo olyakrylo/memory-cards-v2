@@ -4,7 +4,7 @@ import { Divider, Typography } from "@mui/material";
 import { Card as CardType, Topic } from "../../../shared/models";
 import { AdminTabData } from "../../../shared/admin";
 import SkeletonLoader from "../../skeletonLoader";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import styles from "./AdminTopics.module.css";
 import AppImage from "../../image";
 import { useCards } from "../../../hooks";
@@ -82,7 +82,7 @@ export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       data={data}
       itemTitle={topicTitle}

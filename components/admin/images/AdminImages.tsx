@@ -1,20 +1,20 @@
 import AppImage from "../../image";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import { AdminTabData } from "../../../shared/admin";
 
 type AllImagesProps = AdminTabData<string>;
 
 export const AdminImages = ({ data, count }: AllImagesProps) => {
-  const imageTitle = (key: string): string => key;
+  const imageTitle = ({ _id: key }: { _id: string }): string => key;
 
-  const imageContent = (key: string): JSX.Element => {
+  const imageContent = ({ _id: key }: { _id: string }): JSX.Element => {
     return <AppImage src={key} alt={""} maxHeight={"200px"} />;
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
-      data={data}
+      data={data.map((key) => ({ _id: key }))}
       itemTitle={imageTitle}
       itemContent={imageContent}
     />

@@ -3,7 +3,7 @@ import { Divider, Typography } from "@mui/material";
 import AppImage from "../../image";
 import { AdminCard, AdminTabData } from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";
-import { AdminData } from "../AdminData";
+import { AdminView } from "../view/AdminView";
 import { useCards } from "../../../hooks";
 
 type AdminCardsProps = AdminTabData<AdminCard>;
@@ -54,7 +54,7 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
   };
 
   return (
-    <AdminData
+    <AdminView
       count={count}
       deleteFunc={deleteCards}
       data={data}
