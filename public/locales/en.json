@@ -31,7 +31,8 @@
     "create_copy": "Create a copy",
     "edit": "Edit",
     "no_created_topics": "No created topics yet",
-    "no_added_topics": "No added topics yet"
+    "no_added_topics": "No added topics yet",
+    "admin_panel": "Admin panel"
   },
   "tip": {
     "shuffle": "Shuffle",

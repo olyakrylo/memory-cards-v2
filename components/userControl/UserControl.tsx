@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { Divider, IconButton, Menu, MenuItem } from "@mui/material";
 import { Settings } from "@mui/icons-material";
+import Link from "next/link";
 
 import styles from "./UserControl.module.css";
 import { languages } from "../../utils/i18n";
@@ -45,6 +46,15 @@ export const UserControl = () => {
           <LanguageMenu />
         </MenuItem>
         <MenuItem onClick={handleLogout}>{t("ui.logout")}</MenuItem>
+
+        {user.info?.admin && (
+          <>
+            <Divider />
+            <MenuItem>
+              <Link href="/admin">{t("ui.admin_panel")}</Link>
+            </MenuItem>
+          </>
+        )}
       </Menu>
     </div>
   );
@@ -64,7 +74,7 @@ const LanguageMenu = () => {
   };
 
   const setLanguage = (lang: string): void => {
-    i18n.changeLanguage(lang);
+    void i18n.changeLanguage(lang);
   };
 
   return (
