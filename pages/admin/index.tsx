@@ -148,10 +148,7 @@ export const getServerSideProps: GetServerSideProps = async ({
       if (tab === query.tab) {
         return loadData(tab);
       }
-      return {
-        count: 0,
-        data: [],
-      };
+      return emptyData;
     })
   );
 

@@ -24,7 +24,7 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
   const { t } = useTranslation();
   const notification = useNotification();
 
-  const [editDialogOpen, setEditDialogOpen] = useState<boolean>(false);
+  const [editingCardIndex, setEditingCardIndex] = useState<number>();
 
   const handleInputChange = async (
     event: BaseSyntheticEvent
@@ -56,19 +56,15 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
     onChangeCards(updatedCards);
   };
 
-  const openEditDialog = () => {
-    setEditDialogOpen(true);
+  const openEditDialog = (index: number) => {
+    setEditingCardIndex(index);
   };
 
   const closeEditDialog = () => {
-    setEditDialogOpen(false);
+    setEditingCardIndex(undefined);
   };
 
-  const handleEditDialogClose = (
-    index: number,
-    card: ShortCard,
-    data?: ShortCard
-  ): void => {
+  const handleEditDialogClose = (index?: number, data?: ShortCard): void => {
     if (!data) {
       closeEditDialog();
       return;
@@ -134,15 +130,9 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
               className={styles.card__edit}
               size="small"
               color="primary"
-              onClick={openEditDialog}
+              onClick={() => openEditDialog(i)}
             >
               <EditRounded />
-
-              <CardControl
-                open={editDialogOpen}
-                onClose={(data) => handleEditDialogClose(i, card, data)}
-                card={card}
-              />
             </IconButton>
 
             <IconButton
@@ -155,6 +145,12 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
             </IconButton>
           </div>
         ))}
+
+        <CardControl
+          open={typeof editingCardIndex === "number"}
+          onClose={(data) => handleEditDialogClose(editingCardIndex, data)}
+          card={cards[editingCardIndex as number]}
+        />
       </div>
     </div>
   );
