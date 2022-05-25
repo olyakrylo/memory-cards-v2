@@ -1,19 +1,33 @@
-import { Divider, Typography } from "@mui/material";
+import { Button, Divider, Typography } from "@mui/material";
 
 import AppImage from "../../image";
-import { CardWithTopicTitle, AdminTabData } from "../../../shared/admin";
+import {
+  CardWithTopicTitle,
+  AdminTabData,
+  ADMIN_DATA_LIMIT,
+} from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";
 import { AdminView } from "../view/AdminView";
 import { useCards } from "../../../hooks";
 import styles from "./AdminCards.module.css";
+import { useRouter } from "next/router";
 
 type AdminCardsProps = AdminTabData<CardWithTopicTitle>;
 
 export const AdminCards = ({ data, count }: AdminCardsProps) => {
   const cards = useCards();
+  const router = useRouter();
 
   const deleteCards = (selectedIds: string[]): Promise<UpdatedResult> => {
     return cards.deleteMany(selectedIds);
+  };
+
+  const deleteUnusedCards = async (): Promise<void> => {
+    await cards.deleteUnused();
+    await router.push({
+      pathname: router.pathname,
+      query: { ...router.query, skip: 0, limit: ADMIN_DATA_LIMIT },
+    });
   };
 
   const cardTitle = (card: CardWithTopicTitle): string => {
@@ -66,6 +80,15 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
       itemTitle={cardTitle}
       itemContent={cardContent}
       itemCollapse={cardCollapse}
+      footer={
+        <Button
+          variant={"outlined"}
+          color={"secondary"}
+          onClick={deleteUnusedCards}
+        >
+          Remove all unused cards
+        </Button>
+      }
     />
   );
 };

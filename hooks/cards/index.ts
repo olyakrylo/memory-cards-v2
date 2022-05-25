@@ -233,6 +233,10 @@ export const useCardsImpl = () => {
     return startIndexFromUrl || startIndexFromStorage || 0;
   };
 
+  const deleteUnused = (): Promise<UpdatedResult> => {
+    return api.request("admin", "delete_unused_cards", "delete");
+  };
+
   return {
     loading,
     hideArrows,
@@ -253,5 +257,6 @@ export const useCardsImpl = () => {
     updateCard,
     saveIndex,
     getSavedIndex,
+    deleteUnused,
   };
 };

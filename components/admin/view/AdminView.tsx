@@ -18,6 +18,7 @@ interface AdminViewProps<T = any> {
   itemActions?: (item: T) => JSX.Element;
   itemCollapse?: (item: T) => JSX.Element;
   onToggleExpand?: (id: string, expanded: boolean) => void;
+  footer?: JSX.Element;
 }
 
 export function AdminView<T extends { _id: string }>({
@@ -29,6 +30,7 @@ export function AdminView<T extends { _id: string }>({
   itemActions,
   itemCollapse,
   onToggleExpand,
+  footer,
 }: AdminViewProps<T>) {
   const router = useRouter();
 
@@ -70,7 +72,7 @@ export function AdminView<T extends { _id: string }>({
   };
 
   return (
-    <>
+    <div className={styles.container}>
       {!!selectedIds.length && (
         <div className={styles.selected}>
           <Typography>
@@ -116,6 +118,8 @@ export function AdminView<T extends { _id: string }>({
           />
         ))}
       </Masonry>
-    </>
+
+      {footer}
+    </div>
   );
 }

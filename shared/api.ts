@@ -169,6 +169,13 @@ export interface TopicsAPI {
       result: { topics: Topic[]; new_id: string };
     };
   };
+  following_users: {
+    get: {
+      query: { id: string };
+      body: {};
+      result: User[];
+    };
+  };
 }
 
 export interface CardsAPI {
@@ -293,6 +300,20 @@ export type AdminAPI = {
     delete: {
       query: {};
       body: { keys: string[] };
+      result: UpdatedResult;
+    };
+  };
+  delete_unused_topics: {
+    delete: {
+      query: {};
+      body: {};
+      result: UpdatedResult;
+    };
+  };
+  delete_unused_cards: {
+    delete: {
+      query: {};
+      body: {};
       result: UpdatedResult;
     };
   };

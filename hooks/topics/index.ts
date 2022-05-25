@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from "react-redux";
 
 import { State } from "../../shared/redux";
-import { Topic, TopicExt } from "../../shared/models";
+import { Topic, TopicExt, User } from "../../shared/models";
 import {
   setCurrentTopic,
   setTopics,
@@ -179,6 +179,16 @@ export const useTopicsImpl = () => {
     dispatchSwap(id);
   };
 
+  const getFollowingUsersById = (topicId: string): Promise<User[]> => {
+    return api.request("topics", "following_users", "get", {
+      query: { id: topicId },
+    });
+  };
+
+  const deleteUnused = (): Promise<UpdatedResult> => {
+    return api.request("admin", "delete_unused_topics", "delete");
+  };
+
   const isSwapped = (topicId?: string) => {
     const id = topicId ?? currentTopic?._id;
     if (!id) return;
@@ -219,5 +229,7 @@ export const useTopicsImpl = () => {
     deleteMany,
     toggleCardsSwap,
     isSwapped,
+    getFollowingUsersById,
+    deleteUnused,
   };
 };
