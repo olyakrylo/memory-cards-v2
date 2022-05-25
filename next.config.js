@@ -24,7 +24,7 @@ module.exports = withPWA({
     disable: process.env.NODE_ENV !== "production",
   },
   reactStrictMode: true,
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  webpack: (config) => {
     config.plugins.push(new DuplicatePackageCheckerPlugin());
     conflictPackages.forEach((pack) => {
       config.resolve.alias[pack] = path.resolve(
@@ -34,6 +34,9 @@ module.exports = withPWA({
       );
     });
     return config;
+  },
+  images: {
+    domains: [process.env.IMG_DOMAIN],
   },
   async redirects() {
     return [

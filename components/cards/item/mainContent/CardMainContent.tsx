@@ -4,7 +4,8 @@ import { Divider, IconButton, Tooltip, Typography } from "@mui/material";
 import { ZoomInMapRounded, ZoomOutMapRounded } from "@mui/icons-material";
 
 import { Card, CardField } from "../../../../shared/models";
-import styles from "../CardItem.module.css";
+import styles from "./CardMainContent.module.css";
+import mainStyles from "../CardItem.module.css";
 import AppImage from "../../../image";
 import CardDialogContent from "../dialogContent";
 import AppDialog from "../../../dialog";
@@ -40,22 +41,23 @@ export const CardMainContent = ({ card, field }: CardMainContentProps) => {
   return (
     <>
       {card[field].image && (
-        <AppImage
-          src={card[field].image as string}
-          alt={t(`ui.${field}_image`)}
-          classes={styles.card__image}
-        />
+        <div className={mainStyles.card__image}>
+          <AppImage
+            src={card[field].image as string}
+            alt={t(`ui.${field}_image`)}
+          />
+        </div>
       )}
 
       {!card[field].image && (
-        <Typography className={styles.card__text}>
+        <Typography className={mainStyles.card__text}>
           {formatText(cropText(card[field].text))}
         </Typography>
       )}
 
       <Tooltip title={t("tip.reveal") ?? ""}>
         <IconButton
-          className={styles.card__flip}
+          className={mainStyles.card__flip}
           size={"small"}
           onClick={openDialog}
         >
@@ -71,7 +73,7 @@ export const CardMainContent = ({ card, field }: CardMainContentProps) => {
         content={
           <>
             <CardDialogContent field={"question"} card={card} />
-            <Divider classes={{ root: styles.dialog__divider }} />
+            <Divider classes={{ root: styles.dialogDivider }} />
             <CardDialogContent field={"answer"} card={card} />
           </>
         }

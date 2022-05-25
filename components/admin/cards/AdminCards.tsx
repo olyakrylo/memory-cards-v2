@@ -5,6 +5,7 @@ import { CardWithTopicTitle, AdminTabData } from "../../../shared/admin";
 import { UpdatedResult } from "../../../shared/api";
 import { AdminView } from "../view/AdminView";
 import { useCards } from "../../../hooks";
+import styles from "./AdminCards.module.css";
 
 type AdminCardsProps = AdminTabData<CardWithTopicTitle>;
 
@@ -37,7 +38,9 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
         </Typography>
         <Typography>{card.question.text}</Typography>
         {card.question.image && (
-          <AppImage src={card.question.image} alt={""} maxHeight={"150px"} />
+          <div className={styles.image}>
+            <AppImage src={card.question.image} alt={""} />
+          </div>
         )}
 
         <Divider style={{ margin: "16px 0" }} />
@@ -47,7 +50,9 @@ export const AdminCards = ({ data, count }: AdminCardsProps) => {
         </Typography>
         <Typography>{card.answer.text}</Typography>
         {card.answer.image && (
-          <AppImage src={card.answer.image} alt={""} maxHeight={"150px"} />
+          <div className={styles.image}>
+            <AppImage src={card.answer.image} alt={""} />
+          </div>
         )}
       </>
     );

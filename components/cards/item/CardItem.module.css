@@ -37,6 +37,9 @@
 
 .card__image {
   grid-area: content;
+  position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .card__del {
@@ -65,17 +68,4 @@
 .card__flip:hover {
   background: var(--white);
   z-index: 10;
-}
-
-.dialog__header {
-  font-family: var(--brand-font-family);
-}
-
-.dialog__divider {
-  margin: 16px 0 8px;
-}
-
-.dialog__imageContainer {
-  margin: 16px auto;
-  height: max-content;
 }

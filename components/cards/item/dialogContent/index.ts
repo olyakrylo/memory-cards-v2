@@ -1,3 +1,3 @@
-import { CardDialogContent } from "./DialogContent";
+import { CardDialogContent } from "./CardDialogContent";
 
 export default CardDialogContent;

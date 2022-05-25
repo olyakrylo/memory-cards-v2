@@ -19,4 +19,5 @@ export const config = {
     address: getStringValue("MAIL"),
     password: getStringValue("MAIL_PASS"),
   },
+  img_domain: getStringValue("IMG_DOMAIN"),
 };

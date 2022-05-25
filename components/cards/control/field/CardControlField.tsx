@@ -148,11 +148,7 @@ export const CardControlField = ({
 
       {!loading && value.image && (
         <div className={styles.file} style={{ height: IMAGE_HEIGHT }}>
-          <AppImage
-            src={value.image}
-            maxHeight={`${IMAGE_HEIGHT}px`}
-            alt={t(`ui.${field}_image`)}
-          />
+          <AppImage src={value.image} alt={t(`ui.${field}_image`)} />
 
           <IconButton
             size={"small"}
