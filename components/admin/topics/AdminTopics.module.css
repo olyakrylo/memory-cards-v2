@@ -13,3 +13,9 @@
   background-color: var(--bg-color);
   border-radius: 8px;
 }
+
+.card__image {
+  position: relative;
+  height: 150px;
+  width: 100%;
+}

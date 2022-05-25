@@ -71,14 +71,18 @@ export const AdminTopics = ({ data, count }: AdminTopicsProps) => {
                 <Typography fontWeight={500}>{card.question.text}</Typography>
               )}
               {card.question.image && (
-                <AppImage src={card.question.image} alt={""} />
+                <div className={styles.card__image}>
+                  <AppImage src={card.question.image} alt={""} />
+                </div>
               )}
 
               <Divider />
 
               {card.answer.text && <Typography>{card.answer.text}</Typography>}
               {card.answer.image && (
-                <AppImage src={card.answer.image} alt={""} />
+                <div className={styles.card__image}>
+                  <AppImage src={card.answer.image} alt={""} />
+                </div>
               )}
             </div>
           ))}

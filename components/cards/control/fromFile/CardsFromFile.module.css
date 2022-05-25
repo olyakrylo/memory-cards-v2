@@ -51,3 +51,8 @@
 .card__delete {
   grid-area: delete;
 }
+
+.card__image {
+  position: relative;
+  min-height: 200px;
+}

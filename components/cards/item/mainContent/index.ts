@@ -1,3 +1,3 @@
-import { CardMainContent } from "./MainContent";
+import { CardMainContent } from "./CardMainContent";
 
 export default CardMainContent;

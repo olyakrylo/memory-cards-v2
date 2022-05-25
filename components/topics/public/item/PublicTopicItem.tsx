@@ -126,11 +126,12 @@ const PublicTopicCardField = ({ card, field }: PublicTopicsCardFieldProps) => {
       )}
 
       {card[field].image && (
-        <AppImage
-          src={card[field].image as string}
-          alt={t(`ui.${field}_image`)}
-          maxHeight={"180px"}
-        />
+        <div className={styles.card__image}>
+          <AppImage
+            src={card[field].image as string}
+            alt={t(`ui.${field}_image`)}
+          />
+        </div>
       )}
     </>
   );

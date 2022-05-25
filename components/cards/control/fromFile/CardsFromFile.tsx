@@ -103,12 +103,9 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
             <Typography className={styles.card__question}>
               {card.question.text}
               {card.question.image && (
-                <AppImage
-                  src={card.question.image}
-                  alt={""}
-                  maxHeight={"150px"}
-                  alignStart
-                />
+                <div className={styles.card__image}>
+                  <AppImage src={card.question.image} alt={""} alignStart />
+                </div>
               )}
             </Typography>
 
@@ -117,12 +114,9 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
             <Typography className={styles.card__answer}>
               {card.answer.text}
               {card.answer.image && (
-                <AppImage
-                  src={card.answer.image}
-                  alt={""}
-                  maxHeight={"150px"}
-                  alignStart
-                />
+                <div className={styles.card__image}>
+                  <AppImage src={card.answer.image} alt={""} alignStart />
+                </div>
               )}
             </Typography>
 
