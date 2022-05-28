@@ -92,7 +92,7 @@ export const CardsFromFile = ({ cards, onChangeCards }: CardFromFileProps) => {
             type="file"
             hidden
             onChange={handleInputChange}
-            accept=".txt"
+            accept=".txt, .tsv, .csv"
           />
         </Button>
       </Tooltip>
