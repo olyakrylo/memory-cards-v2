@@ -143,7 +143,7 @@ const Recovery = () => {
         <Typography color="primary" fontWeight={500} variant="h5">
           Hi, {user?.login}!
         </Typography>
-        <Typography variant="subtitle2">
+        <Typography variant="subtitle2" color="info">
           {t("auth.recovery.set_new_pass")}:
         </Typography>
 
